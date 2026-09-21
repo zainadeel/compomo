@@ -42,7 +42,7 @@ export class MapEntityMarker {
   /** Short visible identifier revealed on hover or keyboard focus. */
   @Prop() caption: string = '';
 
-  /** Canonical IcoMo icon name for the represented map entity. Immobilized state uses MapKey. */
+  /** Canonical IcoMo icon name for the represented map entity. Immobilized vehicles use MapKey. */
   @Prop() icon: string = 'MapEntityTravelGroup';
 
   /** Semantic operating state that selects the marker background. */
@@ -74,7 +74,8 @@ export class MapEntityMarker {
 
   render() {
     const caption = this.caption.trim();
-    const markerIcon = this.state === 'immobilized' ? 'MapKey' : this.icon;
+    const markerIcon =
+      this.state === 'immobilized' && this.icon === 'MapEntityVehicle' ? 'MapKey' : this.icon;
     const bearing = BEARING_ICONS.has(markerIcon) ? normalizeBearing(this.bearing) : 0;
 
     return (

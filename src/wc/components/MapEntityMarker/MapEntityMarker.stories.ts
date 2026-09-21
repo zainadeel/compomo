@@ -4,10 +4,10 @@ import '../../../../dist/components/ds-map-entity-marker.js';
 
 const STATES = ['moving', 'idling', 'stationary', 'immobilized', 'unknown'] as const;
 const ENTITY_KINDS = [
-  { icon: 'MapEntityTravelGroup', label: 'Travel group' },
-  { icon: 'MapEntityVehicle', label: 'Vehicle' },
-  { icon: 'MapEntityAsset', label: 'Asset' },
-  { icon: 'MapEntityPerson', label: 'Person' },
+  { icon: 'MapEntityTravelGroup', label: 'Travel group', state: 'moving' },
+  { icon: 'MapEntityVehicle', label: 'Vehicle', state: 'idling' },
+  { icon: 'MapEntityAsset', label: 'Asset', state: 'stationary' },
+  { icon: 'MapEntityPerson', label: 'Person', state: 'unknown' },
 ] as const;
 
 const REVIEW_SURFACE = `
@@ -44,7 +44,7 @@ const meta: Meta = {
   args: {
     label: 'Open vehicle 412',
     caption: 'Vehicle 412',
-    icon: 'MapEntityTravelGroup',
+    icon: 'MapEntityVehicle',
     state: 'moving',
     dashed: false,
     bearing: 45,
@@ -92,12 +92,14 @@ export const Review: Story = {
             <ds-map-entity-marker
               label=${`Open ${state} vehicle`}
               caption=${`Vehicle ${412 + index}`}
+              icon="MapEntityVehicle"
               state=${state}
               bearing=${index * 45}
             ></ds-map-entity-marker>
             <ds-map-entity-marker
               label=${`Open ${state} vehicle with dashed outline`}
               caption=${`Vehicle ${512 + index}`}
+              icon="MapEntityVehicle"
               state=${state}
               bearing=${index * 45}
               dashed
@@ -129,7 +131,7 @@ export const EntityKinds: Story = {
                 label=${`Open ${kind.label.toLowerCase()}`}
                 caption=${kind.label}
                 icon=${kind.icon}
-                state=${STATES[index]}
+                state=${kind.state}
                 bearing=${index * 90 + 45}
               ></ds-map-entity-marker>
               <ds-text as="span" variant="text-caption" color="secondary">${kind.label}</ds-text>
@@ -138,8 +140,8 @@ export const EntityKinds: Story = {
         )}
       </div>
       <ds-text as="p" variant="text-body-small" color="secondary">
-        Travel-group and vehicle glyphs consume bearing. Immobilized uses MapKey; asset and person
-        glyphs remain upright.
+        Travel-group and vehicle glyphs consume bearing. The vehicle-only immobilized state uses
+        MapKey; asset and person glyphs remain upright.
       </ds-text>
     </div>
   `,

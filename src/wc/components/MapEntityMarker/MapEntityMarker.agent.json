@@ -35,8 +35,8 @@
   "states": [
     "Unknown represents unavailable current motion and uses the existing stale-background token. The application resolves stale telemetry to Unknown regardless of previous motion; a known Immobilized state takes precedence.",
     "The dashed outline is an independent visual option. Unknown is solid unless the owner explicitly requests dashes.",
-    "immobilized always renders the upright MapKey glyph instead of the entity icon so the state is identifiable without interpreting bearing.",
-    "bearing rotates only MapEntityTravelGroup and MapEntityVehicle glyphs and is normalized to a clockwise value from 0 through 359 degrees. Immobilized, asset, person, and other glyphs remain upright.",
+    "immobilized is a vehicle-only state. A MapEntityVehicle marker in that state renders the upright MapKey glyph so immobilization is identifiable without interpreting bearing; other entity icons are preserved.",
+    "bearing rotates only MapEntityTravelGroup and MapEntityVehicle glyphs and is normalized to a clockwise value from 0 through 359 degrees. The immobilized vehicle replacement, asset, person, and other glyphs remain upright.",
     "dimmed is visual de-emphasis only. The map owner decides when selection context should dim peer markers and keeps every marker operable. A dimmed marker returns to full opacity while hovered or keyboard-focused so its revealed caption remains legible.",
     "Activation emits dsClick without changing application selection internally."
   ],
