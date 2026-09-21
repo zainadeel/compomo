@@ -832,6 +832,12 @@ test('maps every filled intent and contrast recipe', async ({ page }) => {
     'walkthrough',
   ] as const;
   const contrasts = ['bold', 'strong', 'medium', 'faint'] as const;
+  const foregroundContrast = {
+    bold: 'faint',
+    strong: 'medium',
+    medium: 'strong',
+    faint: 'bold',
+  } as const;
 
   for (const intent of intents) {
     for (const contrast of contrasts) {
@@ -846,6 +852,19 @@ test('maps every filled intent and contrast recipe', async ({ page }) => {
       await expect(button).toHaveClass(new RegExp(`button-filled--intent-${intent}`));
       await expect(button).toHaveClass(new RegExp(`button-filled--contrast-${contrast}`));
       await expect(button).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+      const expectedForeground = await page.evaluate(token => {
+        const probe = document.createElement('span');
+        probe.style.color = `var(${token})`;
+        document.body.append(probe);
+        const expected = getComputedStyle(probe).color;
+        probe.remove();
+        return expected;
+      }, `--color-foreground-${foregroundContrast[contrast]}-${intent}`);
+      await expect
+        .poll(() => button.evaluate(element => getComputedStyle(element).color), {
+          message: `${intent}/${contrast} foreground`,
+        })
+        .toBe(expectedForeground);
     }
   }
 });

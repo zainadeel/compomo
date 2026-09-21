@@ -2557,7 +2557,7 @@ export namespace Components {
          */
         "dimmed": boolean;
         /**
-          * Canonical IcoMo icon name for the represented map entity. Immobilized state uses MapKey.
+          * Canonical IcoMo icon name for the represented map entity. Immobilized vehicles use MapKey.
           * @default 'MapEntityTravelGroup'
          */
         "icon": string;
@@ -9572,7 +9572,7 @@ declare namespace LocalJSX {
          */
         "dimmed"?: boolean;
         /**
-          * Canonical IcoMo icon name for the represented map entity. Immobilized state uses MapKey.
+          * Canonical IcoMo icon name for the represented map entity. Immobilized vehicles use MapKey.
           * @default 'MapEntityTravelGroup'
          */
         "icon"?: string;

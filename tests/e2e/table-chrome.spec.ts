@@ -798,12 +798,29 @@ test('uses icon-only Filter, Group, and Sort below 900px and promotes the icon w
   page,
 }) => {
   const table = page.locator('#column-customizer');
-  await table.evaluate(element => {
-    (element as HTMLElement).style.inlineSize = '800px';
-  });
   const filter = table.getByRole('combobox', { name: 'Filter fleet' });
   const group = table.getByRole('combobox', { name: 'Group fleet' });
   const sort = page.locator('#column-customizer-sort').getByRole('button', { name: 'Sort table' });
+  const filterHost = table.locator('#column-customizer-filter ds-filter-menu');
+  const groupHost = table.locator('#column-customizer-group');
+  const sortHost = table.locator('#column-customizer-sort ds-button-unfilled');
+
+  await table.evaluate(element => {
+    (element as HTMLElement).style.inlineSize = '910px';
+  });
+  await expect(filterHost).not.toHaveClass(/ds-table-caption-control--compact/);
+  await expect(groupHost).not.toHaveClass(/ds-table-caption-control--compact/);
+  await expect(sortHost).not.toHaveClass(/ds-table-caption-control--compact/);
+  await expect(filter.locator('.trigger__label-box')).toHaveCount(1);
+  await expect(group.locator('.trigger__label-box')).toHaveCount(1);
+  await expect(sort.locator('.ds-button__label')).toHaveCount(1);
+  for (const host of [filterHost, groupHost, sortHost]) {
+    await expect.poll(async () => (await host.boundingBox())?.width ?? 0).toBeGreaterThan(32);
+  }
+
+  await table.evaluate(element => {
+    (element as HTMLElement).style.inlineSize = '800px';
+  });
 
   await expect
     .poll(() =>

@@ -26,7 +26,7 @@ test('uses Unknown color independently from the optional dashed outline @cross-b
   await expect(marker.locator('svg.map-entity-marker__dashed-outline')).toHaveCount(1);
   await expect(marker).toHaveAttribute('state', 'unknown');
   await marker.evaluate(element => {
-    Object.assign(element, { state: 'immobilized', bearing: 90 });
+    Object.assign(element, { icon: 'MapEntityVehicle', state: 'immobilized', bearing: 90 });
   });
   await expect(marker.locator('ds-icon')).toHaveJSProperty('name', 'MapKey');
   await expect(marker.locator('.map-entity-marker__glyph')).toHaveCSS(
@@ -73,4 +73,20 @@ test('rotates directional icons using bearing attributes and properties @cross-b
     Object.assign(element, { icon: 'MapEntityVehicle', state: 'immobilized' });
   });
   await expect(glyph).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, 0)');
+});
+
+test('reserves the immobilized MapKey glyph for vehicles @cross-browser', async ({ page }) => {
+  await page.goto('/map-entity-marker.html');
+  const marker = page.locator('#marker');
+  const icon = marker.locator('ds-icon');
+
+  await marker.evaluate(element => {
+    Object.assign(element, { icon: 'MapEntityPerson', state: 'immobilized' });
+  });
+  await expect(icon).toHaveJSProperty('name', 'MapEntityPerson');
+
+  await marker.evaluate(element => {
+    (element as HTMLDsMapEntityMarkerElement).icon = 'MapEntityVehicle';
+  });
+  await expect(icon).toHaveJSProperty('name', 'MapKey');
 });
