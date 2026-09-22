@@ -57,7 +57,7 @@ export class Slider {
   @Prop() showValue: boolean = true;
   @Prop() size: SliderSize = 'md';
   @Prop() orientation: SliderOrientation = 'horizontal';
-  /** Align the thumb edge with full-width rail endpoints, or its center with inset rail endpoints. */
+  /** Align the inner orb edge with full-width rail endpoints, or its center with inset rail endpoints. */
   @Prop() thumbAlignment: SliderThumbAlignment = 'edge';
   @Prop({ reflect: true }) name: string | undefined;
   @Prop({ reflect: true }) form: string | undefined;
@@ -446,16 +446,17 @@ export class Slider {
     const control = this.controlEl;
     if (!control) return 0;
     const rect = control.getBoundingClientRect();
-    const thumb = this.el.querySelector<HTMLElement>('.slider__thumb');
-    const thumbSize = thumb
+    const endpoint = this.el.querySelector<HTMLElement>(
+      this.thumbAlignment === 'edge' ? '.slider__thumb-orb' : '.slider__thumb'
+    );
+    const endpointSize = endpoint
       ? this.orientation === 'horizontal'
-        ? thumb.offsetWidth
-        : thumb.offsetHeight
+        ? endpoint.offsetWidth
+        : endpoint.offsetHeight
       : 0;
-    // Both alignment modes keep the complete thumb inside the control. Edge
-    // alignment lets the rail span the control while center alignment insets
-    // the rail to the same thumb-center travel.
-    const inset = thumbSize / 2;
+    // Edge alignment positions the inner orb at the rail ends; the outer halo
+    // may overhang. Center alignment uses the complete thumb at inset rail ends.
+    const inset = endpointSize / 2;
 
     if (this.orientation === 'vertical') {
       const travel = Math.max(1, rect.height - inset * 2);
@@ -561,6 +562,7 @@ export class Slider {
         />
         <span class="slider__thumb-visual" aria-hidden="true">
           <span class="slider__thumb-wash" />
+          <span class="slider__thumb-orb" />
         </span>
       </div>
     );

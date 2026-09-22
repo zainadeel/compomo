@@ -262,3 +262,30 @@
   background-color: transparent;
   --ds-interaction-border-width: 0px;
 }
+
+:host(.tab-group-host--navigation) .tab-list {
+  gap: var(--dimension-space-050);
+  height: calc(var(--ds-control-height) + var(--dimension-space-050) + var(--dimension-space-050));
+  padding: var(--dimension-space-050);
+  border: 0;
+  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--color-border-tertiary);
+}
+
+:host(.tab-group-host--navigation) .tab--selected {
+  box-shadow: var(--effect-elevation-elevated-md);
+  --ds-interaction-border-width: 0px;
+}
+
+@media (forced-colors: active) {
+  :host(.tab-group-host--navigation) .tab-list {
+    box-shadow: none;
+    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-control-boundary);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-012));
+  }
+
+  :host(.tab-group-host--navigation) .tab--selected {
+    box-shadow: none;
+    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-selected);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-012));
+  }
+}

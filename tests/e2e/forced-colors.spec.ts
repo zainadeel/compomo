@@ -66,12 +66,19 @@ test('preserves control boundaries, state, focus, invalid, and disabled meaning'
   await switchControl.click();
   await expect(switchControl).toHaveAttribute('aria-checked', 'true');
   await expect(switchControl).toHaveCSS('background-color', colors.highlight);
+  await expect(switchControl).toHaveCSS('box-shadow', 'none');
   await expect(switchControl.locator('.thumb')).toHaveCSS('background-color', colors.highlightText);
+  await expect(switchControl.locator('.thumb')).toHaveCSS('box-shadow', 'none');
 
   const sliderInput = page.locator('#slider-single .slider__input');
   const sliderThumb = page.locator('#slider-single .slider__thumb-visual');
+  const sliderOrb = sliderThumb.locator('.slider__thumb-orb');
   await expect(page.locator('#slider-single .slider__rail')).toHaveCSS('border-top-style', 'solid');
   await expect(sliderThumb).toHaveCSS('border-top-color', colors.buttonText);
+  await expect(sliderThumb).toHaveCSS('backdrop-filter', 'none');
+  await expect(sliderThumb).toHaveCSS('box-shadow', 'none');
+  await expect(sliderOrb).toHaveCSS('background-color', colors.highlight);
+  await expect(sliderOrb).toHaveCSS('border-top-color', colors.highlightText);
   await page.locator('#slider-range .slider__input').first().focus();
   await page.keyboard.press('Shift+Tab');
   await expect(sliderInput).toBeFocused();

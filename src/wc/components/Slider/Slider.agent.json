@@ -58,7 +58,8 @@
     "Horizontal Slider fills the width supplied by its parent; the parent chooses an appropriate readable track length.",
     "Vertical Slider owns a token-based default length that may be overridden with --ds-slider-vertical-length in layout-specific compositions.",
     "Use md in ordinary forms and sm or xs only when the surrounding control density uses the same recipe.",
-    "Track thickness scales with density. The unfilled track has a neutral border, the filled range uses brand color, and the thumb uses the primary surface with subtle elevation.",
+    "Track thickness scales with density. The half-rounded unfilled track uses a faint-neutral background and tertiary border, and the filled range uses brand color. The round thumb layers a track-sized bold-brand orb with a tertiary inset border over a larger transparent, blurred, medium-elevation circle.",
+    "Edge alignment places the inner orb edge at each full-width rail endpoint while the transparent outer circle overhangs; center alignment places the orb center at inset rail endpoints.",
     "Horizontal value direction is left-to-right; the design system does not author RTL-specific component behavior."
   ],
   "frameworkCaveats": {

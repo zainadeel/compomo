@@ -6,6 +6,7 @@ import '../../../../dist/components/ds-table.js';
 import '../../../../dist/components/ds-text.js';
 import '../../../../dist/components/ds-input.js';
 import '../../../../dist/components/ds-select.js';
+import '../../../../dist/components/ds-tab-group.js';
 import '../../../../dist/components/ds-bar-action.js';
 import '../../../../dist/components/ds-button-unfilled.js';
 import '../../../../dist/components/ds-menu.js';
@@ -1210,6 +1211,22 @@ export const SafetyEvents: Story = {
               ></ds-select>
             </div>
           </div>
+          <span
+            slot="caption-trailing"
+            style="display:inline-flex;align-items:center;gap:var(--dimension-space-100);"
+          >
+            <ds-divider orientation="vertical" length="var(--dimension-size-400)"></ds-divider>
+            <ds-tab-group
+              aria-label="Safety events view"
+              presentation="segmented"
+              size="md"
+              value="table"
+              .tabs=${[
+                { id: 'table', label: 'Table', variant: 'icon-label', icon: 'Table' },
+                { id: 'map', label: 'Map', variant: 'icon-label', icon: 'MapPage' },
+              ]}
+            ></ds-tab-group>
+          </span>
           <ds-text
             slot="footer-leading"
             as="span"

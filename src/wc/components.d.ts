@@ -34,7 +34,7 @@ import { ChartLegendDirection, ChartLegendPercentageDecimals } from "./component
 import { CheckboxSize } from "./components/Checkbox/Checkbox";
 import { CheckboxGroupSize } from "./components/CheckboxGroup/CheckboxGroup";
 import { ChipSize, ChipState } from "./components/Chip/Chip";
-import { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
+import { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1, ControlWidth } from "./utils";
 import { DataField } from "./utils/data-field";
 import { MenuItemData, MenuItemToggleDetail, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
 import { DataCustomizeChangeDetail } from "./components/DataCustomize/DataCustomize";
@@ -62,7 +62,7 @@ import { PanelNavChildSelectDetail, PanelNavGroup, PanelNavItem, PanelNavPresent
 import { MobileBarNavDestinationDetail } from "./components/MobileBarNav/mobile-bar-nav-types";
 import { MobileHeaderHeadingLevel, MobileHeaderSectionsPresentation, MobileHeaderTone } from "./components/MobileHeader/mobile-header-types";
 import { TabGroupItem, TabItem } from "./components/TabGroup/tab-item-utils";
-import { TabGroupSize } from "./components/TabGroup/TabGroup";
+import { TabGroupSize, TabGroupWidth } from "./components/TabGroup/TabGroup";
 import { ModalCloseDetail, ModalWidth } from "./components/Modal/Modal";
 import { PaginationChangeDetail, PaginationPageSizeMode } from "./components/Pagination/pagination-types";
 import { ChromeTransitionDetail } from "./shell/chrome-transition";
@@ -75,6 +75,7 @@ import { RadioTileOption } from "./components/RadioTile/RadioTile";
 import { SafetyScoreLevel, ScoreSize, ScoreVariant } from "./components/Score/score-types";
 import { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
 import { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
+import { SelectToggleOption, SelectToggleSize, SelectToggleVariant } from "./components/SelectToggle/SelectToggle";
 import { SettingRowCheckboxPresentation } from "./components/SettingRowCheckbox/SettingRowCheckbox";
 import { SettingRowRadioPresentation } from "./components/SettingRowRadio/SettingRowRadio";
 import { SettingRowToggleVariant } from "./components/SettingRowToggle/SettingRowToggle";
@@ -86,7 +87,7 @@ import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, Text
 import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderTick, SliderValue } from "./components/Slider/Slider";
 import { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 import { SwitchSize } from "./components/Switch/Switch";
-import { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
+import { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth as TabGroupWidth1 } from "./components/TabGroup/TabGroup";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { TextareaResize, TextareaSize, TextareaWidth } from "./components/Textarea/Textarea";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
@@ -122,7 +123,7 @@ export { ChartLegendDirection, ChartLegendPercentageDecimals } from "./component
 export { CheckboxSize } from "./components/Checkbox/Checkbox";
 export { CheckboxGroupSize } from "./components/CheckboxGroup/CheckboxGroup";
 export { ChipSize, ChipState } from "./components/Chip/Chip";
-export { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
+export { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1, ControlWidth } from "./utils";
 export { DataField } from "./utils/data-field";
 export { MenuItemData, MenuItemToggleDetail, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
 export { DataCustomizeChangeDetail } from "./components/DataCustomize/DataCustomize";
@@ -150,7 +151,7 @@ export { PanelNavChildSelectDetail, PanelNavGroup, PanelNavItem, PanelNavPresent
 export { MobileBarNavDestinationDetail } from "./components/MobileBarNav/mobile-bar-nav-types";
 export { MobileHeaderHeadingLevel, MobileHeaderSectionsPresentation, MobileHeaderTone } from "./components/MobileHeader/mobile-header-types";
 export { TabGroupItem, TabItem } from "./components/TabGroup/tab-item-utils";
-export { TabGroupSize } from "./components/TabGroup/TabGroup";
+export { TabGroupSize, TabGroupWidth } from "./components/TabGroup/TabGroup";
 export { ModalCloseDetail, ModalWidth } from "./components/Modal/Modal";
 export { PaginationChangeDetail, PaginationPageSizeMode } from "./components/Pagination/pagination-types";
 export { ChromeTransitionDetail } from "./shell/chrome-transition";
@@ -163,6 +164,7 @@ export { RadioTileOption } from "./components/RadioTile/RadioTile";
 export { SafetyScoreLevel, ScoreSize, ScoreVariant } from "./components/Score/score-types";
 export { ScrollOverlayScrollDetail } from "./components/ScrollOverlay/ScrollOverlay";
 export { SelectBackground, SelectIndicator, SelectOption, SelectOptionActionDetail, SelectOptionSubtextActionDetail, SelectPopupAlign, SelectSection, SelectSize, SelectValue, SelectWidth } from "./components/Select/Select";
+export { SelectToggleOption, SelectToggleSize, SelectToggleVariant } from "./components/SelectToggle/SelectToggle";
 export { SettingRowCheckboxPresentation } from "./components/SettingRowCheckbox/SettingRowCheckbox";
 export { SettingRowRadioPresentation } from "./components/SettingRowRadio/SettingRowRadio";
 export { SettingRowToggleVariant } from "./components/SettingRowToggle/SettingRowToggle";
@@ -174,7 +176,7 @@ export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, Text
 export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderTick, SliderValue } from "./components/Slider/Slider";
 export { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 export { SwitchSize } from "./components/Switch/Switch";
-export { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
+export { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth as TabGroupWidth1 } from "./components/TabGroup/TabGroup";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { TextareaResize, TextareaSize, TextareaWidth } from "./components/Textarea/Textarea";
 export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
@@ -3023,6 +3025,30 @@ export namespace Components {
          */
         "open": boolean;
     }
+    interface DsNavigationTabGroup {
+        /**
+          * @default null
+         */
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+        /**
+          * @default 'md'
+         */
+        "size": TabGroupSize;
+        /**
+          * @default []
+         */
+        "tabs": TabGroupItem[];
+        /**
+          * Currently selected local view. User activation updates this value.
+          * @default ''
+         */
+        "value": string;
+        /**
+          * @default 'hug'
+         */
+        "width": TabGroupWidth;
+    }
     interface DsPagination {
         /**
           * Effective whole-item capacity to request when Fit is selected.
@@ -3820,6 +3846,53 @@ export namespace Components {
          */
         "width": SelectWidth;
     }
+    interface DsSelectToggle {
+        /**
+          * Optional stable context prepended to the changing accessible choice name.
+          * @default null
+         */
+        "ariaLabel": string | null;
+        /**
+          * Collapse an icon-label choice to its icon in a narrow table caption or data toolbar.
+          * @default false
+         */
+        "collapseLabel": boolean;
+        /**
+          * Show an inset border; both treatments keep the transparent unfilled surface.
+          * @default true
+         */
+        "hasBorder": boolean;
+        /**
+          * Prevent interaction.
+          * @default false
+         */
+        "isInactive": boolean;
+        /**
+          * Exactly two or three choices, each with a unique value and accessible label.
+          * @default []
+         */
+        "options": SelectToggleOption[];
+        /**
+          * Control density: small, medium, or large; the trailing indicator scales with it.
+          * @default 'md'
+         */
+        "size": SelectToggleSize;
+        /**
+          * Current choice. User activation updates this value and emits dsChange.
+          * @default ''
+         */
+        "value": string;
+        /**
+          * Show the current label, icon, or both. Icon variants require an icon on each choice.
+          * @default 'label'
+         */
+        "variant": SelectToggleVariant;
+        /**
+          * Hug the content or fill the parent.
+          * @default 'hug'
+         */
+        "width": ControlWidth;
+    }
     /**
      * Padded settings-row composition for a Checkbox group.
      */
@@ -4207,7 +4280,7 @@ export namespace Components {
          */
         "step": number | 'any';
         /**
-          * Align the thumb edge with full-width rail endpoints, or its center with inset rail endpoints.
+          * Align the inner orb edge with full-width rail endpoints, or its center with inset rail endpoints.
           * @default 'edge'
          */
         "thumbAlignment": SliderThumbAlignment;
@@ -4323,10 +4396,10 @@ export namespace Components {
          */
         "hasContainer": boolean;
         /**
-          * Show the segmented control's outer background, border, and inset.
+          * Visual treatment; use NavigationTabGroup for the outset navigation presentation.
           * @default 'segmented'
          */
-        "presentation": 'segmented' | 'tabs';
+        "presentation": 'segmented' | 'tabs' | 'navigation';
         /**
           * Control density: 24px small, 32px medium, or 40px large track.
           * @default 'md'
@@ -4344,9 +4417,14 @@ export namespace Components {
           * Width fit — hug content (default) or fill the parent with equal-width segments.
           * @default 'hug'
          */
-        "width": TabGroupWidth;
+        "width": TabGroupWidth1;
     }
     interface DsTable {
+        /**
+          * Replace only the data frame with application-owned content; caption and footer remain shared.
+          * @default false
+         */
+        "alternateView": boolean;
         /**
           * Required accessible table name, retained as a native caption.
          */
@@ -5267,6 +5345,10 @@ export interface DsModalCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsModalElement;
 }
+export interface DsNavigationTabGroupCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsNavigationTabGroupElement;
+}
 export interface DsPaginationCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsPaginationElement;
@@ -5306,6 +5388,10 @@ export interface DsScrollOverlayCustomEvent<T> extends CustomEvent<T> {
 export interface DsSelectCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSelectElement;
+}
+export interface DsSelectToggleCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsSelectToggleElement;
 }
 export interface DsSettingRowToggleCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -6354,6 +6440,23 @@ declare global {
         prototype: HTMLDsModalElement;
         new (): HTMLDsModalElement;
     };
+    interface HTMLDsNavigationTabGroupElementEventMap {
+        "dsChange": string;
+    }
+    interface HTMLDsNavigationTabGroupElement extends Components.DsNavigationTabGroup, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsNavigationTabGroupElementEventMap>(type: K, listener: (this: HTMLDsNavigationTabGroupElement, ev: DsNavigationTabGroupCustomEvent<HTMLDsNavigationTabGroupElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsNavigationTabGroupElementEventMap>(type: K, listener: (this: HTMLDsNavigationTabGroupElement, ev: DsNavigationTabGroupCustomEvent<HTMLDsNavigationTabGroupElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsNavigationTabGroupElement: {
+        prototype: HTMLDsNavigationTabGroupElement;
+        new (): HTMLDsNavigationTabGroupElement;
+    };
     interface HTMLDsPaginationElementEventMap {
         "dsChange": PaginationChangeDetail;
     }
@@ -6563,6 +6666,23 @@ declare global {
     var HTMLDsSelectElement: {
         prototype: HTMLDsSelectElement;
         new (): HTMLDsSelectElement;
+    };
+    interface HTMLDsSelectToggleElementEventMap {
+        "dsChange": string;
+    }
+    interface HTMLDsSelectToggleElement extends Components.DsSelectToggle, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsSelectToggleElementEventMap>(type: K, listener: (this: HTMLDsSelectToggleElement, ev: DsSelectToggleCustomEvent<HTMLDsSelectToggleElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsSelectToggleElementEventMap>(type: K, listener: (this: HTMLDsSelectToggleElement, ev: DsSelectToggleCustomEvent<HTMLDsSelectToggleElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsSelectToggleElement: {
+        prototype: HTMLDsSelectToggleElement;
+        new (): HTMLDsSelectToggleElement;
     };
     /**
      * Padded settings-row composition for a Checkbox group.
@@ -6956,6 +7076,7 @@ declare global {
         "ds-mobile-section-switcher": HTMLDsMobileSectionSwitcherElement;
         "ds-mobile-sheet-nav": HTMLDsMobileSheetNavElement;
         "ds-modal": HTMLDsModalElement;
+        "ds-navigation-tab-group": HTMLDsNavigationTabGroupElement;
         "ds-pagination": HTMLDsPaginationElement;
         "ds-panel-nav": HTMLDsPanelNavElement;
         "ds-panel-sub-nav": HTMLDsPanelSubNavElement;
@@ -6968,6 +7089,7 @@ declare global {
         "ds-score": HTMLDsScoreElement;
         "ds-scroll-overlay": HTMLDsScrollOverlayElement;
         "ds-select": HTMLDsSelectElement;
+        "ds-select-toggle": HTMLDsSelectToggleElement;
         "ds-setting-row-checkbox": HTMLDsSettingRowCheckboxElement;
         "ds-setting-row-radio": HTMLDsSettingRowRadioElement;
         "ds-setting-row-toggle": HTMLDsSettingRowToggleElement;
@@ -10102,6 +10224,31 @@ declare namespace LocalJSX {
          */
         "open"?: boolean;
     }
+    interface DsNavigationTabGroup {
+        /**
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        "ariaLabelledby"?: string | undefined;
+        "onDsChange"?: (event: DsNavigationTabGroupCustomEvent<string>) => void;
+        /**
+          * @default 'md'
+         */
+        "size"?: TabGroupSize;
+        /**
+          * @default []
+         */
+        "tabs"?: TabGroupItem[];
+        /**
+          * Currently selected local view. User activation updates this value.
+          * @default ''
+         */
+        "value"?: string;
+        /**
+          * @default 'hug'
+         */
+        "width"?: TabGroupWidth;
+    }
     interface DsPagination {
         /**
           * Effective whole-item capacity to request when Fit is selected.
@@ -10963,6 +11110,54 @@ declare namespace LocalJSX {
          */
         "width"?: SelectWidth;
     }
+    interface DsSelectToggle {
+        /**
+          * Optional stable context prepended to the changing accessible choice name.
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        /**
+          * Collapse an icon-label choice to its icon in a narrow table caption or data toolbar.
+          * @default false
+         */
+        "collapseLabel"?: boolean;
+        /**
+          * Show an inset border; both treatments keep the transparent unfilled surface.
+          * @default true
+         */
+        "hasBorder"?: boolean;
+        /**
+          * Prevent interaction.
+          * @default false
+         */
+        "isInactive"?: boolean;
+        "onDsChange"?: (event: DsSelectToggleCustomEvent<string>) => void;
+        /**
+          * Exactly two or three choices, each with a unique value and accessible label.
+          * @default []
+         */
+        "options"?: SelectToggleOption[];
+        /**
+          * Control density: small, medium, or large; the trailing indicator scales with it.
+          * @default 'md'
+         */
+        "size"?: SelectToggleSize;
+        /**
+          * Current choice. User activation updates this value and emits dsChange.
+          * @default ''
+         */
+        "value"?: string;
+        /**
+          * Show the current label, icon, or both. Icon variants require an icon on each choice.
+          * @default 'label'
+         */
+        "variant"?: SelectToggleVariant;
+        /**
+          * Hug the content or fill the parent.
+          * @default 'hug'
+         */
+        "width"?: ControlWidth;
+    }
     /**
      * Padded settings-row composition for a Checkbox group.
      */
@@ -11416,7 +11611,7 @@ declare namespace LocalJSX {
          */
         "step"?: number | 'any';
         /**
-          * Align the thumb edge with full-width rail endpoints, or its center with inset rail endpoints.
+          * Align the inner orb edge with full-width rail endpoints, or its center with inset rail endpoints.
           * @default 'edge'
          */
         "thumbAlignment"?: SliderThumbAlignment;
@@ -11535,10 +11730,10 @@ declare namespace LocalJSX {
         "hasContainer"?: boolean;
         "onDsChange"?: (event: DsTabGroupCustomEvent<string>) => void;
         /**
-          * Show the segmented control's outer background, border, and inset.
+          * Visual treatment; use NavigationTabGroup for the outset navigation presentation.
           * @default 'segmented'
          */
-        "presentation"?: 'segmented' | 'tabs';
+        "presentation"?: 'segmented' | 'tabs' | 'navigation';
         /**
           * Control density: 24px small, 32px medium, or 40px large track.
           * @default 'md'
@@ -11556,9 +11751,14 @@ declare namespace LocalJSX {
           * Width fit — hug content (default) or fill the parent with equal-width segments.
           * @default 'hug'
          */
-        "width"?: TabGroupWidth;
+        "width"?: TabGroupWidth1;
     }
     interface DsTable {
+        /**
+          * Replace only the data frame with application-owned content; caption and footer remain shared.
+          * @default false
+         */
+        "alternateView"?: boolean;
         /**
           * Required accessible table name, retained as a native caption.
          */
@@ -12976,6 +13176,13 @@ declare namespace LocalJSX {
         "modalWidth": ModalWidth | string;
         "ariaDescribedby": string | undefined;
     }
+    interface DsNavigationTabGroupAttributes {
+        "value": string;
+        "size": TabGroupSize;
+        "width": TabGroupWidth;
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+    }
     interface DsPaginationAttributes {
         "pageIndex": number;
         "pageSize": number;
@@ -13146,6 +13353,16 @@ declare namespace LocalJSX {
         "ariaLabelledby": string | undefined;
         "ariaDescribedby": string | undefined;
     }
+    interface DsSelectToggleAttributes {
+        "value": string;
+        "variant": SelectToggleVariant;
+        "collapseLabel": boolean;
+        "size": SelectToggleSize;
+        "width": ControlWidth;
+        "hasBorder": boolean;
+        "isInactive": boolean;
+        "ariaLabel": string | null;
+    }
     interface DsSettingRowCheckboxAttributes {
         "presentation": SettingRowCheckboxPresentation;
         "label": string;
@@ -13258,7 +13475,7 @@ declare namespace LocalJSX {
         "value": string;
         "size": TabGroupSize;
         "width": TabGroupWidth;
-        "presentation": 'segmented' | 'tabs';
+        "presentation": 'segmented' | 'tabs' | 'navigation';
         "hasContainer": boolean;
         "background": TabBackground | undefined;
         "ariaLabel": string | null;
@@ -13270,6 +13487,7 @@ declare namespace LocalJSX {
         "interactionMode": 'table' | 'edit' | 'grid';
         "caption": string;
         "captionVisibility": TableCaptionVisibility;
+        "alternateView": boolean;
         "columnCustomizer": boolean;
         "captionControlsBorderless": boolean;
         "hideColumnCustomizerTrigger": boolean;
@@ -13492,6 +13710,7 @@ declare namespace LocalJSX {
         "ds-mobile-section-switcher": Omit<DsMobileSectionSwitcher, keyof DsMobileSectionSwitcherAttributes> & { [K in keyof DsMobileSectionSwitcher & keyof DsMobileSectionSwitcherAttributes]?: DsMobileSectionSwitcher[K] } & { [K in keyof DsMobileSectionSwitcher & keyof DsMobileSectionSwitcherAttributes as `attr:${K}`]?: DsMobileSectionSwitcherAttributes[K] } & { [K in keyof DsMobileSectionSwitcher & keyof DsMobileSectionSwitcherAttributes as `prop:${K}`]?: DsMobileSectionSwitcher[K] };
         "ds-mobile-sheet-nav": Omit<DsMobileSheetNav, keyof DsMobileSheetNavAttributes> & { [K in keyof DsMobileSheetNav & keyof DsMobileSheetNavAttributes]?: DsMobileSheetNav[K] } & { [K in keyof DsMobileSheetNav & keyof DsMobileSheetNavAttributes as `attr:${K}`]?: DsMobileSheetNavAttributes[K] } & { [K in keyof DsMobileSheetNav & keyof DsMobileSheetNavAttributes as `prop:${K}`]?: DsMobileSheetNav[K] };
         "ds-modal": Omit<DsModal, keyof DsModalAttributes> & { [K in keyof DsModal & keyof DsModalAttributes]?: DsModal[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `attr:${K}`]?: DsModalAttributes[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `prop:${K}`]?: DsModal[K] } & OneOf<"heading", DsModal["heading"], DsModalAttributes["heading"]>;
+        "ds-navigation-tab-group": Omit<DsNavigationTabGroup, keyof DsNavigationTabGroupAttributes> & { [K in keyof DsNavigationTabGroup & keyof DsNavigationTabGroupAttributes]?: DsNavigationTabGroup[K] } & { [K in keyof DsNavigationTabGroup & keyof DsNavigationTabGroupAttributes as `attr:${K}`]?: DsNavigationTabGroupAttributes[K] } & { [K in keyof DsNavigationTabGroup & keyof DsNavigationTabGroupAttributes as `prop:${K}`]?: DsNavigationTabGroup[K] };
         "ds-pagination": Omit<DsPagination, keyof DsPaginationAttributes> & { [K in keyof DsPagination & keyof DsPaginationAttributes]?: DsPagination[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `attr:${K}`]?: DsPaginationAttributes[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `prop:${K}`]?: DsPagination[K] };
         "ds-panel-nav": Omit<DsPanelNav, keyof DsPanelNavAttributes> & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes]?: DsPanelNav[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `attr:${K}`]?: DsPanelNavAttributes[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `prop:${K}`]?: DsPanelNav[K] };
         "ds-panel-sub-nav": Omit<DsPanelSubNav, keyof DsPanelSubNavAttributes> & { [K in keyof DsPanelSubNav & keyof DsPanelSubNavAttributes]?: DsPanelSubNav[K] } & { [K in keyof DsPanelSubNav & keyof DsPanelSubNavAttributes as `attr:${K}`]?: DsPanelSubNavAttributes[K] } & { [K in keyof DsPanelSubNav & keyof DsPanelSubNavAttributes as `prop:${K}`]?: DsPanelSubNav[K] };
@@ -13504,6 +13723,7 @@ declare namespace LocalJSX {
         "ds-score": Omit<DsScore, keyof DsScoreAttributes> & { [K in keyof DsScore & keyof DsScoreAttributes]?: DsScore[K] } & { [K in keyof DsScore & keyof DsScoreAttributes as `attr:${K}`]?: DsScoreAttributes[K] } & { [K in keyof DsScore & keyof DsScoreAttributes as `prop:${K}`]?: DsScore[K] };
         "ds-scroll-overlay": Omit<DsScrollOverlay, keyof DsScrollOverlayAttributes> & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes]?: DsScrollOverlay[K] } & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes as `attr:${K}`]?: DsScrollOverlayAttributes[K] } & { [K in keyof DsScrollOverlay & keyof DsScrollOverlayAttributes as `prop:${K}`]?: DsScrollOverlay[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
+        "ds-select-toggle": Omit<DsSelectToggle, keyof DsSelectToggleAttributes> & { [K in keyof DsSelectToggle & keyof DsSelectToggleAttributes]?: DsSelectToggle[K] } & { [K in keyof DsSelectToggle & keyof DsSelectToggleAttributes as `attr:${K}`]?: DsSelectToggleAttributes[K] } & { [K in keyof DsSelectToggle & keyof DsSelectToggleAttributes as `prop:${K}`]?: DsSelectToggle[K] };
         "ds-setting-row-checkbox": Omit<DsSettingRowCheckbox, keyof DsSettingRowCheckboxAttributes> & { [K in keyof DsSettingRowCheckbox & keyof DsSettingRowCheckboxAttributes]?: DsSettingRowCheckbox[K] } & { [K in keyof DsSettingRowCheckbox & keyof DsSettingRowCheckboxAttributes as `attr:${K}`]?: DsSettingRowCheckboxAttributes[K] } & { [K in keyof DsSettingRowCheckbox & keyof DsSettingRowCheckboxAttributes as `prop:${K}`]?: DsSettingRowCheckbox[K] };
         "ds-setting-row-radio": Omit<DsSettingRowRadio, keyof DsSettingRowRadioAttributes> & { [K in keyof DsSettingRowRadio & keyof DsSettingRowRadioAttributes]?: DsSettingRowRadio[K] } & { [K in keyof DsSettingRowRadio & keyof DsSettingRowRadioAttributes as `attr:${K}`]?: DsSettingRowRadioAttributes[K] } & { [K in keyof DsSettingRowRadio & keyof DsSettingRowRadioAttributes as `prop:${K}`]?: DsSettingRowRadio[K] };
         "ds-setting-row-toggle": Omit<DsSettingRowToggle, keyof DsSettingRowToggleAttributes> & { [K in keyof DsSettingRowToggle & keyof DsSettingRowToggleAttributes]?: DsSettingRowToggle[K] } & { [K in keyof DsSettingRowToggle & keyof DsSettingRowToggleAttributes as `attr:${K}`]?: DsSettingRowToggleAttributes[K] } & { [K in keyof DsSettingRowToggle & keyof DsSettingRowToggleAttributes as `prop:${K}`]?: DsSettingRowToggle[K] } & OneOf<"label", DsSettingRowToggle["label"], DsSettingRowToggleAttributes["label"]>;
@@ -13619,6 +13839,7 @@ declare module "@stencil/core" {
             "ds-mobile-section-switcher": LocalJSX.IntrinsicElements["ds-mobile-section-switcher"] & JSXBase.HTMLAttributes<HTMLDsMobileSectionSwitcherElement>;
             "ds-mobile-sheet-nav": LocalJSX.IntrinsicElements["ds-mobile-sheet-nav"] & JSXBase.HTMLAttributes<HTMLDsMobileSheetNavElement>;
             "ds-modal": LocalJSX.IntrinsicElements["ds-modal"] & JSXBase.HTMLAttributes<HTMLDsModalElement>;
+            "ds-navigation-tab-group": LocalJSX.IntrinsicElements["ds-navigation-tab-group"] & JSXBase.HTMLAttributes<HTMLDsNavigationTabGroupElement>;
             "ds-pagination": LocalJSX.IntrinsicElements["ds-pagination"] & JSXBase.HTMLAttributes<HTMLDsPaginationElement>;
             "ds-panel-nav": LocalJSX.IntrinsicElements["ds-panel-nav"] & JSXBase.HTMLAttributes<HTMLDsPanelNavElement>;
             "ds-panel-sub-nav": LocalJSX.IntrinsicElements["ds-panel-sub-nav"] & JSXBase.HTMLAttributes<HTMLDsPanelSubNavElement>;
@@ -13631,6 +13852,7 @@ declare module "@stencil/core" {
             "ds-score": LocalJSX.IntrinsicElements["ds-score"] & JSXBase.HTMLAttributes<HTMLDsScoreElement>;
             "ds-scroll-overlay": LocalJSX.IntrinsicElements["ds-scroll-overlay"] & JSXBase.HTMLAttributes<HTMLDsScrollOverlayElement>;
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
+            "ds-select-toggle": LocalJSX.IntrinsicElements["ds-select-toggle"] & JSXBase.HTMLAttributes<HTMLDsSelectToggleElement>;
             /**
              * Padded settings-row composition for a Checkbox group.
              */

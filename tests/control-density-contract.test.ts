@@ -103,7 +103,10 @@ test('inset density reduces only same-size outer geometry', () => {
   const tabGroupSource = read('src/wc/components/TabGroup/TabGroup.tsx');
   assert.match(tabGroupCss, /@import ['"]\.\.\/\.\.\/utils\/control-density-inset\.css['"];/);
   assert.match(tabGroupSource, /\[`ds-control--\$\{this\.size\}`\]: true/);
-  assert.match(tabGroupSource, /['"]ds-control--inset['"]: this\.presentation !== ['"]tabs['"]/);
+  assert.match(
+    tabGroupSource,
+    /['"]ds-control--inset['"]: this\.presentation === ['"]segmented['"]/
+  );
 
   const selectCss = read('src/wc/components/Select/Select.css');
   const selectSource = read('src/wc/components/Select/Select.tsx');

@@ -175,6 +175,8 @@ export class Table {
   @Prop() caption!: string;
   /** Shows a matching presentational title bar above the native table frame. */
   @Prop() captionVisibility: TableCaptionVisibility = 'hidden';
+  /** Replace only the data frame with application-owned content; caption and footer remain shared. */
+  @Prop() alternateView: boolean = false;
   /**
    * Opt in to the table-owned column customizer. The `columns` prop remains the
    * catalog; hidden and ordered columns are controlled separately. The trigger
@@ -300,6 +302,7 @@ export class Table {
   @State() private viewportFitSettled = false;
   @State() private headerPresent = false;
   @State() private headerUsesToolbar = false;
+  @State() private captionTrailingPresent = false;
   @State() private footerSlotPresence = 0;
   @State() private fitPageSize: number | undefined;
   @State() private actionMenu: { rowId: string; columnId: string } | null = null;
@@ -1025,6 +1028,7 @@ export class Table {
     const header = this.el.querySelector<HTMLElement>('[slot="header"]');
     this.headerPresent = !!header;
     this.headerUsesToolbar = header?.tagName === 'DS-DATA-TOOLBAR';
+    this.captionTrailingPresent = !!this.el.querySelector('[slot="caption-trailing"]');
   };
 
   private connectHeaderSlotObserver(): void {
@@ -1299,7 +1303,8 @@ export class Table {
   private get showsCaptionTrailing(): boolean {
     return (
       this.showsDataModeSwitcher ||
-      (this.showsColumnCustomizer && !this.hideColumnCustomizerTrigger)
+      (this.showsColumnCustomizer && !this.hideColumnCustomizerTrigger) ||
+      this.captionTrailingPresent
     );
   }
 
@@ -2970,6 +2975,7 @@ export class Table {
           <ds-divider orientation="vertical" length="32px" />
         ) : null}
         {this.renderDataModeSwitcherTrigger()}
+        <slot name="caption-trailing" />
       </div>
     );
   }
@@ -3302,80 +3308,85 @@ export class Table {
               this.frameEl = element ?? null;
             }}
           >
-            {this.renderDocumentStickyHeader(model)}
-            {this.renderStickyGroup(model)}
-            {!this.documentStickyHeader && this.renderFloatingCollapseAll(model)}
-            <div
-              class={{
-                'ds-table__viewport': true,
-                'ds-focus-ring': this.scrollable,
-              }}
-              style={viewportStyle}
-              ref={element => {
-                this.viewportEl = element ?? null;
-              }}
-              role={this.scrollable ? 'region' : undefined}
-              aria-label={this.scrollable ? regionLabel : undefined}
-              tabIndex={this.scrollable ? 0 : undefined}
-            >
-              <table
+            {this.alternateView ? <slot name="alternate-view" /> : null}
+            {!this.alternateView && this.renderDocumentStickyHeader(model)}
+            {!this.alternateView && this.renderStickyGroup(model)}
+            {!this.alternateView &&
+              !this.documentStickyHeader &&
+              this.renderFloatingCollapseAll(model)}
+            {!this.alternateView && (
+              <div
                 class={{
-                  'ds-table__table': true,
-                  'ds-table__table--selectable': model.selectable,
-                  'ds-table__table--grouped': model.grouped,
-                  'ds-table__table--deferred-rows':
-                    this.dataMode !== 'virtual' && !this.structure.merges.hasRowSpans,
-                  'ds-table__table--windowed': windowRows,
-                  'ds-table__table--virtual': this.dataMode === 'virtual' && windowRows,
-                  'ds-table__table--native-group-sticky':
-                    (model.grouped && this.stickyHeader && !this.documentStickyHeader) ||
-                    windowRows,
+                  'ds-table__viewport': true,
+                  'ds-focus-ring': this.scrollable,
                 }}
-                style={model.tableStyle}
-                role={this.gridEnabled ? 'grid' : 'table'}
-                aria-multiselectable={this.gridEnabled ? 'true' : undefined}
-                aria-rowcount={
-                  windowRows
-                    ? 1 + Number(this.structure.bands.length > 0) + this.virtualItems.length
-                    : undefined
-                }
-                aria-busy={
-                  initialLoading ||
-                  (this.dataMode === 'infinite' && (this.loadingMore || groupLoadingMore))
-                    ? 'true'
-                    : undefined
-                }
+                style={viewportStyle}
                 ref={element => {
-                  this.tableEl = element ?? null;
+                  this.viewportEl = element ?? null;
                 }}
+                role={this.scrollable ? 'region' : undefined}
+                aria-label={this.scrollable ? regionLabel : undefined}
+                tabIndex={this.scrollable ? 0 : undefined}
               >
-                <caption class="ds-table__caption ds-visually-hidden">
-                  <ds-text as="span" variant="text-title-small" emphasis={true} color="primary">
-                    {this.caption}
-                  </ds-text>
-                </caption>
-                {this.renderColgroup(model)}
-                {this.renderHeader(
-                  model,
-                  !this.documentStickyHeader,
-                  false,
-                  windowRows ? 1 : undefined
-                )}
-                {initialLoading
-                  ? this.renderSkeletonBody(model)
-                  : initialError
-                    ? this.renderStateBody('error', model.totalColumns)
-                    : virtualViewportMissing
-                      ? this.renderStateBody('virtual-viewport', model.totalColumns)
-                      : model.hasData || hasGroupedStructure
-                        ? this.renderDataBodies(model, virtualPlan)
-                        : this.renderStateBody('empty', model.totalColumns)}
-                {!initialLoading &&
-                  !initialError &&
-                  this.dataMode !== 'virtual' &&
-                  this.renderLazyBody(model)}
-              </table>
-            </div>
+                <table
+                  class={{
+                    'ds-table__table': true,
+                    'ds-table__table--selectable': model.selectable,
+                    'ds-table__table--grouped': model.grouped,
+                    'ds-table__table--deferred-rows':
+                      this.dataMode !== 'virtual' && !this.structure.merges.hasRowSpans,
+                    'ds-table__table--windowed': windowRows,
+                    'ds-table__table--virtual': this.dataMode === 'virtual' && windowRows,
+                    'ds-table__table--native-group-sticky':
+                      (model.grouped && this.stickyHeader && !this.documentStickyHeader) ||
+                      windowRows,
+                  }}
+                  style={model.tableStyle}
+                  role={this.gridEnabled ? 'grid' : 'table'}
+                  aria-multiselectable={this.gridEnabled ? 'true' : undefined}
+                  aria-rowcount={
+                    windowRows
+                      ? 1 + Number(this.structure.bands.length > 0) + this.virtualItems.length
+                      : undefined
+                  }
+                  aria-busy={
+                    initialLoading ||
+                    (this.dataMode === 'infinite' && (this.loadingMore || groupLoadingMore))
+                      ? 'true'
+                      : undefined
+                  }
+                  ref={element => {
+                    this.tableEl = element ?? null;
+                  }}
+                >
+                  <caption class="ds-table__caption ds-visually-hidden">
+                    <ds-text as="span" variant="text-title-small" emphasis={true} color="primary">
+                      {this.caption}
+                    </ds-text>
+                  </caption>
+                  {this.renderColgroup(model)}
+                  {this.renderHeader(
+                    model,
+                    !this.documentStickyHeader,
+                    false,
+                    windowRows ? 1 : undefined
+                  )}
+                  {initialLoading
+                    ? this.renderSkeletonBody(model)
+                    : initialError
+                      ? this.renderStateBody('error', model.totalColumns)
+                      : virtualViewportMissing
+                        ? this.renderStateBody('virtual-viewport', model.totalColumns)
+                        : model.hasData || hasGroupedStructure
+                          ? this.renderDataBodies(model, virtualPlan)
+                          : this.renderStateBody('empty', model.totalColumns)}
+                  {!initialLoading &&
+                    !initialError &&
+                    this.dataMode !== 'virtual' &&
+                    this.renderLazyBody(model)}
+                </table>
+              </div>
+            )}
           </div>
           {this.renderResultFooter()}
           {this.renderOverflowActionMenu()}

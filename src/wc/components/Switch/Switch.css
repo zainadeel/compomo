@@ -28,8 +28,8 @@
   cursor: default;
   user-select: none;
   outline: none;
-  background-color: transparent;
-  box-shadow: inset 0 0 0 var(--ds-switch-stroke) var(--color-border-secondary);
+  background-color: var(--color-background-faint-neutral);
+  box-shadow: inset 0 0 0 var(--ds-switch-stroke) var(--color-border-tertiary);
   transition: none;
 }
 
@@ -62,7 +62,7 @@
 
 :host(.checked) {
   background-color: var(--color-background-bold-brand);
-  box-shadow: none;
+  box-shadow: inset 0 0 0 var(--ds-switch-stroke) var(--color-border-tertiary);
 }
 
 :host(.switch--readonly),
@@ -83,8 +83,8 @@
   width: var(--ds-switch-thumb-size);
   height: var(--ds-switch-thumb-size);
   border-radius: var(--dimension-radius-half);
-  background-color: var(--color-foreground-tertiary);
-  box-shadow: none;
+  background-color: var(--color-background-primary);
+  box-shadow: var(--effect-elevation-elevated-md);
   transform: translateY(-50%);
   transition: none;
   pointer-events: none;
@@ -127,7 +127,6 @@
 
 :host(.checked) .thumb {
   background-color: var(--color-background-primary);
-  box-shadow: none;
   transform: translate3d(var(--ds-switch-travel), -50%, 0);
 }
 
@@ -152,10 +151,12 @@
   :host(.checked) {
     background-color: var(--ds-forced-color-selected);
     border-color: var(--ds-forced-color-selected);
+    box-shadow: none;
   }
 
   .thumb {
     background-color: var(--ds-forced-color-content);
+    box-shadow: none;
   }
 
   :host(.checked) .thumb {

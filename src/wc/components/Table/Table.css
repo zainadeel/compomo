@@ -37,6 +37,19 @@
   min-inline-size: 0;
 }
 
+::slotted([slot='caption-trailing']) {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+}
+
+::slotted([slot='alternate-view']) {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  min-block-size: 0;
+}
+
 /*
  * The public table recipe stays at zero specificity for product-owned native
  * markup. Inside the component, these classes sit on ds-text hosts whose reset

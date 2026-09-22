@@ -1,0 +1,83 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-select-toggle",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-select-toggle",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Compact cycling choice control with a vertical position indicator.",
+  "useWhen": [
+    "Two or three local view modes should cycle through one compact button without opening a popup.",
+    "The current choice should update its label and/or icon while a small vertical dot indicator shows its position."
+  ],
+  "avoidWhen": [
+    "The full choice set must remain visible at once; use TabGroup instead.",
+    "The user must inspect or search more than three options; use Select instead.",
+    "The value must participate in native form submission; this initial component is a local cycling control, not a form-associated select."
+  ],
+  "alternatives": [
+    {
+      "when": "Every choice should be visible and individually selectable.",
+      "component": "component:ds-tab-group",
+      "reason": "TabGroup exposes all choices and owns segmented keyboard selection."
+    },
+    {
+      "when": "The option list exceeds three choices or needs a dropdown.",
+      "component": "component:ds-select",
+      "reason": "Select provides a popup and the complete form-select contract."
+    }
+  ],
+  "commonlyComposedWith": ["component:ds-text", "component:ds-icon"],
+  "accessibility": [
+    "A single native button owns focus and activation by pointer, Enter, or Space; the dots are decorative and hidden from assistive technology.",
+    "Each option supplies a nonempty label, including icon-only choices. The button name announces the current label, position, and next choice; aria-label adds stable context.",
+    "An inactive button is natively disabled. Do not use aria-pressed because this is a multi-choice cycle, not a binary toggle."
+  ],
+  "states": [
+    "The application supplies exactly two or three uniquely valued options and may set value; invalid values resolve to the first choice without emitting a user-change event.",
+    "Activation advances to the next choice, wraps after the last, updates the mutable value, and emits dsChange once with the next value.",
+    "Variant selects label, icon, or icon-label content; the trailing slot scales with control density and displays the same number of vertical dots as choices.",
+    "Both treatments use transparent unfilled chrome; hasBorder removes only the inset stroke while preserving control geometry."
+  ],
+  "responsiveBehavior": [
+    "Hug follows the current content; fill uses the parent width and truncates a long label without moving the trailing indicator.",
+    "When collapseLabel is enabled in a table caption or data toolbar narrower than 900px, icon-label choices display only the icon while preserving the changing accessible name. Explicit icon and label variants are unchanged.",
+    "Small, medium, and large use shared control-density heights and matching dot-slot geometry."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Assign options as a JavaScript property and listen for dsChange to observe user cycling."
+    ],
+    "react": ["Pass options as an array and handle onDsChange to observe user cycling."],
+    "vue": ["Bind options as an array and handle dsChange to update application state."],
+    "angular": ["Bind options as an array and handle dsChange to update application state."]
+  },
+  "references": [
+    {
+      "label": "Storybook examples",
+      "path": "src/wc/components/SelectToggle/SelectToggle.stories.ts"
+    },
+    { "label": "Rendered behavior and geometry", "path": "tests/e2e/select-toggle.spec.ts" }
+  ],
+  "styling": {
+    "rationale": "The component owns one density-sized unfilled button, changing choice content, and a fixed trailing position indicator; applications own surrounding layout and the choice data.",
+    "protected": [
+      {
+        "properties": [
+          "height",
+          "padding",
+          "gap",
+          "border-radius",
+          "background",
+          "border",
+          "color"
+        ],
+        "reason": "Control density and the indicator slot stay aligned across the supported variants.",
+        "props": ["size", "variant", "width", "hasBorder"]
+      }
+    ],
+    "customProperties": []
+  }
+}

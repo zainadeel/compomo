@@ -1550,7 +1550,7 @@ test('switch does not animate a controlled value during initial hydration @cross
 });
 
 test(
-  'switch sizes preserve density-specific thumb insets and an outset focus ring',
+  'switch sizes preserve track colors and borders, thumb elevation, insets, and focus',
   chromiumOnly(
     'layout-geometry',
     'Switch density and focus-ring geometry are token-backed recipes.'
@@ -1571,11 +1571,17 @@ test(
         const thumbElement = element.shadowRoot!.querySelector<HTMLElement>('.thumb')!;
         const thumb = thumbElement.getBoundingClientRect();
         const probe = document.createElement('span');
-        probe.style.color = 'var(--color-border-secondary)';
+        probe.style.color = 'var(--color-border-tertiary)';
         element.shadowRoot!.append(probe);
-        const borderSecondary = getComputedStyle(probe).color;
-        probe.style.color = 'var(--color-foreground-tertiary)';
-        const tertiary = getComputedStyle(probe).color;
+        const borderTertiary = getComputedStyle(probe).color;
+        probe.style.color = 'var(--color-background-faint-neutral)';
+        const faintNeutralBackground = getComputedStyle(probe).color;
+        probe.style.color = 'var(--color-background-bold-brand)';
+        const boldBrand = getComputedStyle(probe).color;
+        probe.style.color = 'var(--color-background-primary)';
+        const primaryBackground = getComputedStyle(probe).color;
+        probe.style.boxShadow = 'var(--effect-elevation-elevated-md)';
+        const mediumElevation = getComputedStyle(probe).boxShadow;
         probe.remove();
         return {
           width: Math.round(host.width),
@@ -1584,10 +1590,14 @@ test(
           inset: Math.round(thumb.left - host.left),
           blockInset: Math.round(thumb.top - host.top),
           border: getComputedStyle(element).boxShadow,
+          trackBackground: getComputedStyle(element).backgroundColor,
           thumbBackground: getComputedStyle(thumbElement).backgroundColor,
-          thumbBorder: getComputedStyle(thumbElement).boxShadow,
-          borderSecondary,
-          tertiary,
+          thumbShadow: getComputedStyle(thumbElement).boxShadow,
+          borderTertiary,
+          faintNeutralBackground,
+          boldBrand,
+          primaryBackground,
+          mediumElevation,
         };
       });
 
@@ -1600,9 +1610,10 @@ test(
       });
       expect(off.border).toContain('inset');
       expect(off.border).toContain(dimensions.stroke);
-      expect(off.border).toContain(off.borderSecondary);
-      expect(off.thumbBackground).toBe(off.tertiary);
-      expect(off.thumbBorder).toBe('none');
+      expect(off.border).toContain(off.borderTertiary);
+      expect(off.trackBackground).toBe(off.faintNeutralBackground);
+      expect(off.thumbBackground).toBe(off.primaryBackground);
+      expect(off.thumbShadow).toBe(off.mediumElevation);
 
       await switchControl.click();
       await expect(switchControl).toHaveAttribute('aria-checked', 'true');
@@ -1617,10 +1628,17 @@ test(
         .toBe(dimensions.inset);
       const checkedBorders = await switchControl.evaluate(element => ({
         track: getComputedStyle(element).boxShadow,
-        thumb: getComputedStyle(element.shadowRoot!.querySelector('.thumb')!).boxShadow,
+        trackBackground: getComputedStyle(element).backgroundColor,
+        thumbShadow: getComputedStyle(element.shadowRoot!.querySelector('.thumb')!).boxShadow,
+        thumbBackground: getComputedStyle(element.shadowRoot!.querySelector('.thumb')!)
+          .backgroundColor,
       }));
-      expect(checkedBorders.track).toBe('none');
-      expect(checkedBorders.thumb).toBe('none');
+      expect(checkedBorders.track).toContain('inset');
+      expect(checkedBorders.track).toContain(dimensions.stroke);
+      expect(checkedBorders.track).toContain(off.borderTertiary);
+      expect(checkedBorders.trackBackground).toBe(off.boldBrand);
+      expect(checkedBorders.thumbShadow).toBe(off.mediumElevation);
+      expect(checkedBorders.thumbBackground).toBe(off.thumbBackground);
     }
 
     await page.locator('#switch-sm').focus();
@@ -1929,6 +1947,9 @@ test(
           .getBoundingClientRect();
         const rail = element.querySelector<HTMLElement>('.slider__rail')!.getBoundingClientRect();
         const thumb = element.querySelector<HTMLElement>('.slider__thumb')!.getBoundingClientRect();
+        const orb = element
+          .querySelector<HTMLElement>('.slider__thumb-orb')!
+          .getBoundingClientRect();
         const indicator = element
           .querySelector<HTMLElement>('.slider__indicator')!
           .getBoundingClientRect();
@@ -1941,6 +1962,11 @@ test(
             center: thumb.left + thumb.width / 2,
             width: thumb.width,
           },
+          orb: {
+            left: orb.left,
+            right: orb.right,
+            center: orb.left + orb.width / 2,
+          },
           indicator: { left: indicator.left, right: indicator.right },
         };
       });
@@ -1949,13 +1975,15 @@ test(
     const edgeMin = await horizontalGeometry('edge', 0);
     expect(edgeMin.rail.left).toBeCloseTo(edgeMin.control.left, 3);
     expect(edgeMin.rail.right).toBeCloseTo(edgeMin.control.right, 3);
-    expect(edgeMin.thumb.left).toBeCloseTo(edgeMin.control.left, 3);
+    expect(edgeMin.orb.left).toBeCloseTo(edgeMin.rail.left, 3);
+    expect(edgeMin.thumb.left).toBeCloseTo(edgeMin.rail.left - 4, 3);
     expect(edgeMin.indicator.left).toBeCloseTo(edgeMin.control.left, 3);
-    expect(edgeMin.indicator.right).toBeCloseTo(edgeMin.thumb.center, 3);
+    expect(edgeMin.indicator.right).toBeCloseTo(edgeMin.orb.center, 3);
 
     const edgeMax = await horizontalGeometry('edge', 100);
-    expect(edgeMax.thumb.right).toBeCloseTo(edgeMax.control.right, 3);
-    expect(edgeMax.indicator.right).toBeCloseTo(edgeMax.thumb.center, 3);
+    expect(edgeMax.orb.right).toBeCloseTo(edgeMax.rail.right, 3);
+    expect(edgeMax.thumb.right).toBeCloseTo(edgeMax.rail.right + 4, 3);
+    expect(edgeMax.indicator.right).toBeCloseTo(edgeMax.orb.center, 3);
 
     const centerMin = await horizontalGeometry('center', 0);
     expect(centerMin.rail.left).toBeCloseTo(centerMin.control.left + centerMin.thumb.width / 2, 3);
@@ -1963,10 +1991,10 @@ test(
       centerMin.control.right - centerMin.thumb.width / 2,
       3
     );
-    expect(centerMin.thumb.center).toBeCloseTo(centerMin.rail.left, 3);
+    expect(centerMin.orb.center).toBeCloseTo(centerMin.rail.left, 3);
 
     const centerMax = await horizontalGeometry('center', 100);
-    expect(centerMax.thumb.center).toBeCloseTo(centerMax.rail.right, 3);
+    expect(centerMax.orb.center).toBeCloseTo(centerMax.rail.right, 3);
     expect(centerMax.thumb.right).toBeCloseTo(centerMax.control.right, 3);
 
     const verticalGeometry = async (alignment: 'edge' | 'center', value: number) => {
@@ -1985,6 +2013,9 @@ test(
           .getBoundingClientRect();
         const rail = element.querySelector<HTMLElement>('.slider__rail')!.getBoundingClientRect();
         const thumb = element.querySelector<HTMLElement>('.slider__thumb')!.getBoundingClientRect();
+        const orb = element
+          .querySelector<HTMLElement>('.slider__thumb-orb')!
+          .getBoundingClientRect();
         return {
           control: { top: control.top, bottom: control.bottom },
           rail: { top: rail.top, bottom: rail.bottom },
@@ -1994,6 +2025,11 @@ test(
             center: thumb.top + thumb.height / 2,
             height: thumb.height,
           },
+          orb: {
+            top: orb.top,
+            bottom: orb.bottom,
+            center: orb.top + orb.height / 2,
+          },
         };
       });
     };
@@ -2001,7 +2037,12 @@ test(
     const verticalEdgeMin = await verticalGeometry('edge', 0);
     expect(verticalEdgeMin.rail.top).toBeCloseTo(verticalEdgeMin.control.top, 3);
     expect(verticalEdgeMin.rail.bottom).toBeCloseTo(verticalEdgeMin.control.bottom, 3);
-    expect(verticalEdgeMin.thumb.bottom).toBeCloseTo(verticalEdgeMin.control.bottom, 3);
+    expect(verticalEdgeMin.orb.bottom).toBeCloseTo(verticalEdgeMin.rail.bottom, 3);
+    expect(verticalEdgeMin.thumb.bottom).toBeCloseTo(verticalEdgeMin.rail.bottom + 4, 3);
+
+    const verticalEdgeMax = await verticalGeometry('edge', 100);
+    expect(verticalEdgeMax.orb.top).toBeCloseTo(verticalEdgeMax.rail.top, 3);
+    expect(verticalEdgeMax.thumb.top).toBeCloseTo(verticalEdgeMax.rail.top - 4, 3);
 
     const verticalCenterMax = await verticalGeometry('center', 100);
     expect(verticalCenterMax.rail.top).toBeCloseTo(
@@ -2012,7 +2053,7 @@ test(
       verticalCenterMax.control.bottom - verticalCenterMax.thumb.height / 2,
       3
     );
-    expect(verticalCenterMax.thumb.center).toBeCloseTo(verticalCenterMax.rail.top, 3);
+    expect(verticalCenterMax.orb.center).toBeCloseTo(verticalCenterMax.rail.top, 3);
   }
 );
 
@@ -2054,6 +2095,7 @@ test('slider drag paint stays locked to the pointer without positional easing', 
   const slider = page.locator('#slider-single');
   const control = slider.locator('.slider__control');
   const thumb = slider.locator('.slider__thumb');
+  const orb = slider.locator('.slider__thumb-orb');
   await control.scrollIntoViewIfNeeded();
 
   const motion = await slider.evaluate(element => ({
@@ -2065,13 +2107,15 @@ test('slider drag paint stays locked to the pointer without positional easing', 
 
   const controlBox = await control.boundingBox();
   const thumbBox = await thumb.boundingBox();
+  const orbBox = await orb.boundingBox();
   expect(controlBox).not.toBeNull();
   expect(thumbBox).not.toBeNull();
-  if (!controlBox || !thumbBox) return;
+  expect(orbBox).not.toBeNull();
+  if (!controlBox || !thumbBox || !orbBox) return;
 
   const targetPercentage = 0.82;
   const targetX =
-    controlBox.x + thumbBox.width / 2 + (controlBox.width - thumbBox.width) * targetPercentage;
+    controlBox.x + orbBox.width / 2 + (controlBox.width - orbBox.width) * targetPercentage;
   const targetY = controlBox.y + controlBox.height / 2;
   await page.mouse.move(thumbBox.x + thumbBox.width / 2, thumbBox.y + thumbBox.height / 2);
   await page.mouse.down();
@@ -2098,8 +2142,8 @@ test(
   async ({ page }) => {
     const expected = {
       md: { control: 32, thumb: 16, track: 8, trackStroke: '1px' },
-      sm: { control: 24, thumb: 12, track: 6, trackStroke: '1px' },
-      xs: { control: 16, thumb: 8, track: 4, trackStroke: '1px' },
+      sm: { control: 24, thumb: 14, track: 6, trackStroke: '1px' },
+      xs: { control: 16, thumb: 12, track: 4, trackStroke: '1px' },
     } as const;
 
     for (const [size, dimensions] of Object.entries(expected)) {
@@ -2108,23 +2152,51 @@ test(
         const thumb = element.querySelector<HTMLElement>('.slider__thumb')!;
         const rail = element.querySelector<HTMLElement>('.slider__rail')!;
         const visual = element.querySelector<HTMLElement>('.slider__thumb-visual')!;
+        const orb = element.querySelector<HTMLElement>('.slider__thumb-orb')!;
+        const visualBounds = visual.getBoundingClientRect();
+        const orbBounds = orb.getBoundingClientRect();
         const probe = document.createElement('span');
-        probe.style.color = 'var(--color-border-secondary)';
+        probe.style.color = 'var(--color-border-tertiary)';
         element.append(probe);
         const trackColor = getComputedStyle(probe).color;
-        probe.style.boxShadow = 'var(--effect-elevation-elevated-sm)';
+        probe.style.color = 'var(--color-background-faint-neutral)';
+        const trackBackgroundColor = getComputedStyle(probe).color;
+        probe.style.borderRadius = 'var(--dimension-radius-half)';
+        const trackRadiusToken = getComputedStyle(probe).borderRadius;
+        probe.style.color = 'var(--color-background-bold-brand)';
+        const boldBrand = getComputedStyle(probe).color;
+        probe.style.backgroundColor = 'var(--color-background-transparent)';
+        const transparentBackground = getComputedStyle(probe).backgroundColor;
+        probe.style.boxShadow = 'var(--effect-elevation-elevated-md)';
         const thumbElevation = getComputedStyle(probe).boxShadow;
         probe.remove();
         return {
           control: Math.round(control.getBoundingClientRect().height),
           thumb: Math.round(thumb.getBoundingClientRect().width),
+          thumbHeight: Math.round(thumb.getBoundingClientRect().height),
           track: Math.round(rail.getBoundingClientRect().height),
+          orb: Math.round(orbBounds.width),
+          orbHeight: Math.round(orbBounds.height),
+          outer: Math.round(visualBounds.width),
+          outerHeight: Math.round(visualBounds.height),
+          orbInsetInline: Math.round(orbBounds.left - visualBounds.left),
+          orbInsetBlock: Math.round(orbBounds.top - visualBounds.top),
           trackBackground: getComputedStyle(rail).backgroundColor,
           trackBorder: getComputedStyle(rail).boxShadow,
           trackRadius: getComputedStyle(rail).borderRadius,
-          thumbBorder: getComputedStyle(visual).boxShadow,
-          thumbRadius: getComputedStyle(visual).borderRadius,
+          outerBackground: getComputedStyle(visual).backgroundColor,
+          outerBlur: getComputedStyle(visual).backdropFilter,
+          outerShadow: getComputedStyle(visual).boxShadow,
+          outerRadius: getComputedStyle(visual).borderRadius,
+          orbBackground: getComputedStyle(orb).backgroundColor,
+          orbBorder: getComputedStyle(orb).boxShadow,
+          orbRadius: getComputedStyle(orb).borderRadius,
           trackColor,
+          trackBackgroundColor,
+          trackRadiusToken,
+          boldBrand,
+          transparentBackground,
+          blurToken: getComputedStyle(element).getPropertyValue('--effect-blur-sm').trim(),
           thumbElevation,
         };
       });
@@ -2132,15 +2204,29 @@ test(
       expect(actual).toMatchObject({
         control: dimensions.control,
         thumb: dimensions.thumb,
+        thumbHeight: dimensions.thumb,
         track: dimensions.track,
+        orb: dimensions.track,
+        orbHeight: dimensions.track,
+        outer: dimensions.thumb,
+        outerHeight: dimensions.thumb,
+        orbInsetInline: 4,
+        orbInsetBlock: 4,
       });
-      expect(actual.trackBackground).toBe('rgba(0, 0, 0, 0)');
-      expect(actual.trackRadius).toBe('2px');
+      expect(actual.trackBackground).toBe(actual.trackBackgroundColor);
+      expect(actual.trackRadius).toBe(actual.trackRadiusToken);
       expect(actual.trackBorder).toContain('inset');
       expect(actual.trackBorder).toContain(dimensions.trackStroke);
       expect(actual.trackBorder).toContain(actual.trackColor);
-      expect(actual.thumbBorder).toBe(actual.thumbElevation);
-      expect(actual.thumbRadius).toBe('2px');
+      expect(actual.outerBackground).toBe(actual.transparentBackground);
+      expect(actual.outerBlur).toBe(`blur(${actual.blurToken})`);
+      expect(actual.outerShadow).toBe(actual.thumbElevation);
+      expect(actual.outerRadius).toBe(actual.trackRadiusToken);
+      expect(actual.orbBackground).toBe(actual.boldBrand);
+      expect(actual.orbBorder).toContain('inset');
+      expect(actual.orbBorder).toContain(dimensions.trackStroke);
+      expect(actual.orbBorder).toContain(actual.trackColor);
+      expect(actual.orbRadius).toBe(actual.trackRadiusToken);
     }
   }
 );

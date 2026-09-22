@@ -14,6 +14,7 @@
     "A tab set needs concise labels, icons, or icon-label content with optional supplemental notification dots."
   ],
   "avoidWhen": [
+    "The group needs an outset shell around full-height control-sized tabs for local panel navigation; use NavigationTabGroup instead.",
     "The choices navigate application routes; use PanelNav or BarNav instead.",
     "The choices belong in a vertical panel or card side rail; use PanelSubNav instead.",
     "The choices are temporary commands or contextual options; use Menu instead.",
@@ -21,6 +22,11 @@
     "No enabled tab can remain selected while enabled choices exist."
   ],
   "alternatives": [
+    {
+      "when": "Local panel tabs need a roomy navigation shell rather than compact control-height chrome.",
+      "component": "component:ds-navigation-tab-group",
+      "reason": "NavigationTabGroup preserves tab behavior while giving selected tabs the full control-density height and an elevated primary surface."
+    },
     {
       "when": "Local views need persistent vertical side-rail navigation.",
       "component": "component:ds-panel-sub-nav",
