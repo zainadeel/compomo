@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.6.0](https://github.com/zainadeel/compomo/compare/v15.5.1...v15.6.0) (2026-09-22)
+
+
+### Added
+
+* **table:** add column pinning and edge-to-edge chrome ([#645](https://github.com/zainadeel/compomo/issues/645)) ([2951091](https://github.com/zainadeel/compomo/commit/29510916928e614b104fe48f82f1aa360620c72c))
+
 ## [15.5.1](https://github.com/zainadeel/compomo/compare/v15.5.0...v15.5.1) (2026-09-21)
 
 
