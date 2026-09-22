@@ -1,0 +1,351 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "select-toggle",
+  "title": "SelectToggle",
+  "description": "Compact cycling choice control with a vertical position indicator.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/select-toggle",
+    "source": "src/wc/components/SelectToggle/SelectToggle.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Compact cycling choice control with a vertical position indicator.",
+      "useWhen": [
+        "Two or three local view modes should cycle through one compact button without opening a popup.",
+        "The current choice should update its label and/or icon while a small vertical dot indicator shows its position."
+      ],
+      "avoidWhen": [
+        "The full choice set must remain visible at once; use TabGroup instead.",
+        "The user must inspect or search more than three options; use Select instead.",
+        "The value must participate in native form submission; this initial component is a local cycling control, not a form-associated select."
+      ],
+      "alternatives": [
+        {
+          "when": "Every choice should be visible and individually selectable.",
+          "component": "component:ds-tab-group",
+          "reason": "TabGroup exposes all choices and owns segmented keyboard selection."
+        },
+        {
+          "when": "The option list exceeds three choices or needs a dropdown.",
+          "component": "component:ds-select",
+          "reason": "Select provides a popup and the complete form-select contract."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-text",
+        "component:ds-icon"
+      ],
+      "accessibility": [
+        "A single native button owns focus and activation by pointer, Enter, or Space; the dots are decorative and hidden from assistive technology.",
+        "Each option supplies a nonempty label, including icon-only choices. The button name announces the current label, position, and next choice; aria-label adds stable context.",
+        "An inactive button is natively disabled. Do not use aria-pressed because this is a multi-choice cycle, not a binary toggle."
+      ],
+      "states": [
+        "The application supplies exactly two or three uniquely valued options and may set value; invalid values resolve to the first choice without emitting a user-change event.",
+        "Activation advances to the next choice, wraps after the last, updates the mutable value, and emits dsChange once with the next value.",
+        "Variant selects label, icon, or icon-label content; the trailing slot scales with control density and displays the same number of vertical dots as choices.",
+        "Both treatments use transparent unfilled chrome; hasBorder removes only the inset stroke while preserving control geometry."
+      ],
+      "responsiveBehavior": [
+        "Hug follows the current content; fill uses the parent width and truncates a long label without moving the trailing indicator.",
+        "When collapseLabel is enabled in a table caption or data toolbar narrower than 900px, icon-label choices display only the icon while preserving the changing accessible name. Explicit icon and label variants are unchanged.",
+        "Small, medium, and large use shared control-density heights and matching dot-slot geometry."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign options as a JavaScript property and listen for dsChange to observe user cycling."
+        ],
+        "react": [
+          "Pass options as an array and handle onDsChange to observe user cycling."
+        ],
+        "vue": [
+          "Bind options as an array and handle dsChange to update application state."
+        ],
+        "angular": [
+          "Bind options as an array and handle dsChange to update application state."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/SelectToggle/SelectToggle.stories.ts"
+        },
+        {
+          "label": "Rendered behavior and geometry",
+          "path": "tests/e2e/select-toggle.spec.ts"
+        }
+      ],
+      "styling": {
+        "rationale": "The component owns one density-sized unfilled button, changing choice content, and a fixed trailing position indicator; applications own surrounding layout and the choice data.",
+        "protected": [
+          {
+            "properties": [
+              "height",
+              "padding",
+              "gap",
+              "border-radius",
+              "background",
+              "border",
+              "color"
+            ],
+            "reason": "Control density and the indicator slot stay aligned across the supported variants.",
+            "props": [
+              "size",
+              "variant",
+              "width",
+              "hasBorder"
+            ]
+          }
+        ],
+        "customProperties": []
+      }
+    },
+    "api": {
+      "props": {
+        "ariaLabel": {
+          "type": "string | null",
+          "resolvedType": "null | string",
+          "attribute": "aria-label",
+          "default": "null",
+          "required": false,
+          "mutable": false,
+          "description": "Optional stable context prepended to the changing accessible choice name."
+        },
+        "collapseLabel": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "collapse-label",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Collapse an icon-label choice to its icon in a narrow table caption or data toolbar."
+        },
+        "hasBorder": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "has-border",
+          "default": "true",
+          "required": false,
+          "mutable": false,
+          "description": "Show an inset border; both treatments keep the transparent unfilled surface."
+        },
+        "isInactive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-inactive",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Prevent interaction."
+        },
+        "options": {
+          "type": "SelectToggleOption[]",
+          "resolvedType": "SelectToggleOption[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false,
+          "description": "Exactly two or three choices, each with a unique value and accessible label."
+        },
+        "size": {
+          "type": "SelectToggleSize",
+          "resolvedType": "\"lg\" | \"md\" | \"sm\"",
+          "attribute": "size",
+          "default": "'md'",
+          "required": false,
+          "mutable": false,
+          "description": "Control density: small, medium, or large; the trailing indicator scales with it."
+        },
+        "value": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "value",
+          "default": "''",
+          "required": false,
+          "mutable": true,
+          "description": "Current choice. User activation updates this value and emits dsChange."
+        },
+        "variant": {
+          "type": "SelectToggleVariant",
+          "resolvedType": "\"icon\" | \"icon-label\" | \"label\"",
+          "attribute": "variant",
+          "default": "'label'",
+          "required": false,
+          "mutable": false,
+          "description": "Show the current label, icon, or both. Icon variants require an icon on each choice."
+        },
+        "width": {
+          "type": "ControlWidth",
+          "resolvedType": "\"fill\" | \"hug\"",
+          "attribute": "width",
+          "default": "'hug'",
+          "required": false,
+          "mutable": false,
+          "description": "Hug the content or fill the parent."
+        }
+      },
+      "events": [
+        {
+          "name": "dsChange",
+          "detail": "string",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "ariaLabel": {
+        "type": "string | null",
+        "resolvedType": "null | string",
+        "attribute": "aria-label",
+        "default": "null",
+        "required": false,
+        "mutable": false,
+        "description": "Optional stable context prepended to the changing accessible choice name."
+      },
+      "collapseLabel": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "collapse-label",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Collapse an icon-label choice to its icon in a narrow table caption or data toolbar."
+      },
+      "hasBorder": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "has-border",
+        "default": "true",
+        "required": false,
+        "mutable": false,
+        "description": "Show an inset border; both treatments keep the transparent unfilled surface."
+      },
+      "isInactive": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-inactive",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Prevent interaction."
+      },
+      "options": {
+        "type": "SelectToggleOption[]",
+        "resolvedType": "SelectToggleOption[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false,
+        "description": "Exactly two or three choices, each with a unique value and accessible label."
+      },
+      "size": {
+        "type": "SelectToggleSize",
+        "resolvedType": "\"lg\" | \"md\" | \"sm\"",
+        "attribute": "size",
+        "default": "'md'",
+        "required": false,
+        "mutable": false,
+        "description": "Control density: small, medium, or large; the trailing indicator scales with it."
+      },
+      "value": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "value",
+        "default": "''",
+        "required": false,
+        "mutable": true,
+        "description": "Current choice. User activation updates this value and emits dsChange."
+      },
+      "variant": {
+        "type": "SelectToggleVariant",
+        "resolvedType": "\"icon\" | \"icon-label\" | \"label\"",
+        "attribute": "variant",
+        "default": "'label'",
+        "required": false,
+        "mutable": false,
+        "description": "Show the current label, icon, or both. Icon variants require an icon on each choice."
+      },
+      "width": {
+        "type": "ControlWidth",
+        "resolvedType": "\"fill\" | \"hug\"",
+        "attribute": "width",
+        "default": "'hug'",
+        "required": false,
+        "mutable": false,
+        "description": "Hug the content or fill the parent."
+      }
+    },
+    "events": [
+      {
+        "name": "dsChange",
+        "detail": "string",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-select-toggle",
+      "react": "DsSelectToggle",
+      "vue": "DsSelectToggle",
+      "angular": "DsSelectToggle"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-select-toggle.js';",
+        "example": "<ds-select-toggle></ds-select-toggle>"
+      },
+      "react": {
+        "import": "import { DsSelectToggle } from '@ds-mo/ui/react';",
+        "example": "<DsSelectToggle />"
+      },
+      "vue": {
+        "import": "import { DsSelectToggle } from '@ds-mo/ui/vue';",
+        "example": "<DsSelectToggle />"
+      },
+      "angular": {
+        "import": "import { DsSelectToggle } from '@ds-mo/ui/angular/ds-select-toggle';",
+        "example": "<ds-select-toggle></ds-select-toggle>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: options.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.7.0",
+          "@ds-mo/icons ^8.1.1"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "icon",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/SelectToggle/SelectToggle.css",
+      "content": "@import '../../utils/radius.css';\n@import '../../utils/control-density.css';\n@import '../../utils/control-parts.css';\n@import '../../utils/control-width.css';\n@import '../../utils/focus-ring.css';\n@import '../../utils/interaction-fill.css';\n@import '../../utils/control-inactive.css';\n\n:host {\n  display: inline-flex;\n  min-inline-size: 0;\n  --_select-toggle-dot-position: var(--dimension-size-050);\n  --_select-toggle-dot-idle: var(--dimension-space-025);\n  --_select-toggle-dot-active: var(--_select-toggle-dot-idle);\n  --_select-toggle-dot-gap: var(--dimension-space-012);\n}\n\n:host(.ds-control--sm) {\n  --_select-toggle-dot-position: calc(var(--dimension-size-050) * 3 / 4);\n  --_select-toggle-dot-idle: var(--dimension-space-012);\n}\n\n:host(.ds-control--lg) {\n  --_select-toggle-dot-position: calc(var(--dimension-size-050) * 5 / 4);\n  --_select-toggle-dot-idle: calc(var(--dimension-size-050) * 3 / 4);\n  --_select-toggle-dot-gap: var(--dimension-space-025);\n}\n\n:host(.ds-control-width--fill) {\n  display: flex;\n  width: 100%;\n}\n\n.trigger {\n  appearance: none;\n  min-inline-size: 0;\n  max-inline-size: 100%;\n  justify-content: space-between;\n  background: var(--color-background-transparent);\n  border: 0;\n  color: var(--color-foreground-secondary);\n  font-family: inherit;\n  -webkit-user-select: none;\n  user-select: none;\n}\n\n.trigger--bordered {\n  --ds-interaction-border-width: var(--dimension-stroke-width-012);\n  --ds-interaction-border-color: var(--color-border-tertiary);\n}\n\n:host(.ds-control-width--fill) .trigger {\n  width: 100%;\n}\n\n.trigger__content {\n  display: inline-flex;\n  align-items: center;\n  flex: 1 1 auto;\n  gap: var(--ds-control-gap);\n  min-width: 0;\n  overflow: hidden;\n}\n\n.trigger__label {\n  min-width: 0;\n  overflow: hidden;\n  text-align: left;\n}\n\n.trigger__indicator {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  flex: 0 0 calc(var(--ds-control-icon) - var(--dimension-size-100));\n  width: calc(var(--ds-control-icon) - var(--dimension-size-100));\n  height: var(--ds-control-icon);\n  gap: var(--_select-toggle-dot-gap);\n}\n\n.trigger__dot-position {\n  display: grid;\n  place-items: center;\n  flex: 0 0 var(--_select-toggle-dot-position);\n  width: var(--_select-toggle-dot-position);\n  height: var(--_select-toggle-dot-position);\n}\n\n.trigger__dot {\n  width: var(--_select-toggle-dot-idle);\n  height: var(--_select-toggle-dot-idle);\n  border-radius: var(--dimension-radius-half);\n  background: var(--color-foreground-quaternary);\n}\n\n.trigger__dot--active {\n  width: var(--_select-toggle-dot-active);\n  height: var(--_select-toggle-dot-active);\n  background: var(--color-foreground-secondary);\n}\n\n@media (forced-colors: active) {\n  .trigger {\n    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-control-boundary);\n    outline-offset: calc(-1 * var(--dimension-stroke-width-012));\n  }\n\n  .trigger__dot {\n    background: var(--ds-forced-color-content);\n  }\n\n  .trigger__dot--active {\n    background: var(--ds-forced-color-selected);\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/SelectToggle/SelectToggle.tsx",
+      "content": "import {\n  Component,\n  Element,\n  Event,\n  EventEmitter,\n  h,\n  Host,\n  Prop,\n  State,\n  Watch,\n} from '@stencil/core';\nimport { controlWidthClass, CONTROL_TEXT_VARIANT, type ControlWidth } from '../../utils';\nimport { observeTableCaptionCompact } from '../../utils/table-caption-compact';\n\nexport interface SelectToggleOption {\n  value: string;\n  label: string;\n  icon?: string;\n}\n\nexport type SelectToggleVariant = 'label' | 'icon' | 'icon-label';\nexport type SelectToggleSize = 'sm' | 'md' | 'lg';\n\n@Component({ tag: 'ds-select-toggle', styleUrl: 'SelectToggle.css', scoped: true })\nexport class SelectToggle {\n  @Element() el!: HTMLElement;\n\n  /** Exactly two or three choices, each with a unique value and accessible label. */\n  @Prop() options: SelectToggleOption[] = [];\n\n  /** Current choice. User activation updates this value and emits dsChange. */\n  @Prop({ mutable: true }) value: string = '';\n\n  /** Show the current label, icon, or both. Icon variants require an icon on each choice. */\n  @Prop() variant: SelectToggleVariant = 'label';\n\n  /** Collapse an icon-label choice to its icon in a narrow table caption or data toolbar. */\n  @Prop({ reflect: true }) collapseLabel: boolean = false;\n\n  /** Control density: small, medium, or large; the trailing indicator scales with it. */\n  @Prop() size: SelectToggleSize = 'md';\n\n  /** Hug the content or fill the parent. */\n  @Prop() width: ControlWidth = 'hug';\n\n  /** Show an inset border; both treatments keep the transparent unfilled surface. */\n  @Prop() hasBorder: boolean = true;\n\n  /** Prevent interaction. */\n  @Prop() isInactive: boolean = false;\n\n  /** Optional stable context prepended to the changing accessible choice name. */\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n\n  @Event() dsChange!: EventEmitter<string>;\n\n  @State() private captionCompact = false;\n\n  private captionCompactDisconnect: (() => void) | undefined;\n  private hasLoaded = false;\n\n  componentWillLoad() {\n    this.reconcileValue();\n  }\n\n  componentDidLoad(): void {\n    this.hasLoaded = true;\n    this.syncCaptionCompactObserver();\n  }\n\n  connectedCallback(): void {\n    if (this.hasLoaded) this.syncCaptionCompactObserver();\n  }\n\n  disconnectedCallback(): void {\n    this.disconnectCaptionCompactObserver();\n  }\n\n  @Watch('collapseLabel')\n  onCollapseLabelChange(): void {\n    this.syncCaptionCompactObserver();\n  }\n\n  @Watch('options')\n  @Watch('value')\n  reconcileValue() {\n    const choices = this.validOptions;\n    if (choices.length && !choices.some(option => option.value === this.value)) {\n      this.value = choices[0].value;\n    }\n  }\n\n  private get validOptions(): SelectToggleOption[] {\n    if (this.options.length < 2 || this.options.length > 3) return [];\n    if (\n      this.options.some(option => !option.value || !option.label) ||\n      new Set(this.options.map(option => option.value)).size !== this.options.length\n    ) {\n      return [];\n    }\n    return this.options;\n  }\n\n  private advance = () => {\n    const choices = this.validOptions;\n    if (this.isInactive || !choices.length) return;\n    const current = Math.max(\n      0,\n      choices.findIndex(option => option.value === this.value)\n    );\n    const next = choices[(current + 1) % choices.length];\n    this.value = next.value;\n    this.dsChange.emit(next.value);\n  };\n\n  private syncCaptionCompactObserver(): void {\n    this.disconnectCaptionCompactObserver();\n    if (!this.collapseLabel) {\n      if (this.captionCompact) this.captionCompact = false;\n      return;\n    }\n    this.captionCompactDisconnect = observeTableCaptionCompact(this.el, compact => {\n      if (this.captionCompact !== compact) this.captionCompact = compact;\n    });\n  }\n\n  private disconnectCaptionCompactObserver(): void {\n    this.captionCompactDisconnect?.();\n    this.captionCompactDisconnect = undefined;\n  }\n\n  render() {\n    const choices = this.validOptions;\n    const activeIndex = Math.max(\n      0,\n      choices.findIndex(option => option.value === this.value)\n    );\n    const active = choices[activeIndex];\n    const next = choices[(activeIndex + 1) % choices.length];\n    const showIcon = this.variant !== 'label';\n    const showLabel =\n      this.variant !== 'icon' &&\n      !(this.collapseLabel && this.captionCompact && this.variant === 'icon-label' && active?.icon);\n    const accessibleName = active\n      ? `${this.ariaLabel ? `${this.ariaLabel}: ` : ''}${active.label}, ${activeIndex + 1} of ${choices.length}. Next: ${next.label}`\n      : undefined;\n\n    return (\n      <Host\n        class={{\n          [`ds-control--${this.size}`]: true,\n          ...controlWidthClass(this.width),\n        }}\n      >\n        {active && (\n          <button\n            type=\"button\"\n            class={{\n              trigger: true,\n              'ds-control-frame': true,\n              'ds-focus-ring-inset': true,\n              'ds-interaction-fill': true,\n              'ds-control-inactive': this.isInactive,\n              'trigger--bordered': this.hasBorder,\n            }}\n            aria-label={accessibleName}\n            disabled={this.isInactive}\n            onClick={this.advance}\n          >\n            <span class=\"trigger__content ds-interaction-fill__content\">\n              {showIcon && active.icon && (\n                <span class=\"trigger__icon ds-control-icon-box\" aria-hidden=\"true\">\n                  <ds-icon name={active.icon} size={this.size} color=\"inherit\" />\n                </span>\n              )}\n              {showLabel && (\n                <ds-text\n                  class=\"trigger__label ds-control-label-box\"\n                  as=\"span\"\n                  variant={CONTROL_TEXT_VARIANT[this.size]}\n                  color=\"inherit\"\n                  lineTruncation={1}\n                >\n                  {active.label}\n                </ds-text>\n              )}\n            </span>\n            <span class=\"trigger__indicator ds-interaction-fill__content\" aria-hidden=\"true\">\n              {choices.map((option, index) => (\n                <span key={option.value} class=\"trigger__dot-position\">\n                  <span\n                    class={{\n                      trigger__dot: true,\n                      'trigger__dot--active': index === activeIndex,\n                    }}\n                  />\n                </span>\n              ))}\n            </span>\n          </button>\n        )}\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

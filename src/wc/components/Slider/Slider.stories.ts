@@ -123,7 +123,7 @@ export const Sizes: Story = {
           <ds-slider
             size=${size}
             value="40"
-            label=${`${size} · ${size === 'md' ? '32 / 16 / 8' : size === 'sm' ? '24 / 12 / 6' : '16 / 8 / 4'}px control / thumb / track`}
+            label=${`${size} · ${size === 'md' ? '32 / 16 / 8' : size === 'sm' ? '24 / 14 / 6' : '16 / 12 / 4'}px control / thumb / track`}
           ></ds-slider>
         `
       )}
@@ -183,14 +183,14 @@ export const ThumbAlignment: Story = {
     <div style=${STACK}>
       <div style=${PANEL}>
         <ds-text as="span" variant="text-title-small"
-          >Edge aligned · thumb edge reaches rail endpoint</ds-text
+          >Edge aligned · inner dot edge reaches rail endpoint</ds-text
         >
         <ds-slider value="0" label="Minimum"></ds-slider>
         <ds-slider value="100" label="Maximum"></ds-slider>
       </div>
       <div style=${PANEL}>
         <ds-text as="span" variant="text-title-small"
-          >Center aligned · thumb center reaches rail endpoint</ds-text
+          >Center aligned · inner dot center reaches rail endpoint</ds-text
         >
         <ds-slider value="0" label="Minimum" thumb-alignment="center"></ds-slider>
         <ds-slider value="100" label="Maximum" thumb-alignment="center"></ds-slider>

@@ -1,0 +1,279 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "navigation-tab-group",
+  "title": "NavigationTabGroup",
+  "description": "Outset horizontal tab group for switching adjacent local panels on basic application surfaces.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/navigation-tab-group",
+    "source": "src/wc/components/NavigationTabGroup/NavigationTabGroup.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Outset horizontal tab group for switching adjacent local panels on basic application surfaces.",
+      "useWhen": [
+        "Adjacent local panels need a prominent navigation row with full control-height selected tabs.",
+        "A horizontal tab row has room for an outset shell rather than needing to align beside compact controls."
+      ],
+      "avoidWhen": [
+        "The tab row must sit inline with ordinary controls; use TabGroup's compact segmented presentation instead.",
+        "The row sits on bold, strong, media, inverted, or other specialized surfaces; this treatment is intended for basic application backgrounds.",
+        "The choices navigate application routes rather than switching local panels; use PanelNav or BarNav."
+      ],
+      "alternatives": [
+        {
+          "when": "A compact selector must align beside other controls or support specialized surface contexts.",
+          "component": "component:ds-tab-group",
+          "reason": "TabGroup provides control-height segmented chrome and surface-aware selection."
+        },
+        {
+          "when": "The choices are application destinations rather than local panels.",
+          "component": "component:ds-panel-nav",
+          "reason": "PanelNav owns application navigation semantics and route selection."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-text",
+        "component:ds-icon"
+      ],
+      "accessibility": [
+        "Provide an accessible name for the delegated tab list with aria-label or aria-labelledby.",
+        "TabGroup owns tab semantics, roving focus, arrow-key selection, and inactive-tab behavior; the navigation wrapper must not create a second tab or event stream.",
+        "Keep the selected local panel synchronized with dsChange and connect each tab to its panel when panels are present."
+      ],
+      "states": [
+        "The parent owns which adjacent panel is visible; user activation updates the mutable selected value and emits dsChange once through the wrapper.",
+        "The selected tab uses the normal control-density height and primary surface with medium elevation inside an outset, padded shell.",
+        "The navigation treatment delegates its tab items, selection, focus, and keyboard behavior to TabGroup rather than maintaining a parallel implementation."
+      ],
+      "responsiveBehavior": [
+        "The group stays on one horizontal row; choose the control density and bounded width to fit the available layout.",
+        "Hug follows content width and fill distributes selectable tabs evenly across a definite parent width."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Assign tabs as a JavaScript property and keep the selected panel synchronized with dsChange."
+        ],
+        "react": [
+          "Pass tabs as an array through the generated wrapper and handle onDsChange to update the visible panel."
+        ],
+        "vue": [
+          "Use v-model for the selected value and pass tabs as a property-bound array."
+        ],
+        "angular": [
+          "Bind tabs and value as properties and handle dsChange to update the visible panel."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/NavigationTabGroup/NavigationTabGroup.stories.ts"
+        },
+        {
+          "label": "Rendered behavior and geometry",
+          "path": "tests/e2e/navigation-tab-group.spec.ts"
+        }
+      ],
+      "styling": {
+        "rationale": "The component owns its outset shell and selected-tab treatment through TabGroup's shared tab anatomy; applications own the surrounding basic surface and panel layout.",
+        "protected": [
+          {
+            "properties": [
+              "height",
+              "padding",
+              "gap",
+              "border-radius",
+              "background",
+              "border",
+              "box-shadow"
+            ],
+            "reason": "The shell and selected tab form one density-specific navigation recipe; choose size and width instead of restyling nested tabs.",
+            "props": [
+              "size",
+              "width"
+            ]
+          }
+        ],
+        "customProperties": []
+      }
+    },
+    "api": {
+      "props": {
+        "ariaLabel": {
+          "type": "string | null",
+          "resolvedType": "null | string",
+          "attribute": "aria-label",
+          "default": "null",
+          "required": false,
+          "mutable": false
+        },
+        "ariaLabelledby": {
+          "type": "string | undefined",
+          "resolvedType": "string | undefined",
+          "attribute": "aria-labelledby",
+          "required": false,
+          "mutable": false
+        },
+        "size": {
+          "type": "TabGroupSize",
+          "resolvedType": "\"lg\" | \"md\" | \"sm\"",
+          "attribute": "size",
+          "default": "'md'",
+          "required": false,
+          "mutable": false
+        },
+        "tabs": {
+          "type": "TabGroupItem[]",
+          "resolvedType": "TabGroupItem[]",
+          "default": "[]",
+          "required": false,
+          "mutable": false
+        },
+        "value": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "value",
+          "default": "''",
+          "required": false,
+          "mutable": true,
+          "description": "Currently selected local view. User activation updates this value."
+        },
+        "width": {
+          "type": "TabGroupWidth",
+          "resolvedType": "\"fill\" | \"hug\"",
+          "attribute": "width",
+          "default": "'hug'",
+          "required": false,
+          "mutable": false
+        }
+      },
+      "events": [
+        {
+          "name": "dsChange",
+          "detail": "string",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true
+        }
+      ],
+      "methods": [],
+      "slots": []
+    },
+    "props": {
+      "ariaLabel": {
+        "type": "string | null",
+        "resolvedType": "null | string",
+        "attribute": "aria-label",
+        "default": "null",
+        "required": false,
+        "mutable": false
+      },
+      "ariaLabelledby": {
+        "type": "string | undefined",
+        "resolvedType": "string | undefined",
+        "attribute": "aria-labelledby",
+        "required": false,
+        "mutable": false
+      },
+      "size": {
+        "type": "TabGroupSize",
+        "resolvedType": "\"lg\" | \"md\" | \"sm\"",
+        "attribute": "size",
+        "default": "'md'",
+        "required": false,
+        "mutable": false
+      },
+      "tabs": {
+        "type": "TabGroupItem[]",
+        "resolvedType": "TabGroupItem[]",
+        "default": "[]",
+        "required": false,
+        "mutable": false
+      },
+      "value": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "value",
+        "default": "''",
+        "required": false,
+        "mutable": true,
+        "description": "Currently selected local view. User activation updates this value."
+      },
+      "width": {
+        "type": "TabGroupWidth",
+        "resolvedType": "\"fill\" | \"hug\"",
+        "attribute": "width",
+        "default": "'hug'",
+        "required": false,
+        "mutable": false
+      }
+    },
+    "events": [
+      {
+        "name": "dsChange",
+        "detail": "string",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true
+      }
+    ],
+    "methods": [],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-navigation-tab-group",
+      "react": "DsNavigationTabGroup",
+      "vue": "DsNavigationTabGroup",
+      "angular": "DsNavigationTabGroup"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-navigation-tab-group.js';",
+        "example": "<ds-navigation-tab-group></ds-navigation-tab-group>"
+      },
+      "react": {
+        "import": "import { DsNavigationTabGroup } from '@ds-mo/ui/react';",
+        "example": "<DsNavigationTabGroup />"
+      },
+      "vue": {
+        "import": "import { DsNavigationTabGroup } from '@ds-mo/ui/vue';",
+        "example": "<DsNavigationTabGroup />"
+      },
+      "angular": {
+        "import": "import { DsNavigationTabGroup } from '@ds-mo/ui/angular/ds-navigation-tab-group';",
+        "example": "<ds-navigation-tab-group></ds-navigation-tab-group>"
+      },
+      "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: tabs.",
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^6.7.0",
+          "@ds-mo/icons ^8.1.1"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "tab-group"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/NavigationTabGroup/NavigationTabGroup.css",
+      "content": ":host {\n  display: block;\n  box-sizing: border-box;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/NavigationTabGroup/NavigationTabGroup.tsx",
+      "content": "import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\nimport type { TabGroupSize, TabGroupWidth } from '../TabGroup/TabGroup';\nimport type { TabGroupItem } from '../TabGroup/tab-item-utils';\n\n@Component({ tag: 'ds-navigation-tab-group', styleUrl: 'NavigationTabGroup.css', scoped: true })\nexport class NavigationTabGroup {\n  /** Currently selected local view. User activation updates this value. */\n  @Prop({ mutable: true }) value: string = '';\n  @Prop() tabs: TabGroupItem[] = [];\n  @Prop() size: TabGroupSize = 'md';\n  @Prop() width: TabGroupWidth = 'hug';\n  @Prop({ attribute: 'aria-label' }) ariaLabel: string | null = null;\n  @Prop({ attribute: 'aria-labelledby' }) ariaLabelledby: string | undefined;\n\n  @Event() dsChange!: EventEmitter<string>;\n\n  private handleChange = (event: CustomEvent<string>) => {\n    event.stopPropagation();\n    this.value = event.detail;\n    this.dsChange.emit(event.detail);\n  };\n\n  render() {\n    return (\n      <Host>\n        <ds-tab-group\n          tabs={this.tabs}\n          value={this.value}\n          size={this.size}\n          width={this.width}\n          presentation=\"navigation\"\n          aria-label={this.ariaLabel}\n          aria-labelledby={this.ariaLabelledby}\n          onDsChange={this.handleChange}\n        />\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

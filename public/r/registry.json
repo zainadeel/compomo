@@ -10978,6 +10978,155 @@
       ]
     },
     {
+      "name": "navigation-tab-group",
+      "title": "NavigationTabGroup",
+      "description": "Outset horizontal tab group for switching adjacent local panels on basic application surfaces.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/navigation-tab-group",
+        "source": "src/wc/components/NavigationTabGroup/NavigationTabGroup.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Outset horizontal tab group for switching adjacent local panels on basic application surfaces.",
+          "useWhen": [
+            "Adjacent local panels need a prominent navigation row with full control-height selected tabs.",
+            "A horizontal tab row has room for an outset shell rather than needing to align beside compact controls."
+          ],
+          "avoidWhen": [
+            "The tab row must sit inline with ordinary controls; use TabGroup's compact segmented presentation instead.",
+            "The row sits on bold, strong, media, inverted, or other specialized surfaces; this treatment is intended for basic application backgrounds.",
+            "The choices navigate application routes rather than switching local panels; use PanelNav or BarNav."
+          ],
+          "alternatives": [
+            {
+              "when": "A compact selector must align beside other controls or support specialized surface contexts.",
+              "component": "component:ds-tab-group",
+              "reason": "TabGroup provides control-height segmented chrome and surface-aware selection."
+            },
+            {
+              "when": "The choices are application destinations rather than local panels.",
+              "component": "component:ds-panel-nav",
+              "reason": "PanelNav owns application navigation semantics and route selection."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-text",
+            "component:ds-icon"
+          ],
+          "accessibility": [
+            "Provide an accessible name for the delegated tab list with aria-label or aria-labelledby.",
+            "TabGroup owns tab semantics, roving focus, arrow-key selection, and inactive-tab behavior; the navigation wrapper must not create a second tab or event stream.",
+            "Keep the selected local panel synchronized with dsChange and connect each tab to its panel when panels are present."
+          ],
+          "states": [
+            "The parent owns which adjacent panel is visible; user activation updates the mutable selected value and emits dsChange once through the wrapper.",
+            "The selected tab uses the normal control-density height and primary surface with medium elevation inside an outset, padded shell.",
+            "The navigation treatment delegates its tab items, selection, focus, and keyboard behavior to TabGroup rather than maintaining a parallel implementation."
+          ],
+          "responsiveBehavior": [
+            "The group stays on one horizontal row; choose the control density and bounded width to fit the available layout.",
+            "Hug follows content width and fill distributes selectable tabs evenly across a definite parent width."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign tabs as a JavaScript property and keep the selected panel synchronized with dsChange."
+            ],
+            "react": [
+              "Pass tabs as an array through the generated wrapper and handle onDsChange to update the visible panel."
+            ],
+            "vue": [
+              "Use v-model for the selected value and pass tabs as a property-bound array."
+            ],
+            "angular": [
+              "Bind tabs and value as properties and handle dsChange to update the visible panel."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/NavigationTabGroup/NavigationTabGroup.stories.ts"
+            },
+            {
+              "label": "Rendered behavior and geometry",
+              "path": "tests/e2e/navigation-tab-group.spec.ts"
+            }
+          ],
+          "styling": {
+            "rationale": "The component owns its outset shell and selected-tab treatment through TabGroup's shared tab anatomy; applications own the surrounding basic surface and panel layout.",
+            "protected": [
+              {
+                "properties": [
+                  "height",
+                  "padding",
+                  "gap",
+                  "border-radius",
+                  "background",
+                  "border",
+                  "box-shadow"
+                ],
+                "reason": "The shell and selected tab form one density-specific navigation recipe; choose size and width instead of restyling nested tabs.",
+                "props": [
+                  "size",
+                  "width"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
+        },
+        "props": {
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "ariaLabelledby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "size": {
+            "type": "TabGroupSize",
+            "required": false
+          },
+          "tabs": {
+            "type": "TabGroupItem[]",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          },
+          "width": {
+            "type": "TabGroupWidth",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "string"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-navigation-tab-group",
+          "react": "DsNavigationTabGroup",
+          "vue": "DsNavigationTabGroup",
+          "angular": "DsNavigationTabGroup"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "tab-group"
+      ]
+    },
+    {
       "name": "pagination",
       "title": "Pagination",
       "description": "Controlled fixed or fitted page-size, page position, adjacent-page navigation, and optional first/last controls for application-owned data windows.",
@@ -13317,6 +13466,173 @@
       ]
     },
     {
+      "name": "select-toggle",
+      "title": "SelectToggle",
+      "description": "Compact cycling choice control with a vertical position indicator.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/select-toggle",
+        "source": "src/wc/components/SelectToggle/SelectToggle.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Compact cycling choice control with a vertical position indicator.",
+          "useWhen": [
+            "Two or three local view modes should cycle through one compact button without opening a popup.",
+            "The current choice should update its label and/or icon while a small vertical dot indicator shows its position."
+          ],
+          "avoidWhen": [
+            "The full choice set must remain visible at once; use TabGroup instead.",
+            "The user must inspect or search more than three options; use Select instead.",
+            "The value must participate in native form submission; this initial component is a local cycling control, not a form-associated select."
+          ],
+          "alternatives": [
+            {
+              "when": "Every choice should be visible and individually selectable.",
+              "component": "component:ds-tab-group",
+              "reason": "TabGroup exposes all choices and owns segmented keyboard selection."
+            },
+            {
+              "when": "The option list exceeds three choices or needs a dropdown.",
+              "component": "component:ds-select",
+              "reason": "Select provides a popup and the complete form-select contract."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-text",
+            "component:ds-icon"
+          ],
+          "accessibility": [
+            "A single native button owns focus and activation by pointer, Enter, or Space; the dots are decorative and hidden from assistive technology.",
+            "Each option supplies a nonempty label, including icon-only choices. The button name announces the current label, position, and next choice; aria-label adds stable context.",
+            "An inactive button is natively disabled. Do not use aria-pressed because this is a multi-choice cycle, not a binary toggle."
+          ],
+          "states": [
+            "The application supplies exactly two or three uniquely valued options and may set value; invalid values resolve to the first choice without emitting a user-change event.",
+            "Activation advances to the next choice, wraps after the last, updates the mutable value, and emits dsChange once with the next value.",
+            "Variant selects label, icon, or icon-label content; the trailing slot scales with control density and displays the same number of vertical dots as choices.",
+            "Both treatments use transparent unfilled chrome; hasBorder removes only the inset stroke while preserving control geometry."
+          ],
+          "responsiveBehavior": [
+            "Hug follows the current content; fill uses the parent width and truncates a long label without moving the trailing indicator.",
+            "When collapseLabel is enabled in a table caption or data toolbar narrower than 900px, icon-label choices display only the icon while preserving the changing accessible name. Explicit icon and label variants are unchanged.",
+            "Small, medium, and large use shared control-density heights and matching dot-slot geometry."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Assign options as a JavaScript property and listen for dsChange to observe user cycling."
+            ],
+            "react": [
+              "Pass options as an array and handle onDsChange to observe user cycling."
+            ],
+            "vue": [
+              "Bind options as an array and handle dsChange to update application state."
+            ],
+            "angular": [
+              "Bind options as an array and handle dsChange to update application state."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/SelectToggle/SelectToggle.stories.ts"
+            },
+            {
+              "label": "Rendered behavior and geometry",
+              "path": "tests/e2e/select-toggle.spec.ts"
+            }
+          ],
+          "styling": {
+            "rationale": "The component owns one density-sized unfilled button, changing choice content, and a fixed trailing position indicator; applications own surrounding layout and the choice data.",
+            "protected": [
+              {
+                "properties": [
+                  "height",
+                  "padding",
+                  "gap",
+                  "border-radius",
+                  "background",
+                  "border",
+                  "color"
+                ],
+                "reason": "Control density and the indicator slot stay aligned across the supported variants.",
+                "props": [
+                  "size",
+                  "variant",
+                  "width",
+                  "hasBorder"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
+        },
+        "props": {
+          "ariaLabel": {
+            "type": "string | null",
+            "required": false
+          },
+          "collapseLabel": {
+            "type": "boolean",
+            "required": false
+          },
+          "hasBorder": {
+            "type": "boolean",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "options": {
+            "type": "SelectToggleOption[]",
+            "required": false
+          },
+          "size": {
+            "type": "SelectToggleSize",
+            "required": false
+          },
+          "value": {
+            "type": "string",
+            "required": false
+          },
+          "variant": {
+            "type": "SelectToggleVariant",
+            "required": false
+          },
+          "width": {
+            "type": "ControlWidth",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsChange",
+            "detail": "string"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-select-toggle",
+          "react": "DsSelectToggle",
+          "vue": "DsSelectToggle",
+          "angular": "DsSelectToggle"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "icon",
+        "text"
+      ]
+    },
+    {
       "name": "setting-row-checkbox",
       "title": "SettingRowCheckbox",
       "description": "Padded settings-row composition for an editable Checkbox group and its non-interactive saved-value readout.",
@@ -14554,7 +14870,8 @@
             "Horizontal Slider fills the width supplied by its parent; the parent chooses an appropriate readable track length.",
             "Vertical Slider owns a token-based default length that may be overridden with --ds-slider-vertical-length in layout-specific compositions.",
             "Use md in ordinary forms and sm or xs only when the surrounding control density uses the same recipe.",
-            "Track thickness scales with density. The unfilled track has a neutral border, the filled range uses brand color, and the thumb uses the primary surface with subtle elevation.",
+            "Track thickness scales with density. The half-rounded unfilled track uses a faint-neutral background and tertiary border, and the filled range uses brand color. The round thumb layers a track-sized bold-brand orb with a tertiary inset border over a larger transparent, blurred, medium-elevation circle.",
+            "Edge alignment places the inner orb edge at each full-width rail endpoint while the transparent outer circle overhangs; center alignment places the orb center at inset rail endpoints.",
             "Horizontal value direction is left-to-right; the design system does not author RTL-specific component behavior."
           ],
           "frameworkCaveats": {
@@ -14968,7 +15285,7 @@
             "Activation updates checked immediately and emits dsChange with the new boolean value.",
             "The initial checked value is the form-reset baseline; unchecked switches submit nothing unless uncheckedValue is provided.",
             "Sizes are lg 40×24 with a 16px thumb and 4px body inset, md 32×20 with a 12px thumb and 4px inset, sm 24×16 with a 10px thumb and 3px inset, and xs 20×12 with an 8px thumb and 2px inset.",
-            "Unchecked uses a transparent track with a density-specific tertiary-foreground inset stroke and a solid tertiary-foreground thumb without a border. Checked uses a brand track and primary-background thumb with no strokes.",
+            "Unchecked uses a faint-neutral track with a density-specific tertiary-border inset stroke and a primary-background thumb with medium elevation. Checked uses a brand track with the same default tertiary-border inset stroke and elevated primary-background thumb.",
             "Presentation mode removes switch semantics, focus, interaction, and form submission while retaining the checked visual."
           ],
           "responsiveBehavior": [
@@ -15129,6 +15446,7 @@
             "A tab set needs concise labels, icons, or icon-label content with optional supplemental notification dots."
           ],
           "avoidWhen": [
+            "The group needs an outset shell around full-height control-sized tabs for local panel navigation; use NavigationTabGroup instead.",
             "The choices navigate application routes; use PanelNav or BarNav instead.",
             "The choices belong in a vertical panel or card side rail; use PanelSubNav instead.",
             "The choices are temporary commands or contextual options; use Menu instead.",
@@ -15136,6 +15454,11 @@
             "No enabled tab can remain selected while enabled choices exist."
           ],
           "alternatives": [
+            {
+              "when": "Local panel tabs need a roomy navigation shell rather than compact control-height chrome.",
+              "component": "component:ds-navigation-tab-group",
+              "reason": "NavigationTabGroup preserves tab behavior while giving selected tabs the full control-density height and an elevated primary surface."
+            },
             {
               "when": "Local views need persistent vertical side-rail navigation.",
               "component": "component:ds-panel-sub-nav",
@@ -15273,7 +15596,7 @@
             "required": false
           },
           "presentation": {
-            "type": "'segmented' | 'tabs'",
+            "type": "'segmented' | 'tabs' | 'navigation'",
             "required": false
           },
           "size": {
@@ -15367,7 +15690,8 @@
           ],
           "accessibility": [
             "The rendered structure uses a native table, caption, column headers, row groups, and data cells; keep the caption non-empty. The native caption remains visually hidden as the table's accessible name. When caption visibility is enabled, a 48px header bar renders as component chrome outside the data scrollport. It defaults to a presentational caption title that does not duplicate the accessible name. Application-owned labeled controls supplied through the single named header slot replace that fallback and share one horizontal caption overflow row with table-owned actions inside the component-owned 8px inset. Table caption buttons keep pressed interaction paint without physically scaling. When columnCustomizer is enabled, the table adds a trailing Customize control named Customize table. Its label uses regular weight and its resting foreground remains neutral when hidden or reordered columns differ from the catalog default. The control is icon-label at typical widths and the icon-only Customize menu button below 900px, where a tooltip preserves the Customize label. The always-icon-only table-variant control also exposes its label through a tooltip. Otherwise the header slot receives the complete content width.",
-            "The data-mode switcher is the shared Menu of the table's supported infinite, pagination, and virtual modes. It uses an Ellipses trigger. The switcher is the final caption-bar action; when the column customizer is also present, a decorative vertical divider separates the two controls. dataMode remains controlled, and the application responds to change intent by supplying the matching records, pagination state, loading behavior, and query consequences. Escape, dismissal, and selection return focus to the trigger.",
+            "The data-mode switcher is the shared Menu of the table's supported infinite, pagination, and virtual modes. It uses an Ellipses trigger. When the column customizer is also present, a decorative vertical divider separates the two controls. The optional caption-trailing slot follows table-owned caption actions for application-owned presentation controls; the application supplies its own divider when needed. dataMode remains controlled, and the application responds to change intent by supplying the matching records, pagination state, loading behavior, and query consequences. Escape, dismissal, and selection return focus to the trigger.",
+            "When alternateView is enabled, the alternate-view slot replaces the table frame body while the shared caption and footer remain mounted. The application owns the replacement content's accessible name, filtering, and interaction. Do not render a hidden duplicate semantic table behind that content.",
             "The column customizer is the shared Menu surface of composite preference rows. Data columns can be shown, hidden, left-pinned, and reordered. Visibility and pin state are independent, so hidden pinned columns retain their pin state. A tertiary divider separates the visibility switch from an unbordered Pin toggle. Pinned and unpinned sections constrain drag reorder to their own partition; a single pinned row keeps its drag handle visible but inactive in quaternary foreground. Action columns and the selection checkbox remain system-managed and never appear in the menu. Escape and outside click restore focus to the trigger. Persistence stays in the application.",
             "Sorting controls remain buttons inside column headers and expose the table's one controlled member-row sort through aria-sort. ds-data-sort in the toolbar trailing cluster is the matching menu of Data and Order sections; it emits the same dsSortChange shape so header clicks and menu choices stay in sync. Grouping never adds a second sort indicator or header control; ds-data-group controls the grouping data point and ascending or descending group-section order while the application supplies the resulting groups. Optional column help underlines the header label with the shared dotted decoration and shows ds-tooltip from that label; it does not add a second header control or replace the column name.",
             "Selection controls expose checkbox semantics and explicit row names; select-all affects selectable loaded rows only and preserves selected identities outside the loaded window. In virtual mode the supplied in-memory rows are that loaded set, including rows whose DOM is recycled. When grouping is active with multi-selection, each group section header also exposes a checkbox that selects or clears that group's selectable loaded rows.",
@@ -15556,6 +15880,10 @@
           }
         },
         "props": {
+          "alternateView": {
+            "type": "boolean",
+            "required": false
+          },
           "caption": {
             "type": "string",
             "required": true

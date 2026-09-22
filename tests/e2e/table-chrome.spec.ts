@@ -6,6 +6,34 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
+test('keeps caption actions while replacing the semantic table with an alternate view', async ({
+  page,
+}) => {
+  const table = page.locator('#column-customizer');
+  await expect(table.getByRole('table')).toBeVisible();
+
+  await table.evaluate(element => {
+    const switcher = document.createElement('span');
+    switcher.slot = 'caption-trailing';
+    switcher.textContent = 'Table / Map';
+    const map = document.createElement('div');
+    map.slot = 'alternate-view';
+    map.setAttribute('role', 'application');
+    map.setAttribute('aria-label', 'Events map');
+    map.textContent = 'Map preview';
+    element.append(switcher, map);
+    (element as HTMLDsTableElement).alternateView = true;
+  });
+
+  await expect(table.getByRole('button', { name: 'Customize table' })).toBeVisible();
+  await expect(table.getByText('Table / Map')).toBeVisible();
+  await expect(table.getByRole('application', { name: 'Events map' })).toBeVisible();
+  await expect(table.getByRole('table')).toHaveCount(0);
+
+  await table.evaluate(element => ((element as HTMLDsTableElement).alternateView = false));
+  await expect(table.getByRole('table')).toBeVisible();
+});
+
 test('groups through two dependent panes and keeps order unavailable until data is selected', async ({
   page,
 }) => {

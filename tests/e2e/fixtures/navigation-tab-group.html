@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <title>Navigation tab group e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+  </head>
+  <body>
+    <main>
+      <ds-navigation-tab-group id="navigation-tabs" aria-label="Workspace panels"></ds-navigation-tab-group>
+      <section id="panel-overview" role="tabpanel">Overview panel</section>
+      <section id="panel-activity" role="tabpanel" hidden>Activity panel</section>
+      <section id="panel-settings" role="tabpanel" hidden>Settings panel</section>
+    </main>
+    <script type="module" src="/navigation-tab-group-setup.mjs"></script>
+  </body>
+</html>

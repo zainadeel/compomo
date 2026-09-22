@@ -1,0 +1,116 @@
+@import '../../utils/radius.css';
+@import '../../utils/control-density.css';
+@import '../../utils/control-parts.css';
+@import '../../utils/control-width.css';
+@import '../../utils/focus-ring.css';
+@import '../../utils/interaction-fill.css';
+@import '../../utils/control-inactive.css';
+
+:host {
+  display: inline-flex;
+  min-inline-size: 0;
+  --_select-toggle-dot-position: var(--dimension-size-050);
+  --_select-toggle-dot-idle: var(--dimension-space-025);
+  --_select-toggle-dot-active: var(--_select-toggle-dot-idle);
+  --_select-toggle-dot-gap: var(--dimension-space-012);
+}
+
+:host(.ds-control--sm) {
+  --_select-toggle-dot-position: calc(var(--dimension-size-050) * 3 / 4);
+  --_select-toggle-dot-idle: var(--dimension-space-012);
+}
+
+:host(.ds-control--lg) {
+  --_select-toggle-dot-position: calc(var(--dimension-size-050) * 5 / 4);
+  --_select-toggle-dot-idle: calc(var(--dimension-size-050) * 3 / 4);
+  --_select-toggle-dot-gap: var(--dimension-space-025);
+}
+
+:host(.ds-control-width--fill) {
+  display: flex;
+  width: 100%;
+}
+
+.trigger {
+  appearance: none;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  justify-content: space-between;
+  background: var(--color-background-transparent);
+  border: 0;
+  color: var(--color-foreground-secondary);
+  font-family: inherit;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.trigger--bordered {
+  --ds-interaction-border-width: var(--dimension-stroke-width-012);
+  --ds-interaction-border-color: var(--color-border-tertiary);
+}
+
+:host(.ds-control-width--fill) .trigger {
+  width: 100%;
+}
+
+.trigger__content {
+  display: inline-flex;
+  align-items: center;
+  flex: 1 1 auto;
+  gap: var(--ds-control-gap);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.trigger__label {
+  min-width: 0;
+  overflow: hidden;
+  text-align: left;
+}
+
+.trigger__indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 calc(var(--ds-control-icon) - var(--dimension-size-100));
+  width: calc(var(--ds-control-icon) - var(--dimension-size-100));
+  height: var(--ds-control-icon);
+  gap: var(--_select-toggle-dot-gap);
+}
+
+.trigger__dot-position {
+  display: grid;
+  place-items: center;
+  flex: 0 0 var(--_select-toggle-dot-position);
+  width: var(--_select-toggle-dot-position);
+  height: var(--_select-toggle-dot-position);
+}
+
+.trigger__dot {
+  width: var(--_select-toggle-dot-idle);
+  height: var(--_select-toggle-dot-idle);
+  border-radius: var(--dimension-radius-half);
+  background: var(--color-foreground-quaternary);
+}
+
+.trigger__dot--active {
+  width: var(--_select-toggle-dot-active);
+  height: var(--_select-toggle-dot-active);
+  background: var(--color-foreground-secondary);
+}
+
+@media (forced-colors: active) {
+  .trigger {
+    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-control-boundary);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-012));
+  }
+
+  .trigger__dot {
+    background: var(--ds-forced-color-content);
+  }
+
+  .trigger__dot--active {
+    background: var(--ds-forced-color-selected);
+  }
+}
