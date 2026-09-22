@@ -3228,6 +3228,84 @@ test('bounds the complete header, frame, and footer composition with height', as
   await expect(table.locator('.ds-table__footer')).toHaveCSS('border-end-start-radius', '10px');
 });
 
+test('supports edge-to-edge chrome around an inset frame and responsive cards', async ({
+  page,
+}) => {
+  const owner = page.locator('#edge-to-edge-owner');
+  const table = page.locator('#edge-to-edge');
+  const surface = table.locator('.ds-table');
+  const caption = table.locator('.ds-table__caption-bar');
+  const frame = table.locator('.ds-table__frame');
+  const footer = table.locator('.ds-table__footer');
+
+  await expect(surface).toHaveClass(/ds-table--chrome-edge-to-edge/);
+  await expect(caption).toHaveCSS('border-radius', '0px');
+  await expect(footer).toHaveCSS('border-radius', '0px');
+  await expect(frame).toHaveCSS('margin', '16px');
+  await expect(frame).toHaveCSS('border-radius', '4px');
+  await expect(frame).toHaveCSS('box-shadow', 'none');
+  await expect(frame).toHaveCSS('outline-style', 'solid');
+  await expect(frame).toHaveCSS('outline-width', '1px');
+  await expect(footer).toHaveCSS('border-top-width', '0px');
+
+  const desktopGeometry = await surface.evaluate(element => {
+    const root = element.getBoundingClientRect();
+    const captionRect = element
+      .querySelector<HTMLElement>('.ds-table__caption-bar')!
+      .getBoundingClientRect();
+    const frameRect = element
+      .querySelector<HTMLElement>('.ds-table__frame')!
+      .getBoundingClientRect();
+    const footerElement = element.querySelector<HTMLElement>('.ds-table__footer')!;
+    const footerRect = footerElement.getBoundingClientRect();
+    const footerDivider = getComputedStyle(footerElement, '::before');
+    const frameStyle = getComputedStyle(element.querySelector<HTMLElement>('.ds-table__frame')!);
+    const probe = document.createElement('span');
+    probe.style.background = 'var(--color-border-tertiary)';
+    document.body.append(probe);
+    const tertiary = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return {
+      captionStart: captionRect.left - root.left,
+      captionEnd: root.right - captionRect.right,
+      frameStart: frameRect.left - root.left,
+      frameEnd: root.right - frameRect.right,
+      footerStart: footerRect.left - root.left,
+      footerEnd: root.right - footerRect.right,
+      footerDividerColor: footerDivider.backgroundColor,
+      footerDividerHeight: footerDivider.height,
+      footerDividerTop: footerDivider.top,
+      frameOutlineColor: frameStyle.outlineColor,
+      tertiary,
+    };
+  });
+  expect(desktopGeometry).toMatchObject({
+    captionStart: 0,
+    captionEnd: 0,
+    frameStart: 16,
+    frameEnd: 16,
+    footerStart: 0,
+    footerEnd: 0,
+    footerDividerColor: desktopGeometry.tertiary,
+    footerDividerHeight: '1px',
+    footerDividerTop: '-1px',
+    frameOutlineColor: desktopGeometry.tertiary,
+  });
+
+  await owner.evaluate(element => {
+    (element as HTMLElement).style.inlineSize = '600px';
+  });
+  await expect(surface).not.toHaveClass(/ds-table--cards-active/);
+  await expect(frame).toHaveCSS('margin', '16px');
+
+  await page.setViewportSize({ width: 767, height: 800 });
+  await expect(surface).toHaveClass(/ds-table--cards-active/);
+  await expect(frame).toHaveCSS('margin', '0px');
+  await expect(frame).toHaveCSS('outline-style', 'none');
+  await expect(table.locator('.ds-table__row').first()).toHaveCSS('display', 'grid');
+  await expect(table.locator('.ds-table__table')).toHaveCSS('padding-left', '16px');
+});
+
 test('fits to a collapsing page scrollport before handing vertical scroll to native groups', async ({
   page,
 }) => {

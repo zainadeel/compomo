@@ -1,10 +1,17 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  isTableCardViewport,
   resolveTableLayoutMetrics,
   TableLayoutController,
   type TableOverflowState,
 } from '../src/wc/components/Table/table-layout-controller';
+
+test('activates responsive cards from the browser viewport breakpoint', () => {
+  assert.equal(isTableCardViewport(767), true);
+  assert.equal(isTableCardViewport(768), false);
+  assert.equal(isTableCardViewport(1200), false);
+});
 
 test('resolves viewport, sticky, and floating-control geometry in one snapshot', () => {
   assert.deepEqual(

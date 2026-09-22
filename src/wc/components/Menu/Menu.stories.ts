@@ -11,7 +11,7 @@ import { TOKEN_CSS_LENGTHS } from '../../utils/token-defaults';
 import { PANEL_NAV_USER_MENU_PLACEMENT } from './menu-placement';
 import { shellGradientPickerSections } from '../../shell/shell-gradient-presets';
 import { isolatedOverlayDocs } from '../../stories/isolated-overlay-docs';
-import type { MenuItemData, MenuReorderDetail } from './menu-types';
+import type { MenuItemData, MenuItemToggleDetail, MenuReorderDetail } from './menu-types';
 
 const items = [
   { label: 'Edit', value: 'edit' },
@@ -172,14 +172,45 @@ export const WithPrefixIcons: Story = {
 };
 
 const reorderableItems: MenuItemData[] = [
-  { label: 'Driver', value: 'driver', showSwitch: true, switchValue: true, reorderable: true },
-  { label: 'Status', value: 'status', showSwitch: true, switchValue: true, reorderable: true },
-  { label: 'Vehicle', value: 'vehicle', showSwitch: true, switchValue: false, reorderable: true },
-  { label: 'Action', value: 'action', showSwitch: true, switchValue: true, isInactive: true },
+  {
+    label: 'Driver',
+    value: 'driver',
+    reorderable: false,
+    reorderHandleInactive: true,
+    trailingActions: [
+      { id: 'visibility', icon: 'EyeStrikethrough', label: 'Hide Driver' },
+      { id: 'pin', icon: 'Cross', label: 'Unpin Driver' },
+    ],
+  },
+  {
+    label: 'Status',
+    value: 'status',
+    reorderable: true,
+    trailingActions: [
+      { id: 'visibility', icon: 'EyeStrikethrough', label: 'Hide Status' },
+      { id: 'pin', icon: 'Pin', label: 'Pin Status' },
+    ],
+  },
+  {
+    label: 'Vehicle',
+    value: 'vehicle',
+    reorderable: true,
+    trailingActions: [
+      { id: 'visibility', icon: 'Eye', label: 'Show Vehicle' },
+      { id: 'pin', icon: 'Pin', label: 'Pin Vehicle' },
+    ],
+  },
+  {
+    label: 'Action',
+    value: 'action',
+    trailingActions: [
+      { id: 'visibility', icon: 'EyeStrikethrough', label: 'Hide Action', isInactive: true },
+    ],
+  },
 ];
 
 export const ReorderableSwitches: Story = {
-  name: 'Reorderable switch rows',
+  name: 'Reorderable action rows',
   args: {
     items: reorderableItems,
   },
@@ -190,7 +221,7 @@ export const ReorderableSwitches: Story = {
     docs: {
       description: {
         story:
-          'Reorderable rows prefix a Drag handle. Pointer drag and Alt+Arrow Up/Down emit dsReorder without closing or mutating items. Locked rows stay last.',
+          'Action rows keep their resting surface quiet: only the inset Drag handle and trailing actions show hover or press feedback. Pointer drag and Alt+Arrow Up/Down emit dsReorder without closing or mutating items; an unavailable handle remains tertiary and non-interactive.',
       },
     },
   },
@@ -210,11 +241,29 @@ export const ReorderableSwitches: Story = {
           anchor-id="menu-anchor-reorder"
           @dsReorder=${(event: CustomEvent<MenuReorderDetail>) =>
             updateArgs({ items: event.detail.items })}
-          @dsSelect=${(event: CustomEvent<MenuItemData>) =>
+          @dsItemToggle=${(event: CustomEvent<MenuItemToggleDetail>) =>
             updateArgs({
               items: items.map(item =>
-                item.value === event.detail.value && !item.isInactive
-                  ? { ...item, switchValue: !item.switchValue }
+                item.value === event.detail.item.value && event.detail.action
+                  ? {
+                      ...item,
+                      trailingActions: item.trailingActions?.map(action =>
+                        action.id !== event.detail.action?.id
+                          ? action
+                          : action.id === 'visibility'
+                            ? {
+                                ...action,
+                                icon:
+                                  action.icon === 'EyeStrikethrough' ? 'Eye' : 'EyeStrikethrough',
+                                label: `${action.icon === 'EyeStrikethrough' ? 'Show' : 'Hide'} ${item.label}`,
+                              }
+                            : {
+                                ...action,
+                                icon: action.icon === 'Pin' ? 'Cross' : 'Pin',
+                                label: `${action.icon === 'Pin' ? 'Unpin' : 'Pin'} ${item.label}`,
+                              }
+                      ),
+                    }
                   : item
               ),
             })}

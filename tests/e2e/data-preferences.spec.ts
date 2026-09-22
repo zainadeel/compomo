@@ -5,6 +5,15 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
+test('keeps the embedded tab strip transparent so the owning panel highlight remains visible', async ({
+  page,
+}) => {
+  await expect(page.locator('#embedded .data-preferences__tabs')).toHaveCSS(
+    'background-color',
+    'rgba(0, 0, 0, 0)'
+  );
+});
+
 test('shares controlled preferences across tabs and restores focus @cross-browser', async ({
   page,
 }) => {
@@ -39,7 +48,7 @@ test('shares controlled preferences across tabs and restores focus @cross-browse
   await dialog.getByRole('option', { name: 'Status', exact: true }).click();
   await dialog.getByRole('option', { name: 'Descending', exact: true }).click();
   await dialog.getByRole('tab', { name: 'Customize', exact: true }).click();
-  await dialog.getByRole('menuitemcheckbox', { name: 'Vehicle', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Hide Vehicle', exact: true }).click();
   await expect
     .poll(() =>
       page.locator('#preferences').evaluate((el: HTMLDsDataPreferencesElement) => ({
@@ -91,6 +100,7 @@ test('stages filter changes and keeps Apply visible and inactive until changed',
   page,
 }) => {
   await page.getByRole('button', { name: 'Configure view' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Configure view', exact: true });
   const apply = page.getByRole('button', { name: 'Apply', exact: true });
   await expect(apply).toHaveCount(0);
   await page.getByRole('option', { name: 'Driving', exact: true }).click();
@@ -103,8 +113,8 @@ test('stages filter changes and keeps Apply visible and inactive until changed',
   });
   expect(actionGap).toEqual([8, 8]);
   await expect(page.locator('#preferences')).toHaveJSProperty('values', {});
-  await page.getByRole('tab', { name: 'Sort', exact: true }).click();
-  await page.getByRole('tab', { name: 'Filters', exact: true }).click();
+  await dialog.getByRole('tab', { name: 'Sort', exact: true }).click();
+  await dialog.getByRole('tab', { name: 'Filters', exact: true }).click();
   await expect(apply).toBeEnabled();
   await apply.click();
   await expect(page.locator('#preferences')).toHaveJSProperty('values', { status: ['driving'] });

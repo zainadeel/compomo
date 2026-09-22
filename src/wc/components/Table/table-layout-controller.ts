@@ -23,8 +23,13 @@ export interface TableLayoutControllerOptions {
   elements: () => TableLayoutElements;
   mode: () => TableLayoutMode;
   overflowChanged: (state: TableOverflowState) => void;
-  narrowChanged?: (narrow: boolean) => void;
   verticalEdgeWheel?: (deltaY: number) => boolean;
+}
+
+export const TABLE_CARD_VIEWPORT_BREAKPOINT = 768;
+
+export function isTableCardViewport(inlineSize: number): boolean {
+  return inlineSize < TABLE_CARD_VIEWPORT_BREAKPOINT;
 }
 
 export interface TableLayoutMetricInput {
@@ -233,15 +238,6 @@ export class TableLayoutController {
     const crowded = pinnedSize > 0 && pinnedSize >= metrics.visibleInlineSize;
     if (elements.frame?.getAttribute('data-pins-crowded') !== String(crowded))
       elements.frame?.setAttribute('data-pins-crowded', String(crowded));
-    // Reuse viewport observation rather than size-contain the recycled body:
-    // WebKit resets native scrolling when contained virtual rows are replaced.
-    // Responsive mode belongs to the frame, not the scrollable content width:
-    // classic scrollbar gutters must not move the card breakpoint.
-    const narrow = (elements.frame?.clientWidth ?? metrics.visibleInlineSize) < 768;
-    this.options.narrowChanged?.(narrow);
-    if (elements.frame?.getAttribute('data-narrow') !== String(narrow))
-      elements.frame?.setAttribute('data-narrow', String(narrow));
-
     this.setProperty(viewport, '--ds-table-visible-inline-size', `${metrics.visibleInlineSize}px`);
     if (elements.stickyHeaderTable) {
       this.setProperty(

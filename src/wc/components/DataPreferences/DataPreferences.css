@@ -63,4 +63,5 @@
 .data-preferences-panel .data-preferences__tabs {
   flex: 0 0 auto;
   padding: var(--dimension-space-200);
+  background: transparent;
 }

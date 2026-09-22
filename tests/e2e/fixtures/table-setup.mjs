@@ -928,6 +928,12 @@ fixedHeight.rows = Array.from({ length: 12 }, (_, index) => ({
 fixedHeight.displayedCount = 12;
 fixedHeight.totalCount = 40;
 
+const edgeToEdge = document.getElementById('edge-to-edge');
+edgeToEdge.columns = columns;
+edgeToEdge.rows = rows;
+edgeToEdge.displayedCount = rows.length;
+edgeToEdge.totalCount = 40;
+
 const viewportFit = document.getElementById('viewport-fit');
 viewportFit.columns = interactive.columns;
 viewportFit.grouping = { fieldId: 'status', direction: 'asc' };
@@ -994,10 +1000,12 @@ const customizerRows = rows.map(row => ({
 customizer.rows = customizerRows;
 customizer.hiddenFieldIds = [];
 customizer.fieldOrder = [];
+customizer.pinnedFieldIds = [];
 customizer.sort = { fieldId: 'name', direction: 'asc' };
 customizer.addEventListener('dsFieldsConfigChange', event => {
   customizer.hiddenFieldIds = event.detail.hiddenFieldIds;
   customizer.fieldOrder = event.detail.fieldOrder;
+  customizer.pinnedFieldIds = event.detail.pinnedFieldIds;
 });
 customizer.addEventListener('dsDataModeChange', event => {
   customizer.dataMode = event.detail.dataMode;

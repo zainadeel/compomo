@@ -49,10 +49,12 @@ function applyColumnsConfig(event: Event) {
   const table = event.currentTarget as HTMLElement & {
     hiddenFieldIds: string[];
     fieldOrder: string[];
+    pinnedFieldIds: string[];
   };
   const detail = (event as CustomEvent<DataFieldsConfigChangeDetail>).detail;
   table.hiddenFieldIds = detail.hiddenFieldIds;
   table.fieldOrder = detail.fieldOrder;
+  table.pinnedFieldIds = detail.pinnedFieldIds;
 }
 
 function tableRowSearchText(row: TableRow): string {
@@ -959,6 +961,7 @@ const meta: Meta = {
   },
   argTypes: {
     captionVisibility: { control: 'select', options: ['visible', 'hidden'] },
+    chromeLayout: { control: 'select', options: ['contained', 'edge-to-edge'] },
     stickyHeader: { control: 'boolean' },
     selectionMode: { control: 'select', options: ['none', 'multiple'] },
     loading: { control: 'boolean' },
@@ -970,6 +973,7 @@ const meta: Meta = {
   },
   args: {
     captionVisibility: 'visible',
+    chromeLayout: 'contained',
     stickyHeader: false,
     selectionMode: 'multiple',
     loading: false,
@@ -999,6 +1003,7 @@ export const Playground: Story = {
         .selectedRowIds=${selectedRowIds}
         caption="Workforce overview"
         caption-visibility=${args['captionVisibility']}
+        chrome-layout=${args['chromeLayout']}
         selection-mode=${args['selectionMode']}
         .displayedCount=${args['displayedCount']}
         .totalCount=${args['totalCount']}
@@ -1149,7 +1154,7 @@ export const SafetyEvents: Story = {
     docs: {
       description: {
         story:
-          'A Motive Dashboard-inspired safety-events table. Its table-owned 48px header gives one full-width, 8px-inset surface to the application through the header slot. Selecting rows overlays ds-bar-action above the footer; that overlay inset is application layout, not table chrome. The footer pairs an application-owned last-updated label on the left with the controlled result summary on the right. The checkbox and blank action lanes stay pinned; each owns a fixed divider and a row-clipped shadow directed into the scrolling columns while more content remains.',
+          'A Motive Dashboard-inspired safety-events table using edge-to-edge chrome around an inset data frame with a tertiary outer border. Its table-owned 48px header gives one full-width, 8px-inset surface to the application through the header slot. Below 768px the same semantic table becomes responsive cards while the toolbar and footer remain edge to edge. Selecting rows overlays ds-bar-action above the footer; that overlay inset is application layout, not table chrome. The footer pairs an application-owned last-updated label on the left with the controlled result summary on the right.',
       },
     },
   },
@@ -1162,6 +1167,8 @@ export const SafetyEvents: Story = {
     return html`
       <div style="position:relative;min-width:0;">
         <ds-table
+          chrome-layout="edge-to-edge"
+          responsive-layout="cards"
           fit-viewport
           viewport-inset-block-start="var(--dimension-space-200)"
           viewport-inset-block-end="var(--dimension-space-200)"
@@ -1862,7 +1869,7 @@ export const ColumnCustomizer: Story = {
     docs: {
       description: {
         story:
-          'Opt-in columnCustomizer keeps columns as the catalog. hiddenFieldIds and fieldOrder are controlled; dsFieldsConfigChange reports live show/hide and data-column reorder. The trailing neutral Customize control opens the shared Menu of reorderable switch rows and stays open while toggling or dragging. Its label and resting foreground do not change when the controlled column configuration differs from the catalog default. Below 900px it becomes the icon-only Customize menu button with the same neutral resting foreground. Selection and action columns are omitted from the menu, action columns stay fixed last, and the last remaining visible data column cannot be hidden. Persistence stays in the application.',
+          'Opt-in columnCustomizer keeps columns as the catalog. hiddenFieldIds, fieldOrder, and pinnedFieldIds are controlled; dsFieldsConfigChange reports live show/hide, pin, and partitioned reorder intent. Each row keeps visibility and pinning independent. Pinned columns move into a contiguous sticky-start block and can only reorder within that block; unpinning inserts the column first among unpinned columns. Selection and action columns remain system-managed and absent from the menu. Persistence stays in the application.',
       },
       ...isolatedOverlayDocs('480px'),
     },

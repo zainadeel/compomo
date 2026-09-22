@@ -6,6 +6,7 @@ export type {
   TableCellRange,
   TableCellsChangeDetail,
   TableCaptionVisibility,
+  TableChromeLayout,
   TableCellAlign,
   TableCellAction,
   TableCellActionDetail,
