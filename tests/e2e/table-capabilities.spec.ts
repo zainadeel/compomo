@@ -133,20 +133,19 @@ test('shared editors preserve cell geometry, draft boundaries, popup anchoring a
 test('cards have inset field dividers, one interaction surface, and edge-to-edge chrome @cross-browser', async ({
   page,
 }) => {
+  await page.setViewportSize({ width: 768, height: 800 });
   await page.goto('/table-capabilities.html');
   const table = page.locator('#review');
   await expect(table.locator('[data-row-id="review-0"]')).toBeVisible();
   await table.evaluate((el: HTMLDsTableElement) => {
     el.rows = el.rows.slice(0, 3);
     el.dataMode = 'infinite';
-    el.style.width = '768px';
+    el.style.width = '600px';
     el.displayedCount = 3;
     el.totalCount = 3;
   });
   await expect(table.locator('.ds-table__frame')).toHaveAttribute('data-narrow', 'false');
-  await table.evaluate((el: HTMLElement) => {
-    el.style.width = '767px';
-  });
+  await page.setViewportSize({ width: 767, height: 800 });
   await expect(table.locator('.ds-table__frame')).toHaveAttribute('data-narrow', 'true');
   const row = table.locator('[data-row-id="review-0"]');
   const nextRow = table.locator('[data-row-id="review-1"]');
@@ -403,6 +402,7 @@ for (const layout of ['virtual', 'native', 'document'] as const) {
 test('native cards expose a clickable corner checkbox without header UI @cross-browser', async ({
   page,
 }) => {
+  await page.setViewportSize({ width: 767, height: 800 });
   await page.goto('/table-capabilities.html');
   const table = page.locator('#review');
   await expect(table.locator('[data-row-id="review-0"]')).toBeVisible();

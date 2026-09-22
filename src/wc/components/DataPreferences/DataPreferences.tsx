@@ -1,5 +1,5 @@
 import type { DataField } from '../../utils/data-field';
-import type { MenuItemData, MenuSection } from '../Menu/menu-types';
+import type { MenuItemData, MenuItemToggleDetail, MenuSection } from '../Menu/menu-types';
 import { resolveAnchoredOverlayBoundaryRect } from '../../utils/anchored-overlay-boundary';
 import {
   Component,
@@ -30,10 +30,12 @@ import type { DataGroupOption } from '../DataGroup/DataGroup';
 import { dataSortMenuSections, nextDataSortStateFromMenuItem } from '../DataSort/data-sort-menu';
 import {
   tableColumnCustomizerLabel,
-  tableColumnCustomizerMenuItems,
+  tableColumnCustomizerSections,
   tableDataColumns,
   toggleTableColumnHidden,
-  resolveTableColumnOrder,
+  reorderTableColumnPartition,
+  resolveTableFieldsConfiguration,
+  toggleTableColumnPinned,
 } from '../Table/table-column-customizer';
 import {
   listCustomizerMenuItems,
@@ -87,6 +89,8 @@ export class DataPreferences {
   @Prop() grouping: DataGroupingState | null = null;
   @Prop() hiddenFieldIds: string[] = [];
   @Prop() fieldOrder: string[] = [];
+  /** Controlled user-pinned table-column identities. Ignored for toggle-only catalogs. */
+  @Prop() pinnedFieldIds: string[] = [];
   /** Render shared content without its popup or trigger. */
   @Prop() embedded = false;
   @Prop() activeTab: PreferencesTab = 'filters';
@@ -107,6 +111,40 @@ export class DataPreferences {
       id: column.id,
       label: tableColumnCustomizerLabel(column),
     }));
+  }
+
+  private customizeMenuSections(): MenuSection[] {
+    const catalogSections: MenuSection[] = !this.fields.length
+      ? []
+      : this.catalogReorderable
+        ? tableColumnCustomizerSections(
+            this.fields,
+            this.hiddenFieldIds,
+            this.fieldOrder,
+            this.pinnedFieldIds
+          ).map((section, index, sections) =>
+            index === 0 && sections.length === 1 && this.catalogHeader
+              ? { ...section, header: this.catalogHeader }
+              : section
+          )
+        : [
+            {
+              header: this.catalogHeader ?? (this.customizeOptions.length ? 'Columns' : undefined),
+              items: listCustomizerMenuItems(
+                this.catalogItems(),
+                this.hiddenFieldIds,
+                this.fieldOrder,
+                TOGGLE_ONLY_CATALOG
+              ),
+            },
+          ];
+    return [
+      ...catalogSections,
+      ...this.customizeSections,
+      ...(this.customizeOptions.length
+        ? [{ header: 'Options', items: this.customizeOptions }]
+        : []),
+    ];
   }
   @State() private open = false;
   @State() private tab: PreferencesTab = 'filters';
@@ -325,33 +363,7 @@ export class DataPreferences {
                 <ds-menu
                   embedded
                   menuLabel={this.customizeLabel}
-                  sections={[
-                    ...(this.fields.length
-                      ? [
-                          {
-                            header:
-                              this.catalogHeader ??
-                              (this.customizeOptions.length ? 'Columns' : undefined),
-                            items: this.catalogReorderable
-                              ? tableColumnCustomizerMenuItems(
-                                  this.fields,
-                                  this.hiddenFieldIds,
-                                  this.fieldOrder
-                                )
-                              : listCustomizerMenuItems(
-                                  this.catalogItems(),
-                                  this.hiddenFieldIds,
-                                  this.fieldOrder,
-                                  TOGGLE_ONLY_CATALOG
-                                ),
-                          },
-                        ]
-                      : []),
-                    ...this.customizeSections,
-                    ...(this.customizeOptions.length
-                      ? [{ header: 'Options', items: this.customizeOptions }]
-                      : []),
-                  ]}
+                  sections={this.customizeMenuSections()}
                   onDsSelect={e => {
                     e.stopPropagation();
                     if (!e.detail.value || e.detail.isInactive) return;
@@ -376,28 +388,63 @@ export class DataPreferences {
                           TOGGLE_ONLY_CATALOG
                         ),
                         fieldOrder: resolveListOrder(ids, this.fieldOrder),
+                        pinnedFieldIds: this.pinnedFieldIds,
                       });
                       return;
                     }
-                    this.dsFieldsConfigChange.emit({
-                      hiddenFieldIds: toggleTableColumnHidden(
+                    this.dsFieldsConfigChange.emit(
+                      resolveTableFieldsConfiguration(
+                        this.fields,
+                        toggleTableColumnHidden(this.fields, this.hiddenFieldIds, e.detail.value),
+                        this.fieldOrder,
+                        this.pinnedFieldIds
+                      )
+                    );
+                  }}
+                  onDsItemToggle={(e: CustomEvent<MenuItemToggleDetail>) => {
+                    e.stopPropagation();
+                    if (!this.catalogReorderable || !e.detail.item.value) return;
+                    if (e.detail.action?.id === 'visibility') {
+                      this.dsFieldsConfigChange.emit(
+                        resolveTableFieldsConfiguration(
+                          this.fields,
+                          toggleTableColumnHidden(
+                            this.fields,
+                            this.hiddenFieldIds,
+                            e.detail.item.value
+                          ),
+                          this.fieldOrder,
+                          this.pinnedFieldIds
+                        )
+                      );
+                      return;
+                    }
+                    if (e.detail.action?.id !== 'pin') return;
+                    this.dsFieldsConfigChange.emit(
+                      toggleTableColumnPinned(
                         this.fields,
                         this.hiddenFieldIds,
-                        e.detail.value
-                      ),
-                      fieldOrder: resolveTableColumnOrder(this.fields, this.fieldOrder),
-                    });
+                        this.fieldOrder,
+                        this.pinnedFieldIds,
+                        e.detail.item.value
+                      )
+                    );
                   }}
                   onDsReorder={e => {
                     e.stopPropagation();
                     if (!this.catalogReorderable) return;
-                    this.dsFieldsConfigChange.emit({
-                      hiddenFieldIds: this.hiddenFieldIds,
-                      fieldOrder: e.detail.items
-                        .filter(item => item.reorderable)
-                        .map(item => item.value!)
-                        .filter(Boolean),
-                    });
+                    this.dsFieldsConfigChange.emit(
+                      reorderTableColumnPartition(
+                        this.fields,
+                        this.hiddenFieldIds,
+                        this.fieldOrder,
+                        this.pinnedFieldIds,
+                        e.detail.items
+                          .filter(item => item.reorderable)
+                          .map(item => item.value!)
+                          .filter(Boolean)
+                      )
+                    );
                   }}
                 />
               )}

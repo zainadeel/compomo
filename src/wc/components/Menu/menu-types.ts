@@ -15,6 +15,28 @@ export interface MenuItemTagData {
   rounded?: boolean;
 }
 
+export interface MenuItemTrailingToggleData {
+  /** Icon-only toggle glyph. */
+  icon: string;
+  /** Accessible name describing the requested state change. */
+  label: string;
+  /** Controlled toggle state. */
+  pressed: boolean;
+  /** Keep the toggle visible but unavailable. */
+  isInactive?: boolean;
+}
+
+export interface MenuItemActionData {
+  /** Stable action identity for consumer event handling. */
+  id: string;
+  /** Icon-only action glyph. */
+  icon: string;
+  /** Accessible name describing the action. */
+  label: string;
+  /** Keep the action visible but unavailable. */
+  isInactive?: boolean;
+}
+
 export interface MenuItemData {
   label: string;
   value?: string;
@@ -33,6 +55,19 @@ export interface MenuItemData {
   switchValue?: boolean;
   /** Prefix a drag handle and allow pointer and keyboard reorder within the contiguous reorderable run. */
   reorderable?: boolean;
+  /** Keep the drag handle visible as an inactive alignment affordance when reordering is unavailable. */
+  reorderHandleInactive?: boolean;
+  /** Append a separate unfilled icon toggle after a decorative divider. */
+  trailingToggle?: MenuItemTrailingToggleData;
+  /** Append independent unfilled icon actions while the row owns the shared hover surface. */
+  trailingActions?: MenuItemActionData[];
+}
+
+export interface MenuItemToggleDetail {
+  item: MenuItemData;
+  pressed: boolean;
+  /** Identifies an independent trailing action; omitted for the legacy toggle control. */
+  action?: MenuItemActionData;
 }
 
 /** Next section item order after a pointer or keyboard reorder. */
@@ -46,6 +81,10 @@ export interface MenuReorderDetail {
 
 export interface MenuItemsSection {
   header?: string;
+  /** Secondary heading beneath a shared parent section heading. */
+  subheader?: string;
+  /** Separate this subsection from the previous one with an inset divider. */
+  insetDividerBefore?: boolean;
   items: MenuItemData[];
 }
 

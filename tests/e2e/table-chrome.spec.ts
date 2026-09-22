@@ -87,7 +87,7 @@ test('supports product-owned order choices for one grouping data point', async (
     ]);
 });
 
-test('owns a caption-bar column customizer menu for live show/hide and reorder', async ({
+test('owns a caption-bar column customizer for live visibility, pinning, and reorder', async ({
   page,
 }) => {
   const table = page.locator('#column-customizer');
@@ -99,17 +99,19 @@ test('owns a caption-bar column customizer menu for live show/hide and reorder',
   await expect(table.getByRole('columnheader', { name: 'Action' })).toBeVisible();
 
   await trigger.click();
-  const menu = page.getByRole('menu', { name: 'Customize table' });
+  const menu = page.getByRole('dialog', { name: 'Customize table' });
   await expect(menu).toBeVisible();
   await expect(menu).toHaveCSS('animation-name', 'dsChoiceFadeIn');
-  await expect(menu.getByRole('menuitemcheckbox', { name: 'Driver' })).toBeVisible();
-  await expect(menu.getByRole('menuitemcheckbox', { name: 'Action' })).toHaveCount(0);
-  await expect(menu.getByRole('menuitemcheckbox', { name: /Select/ })).toHaveCount(0);
-  await expect(
-    menu.getByRole('menuitemcheckbox', { name: 'Driver' }).locator('[data-menu-handle]')
-  ).toBeVisible();
+  const driverRow = menu.getByRole('group', { name: 'Driver', exact: true });
+  const statusRow = menu.getByRole('group', { name: 'Status', exact: true });
+  await expect(driverRow).toBeVisible();
+  await expect(menu.getByRole('button', { name: 'Action', exact: true })).toHaveCount(0);
+  await expect(menu.getByRole('button', { name: /Select/ })).toHaveCount(0);
+  await expect(driverRow.locator('[data-menu-handle]')).toBeVisible();
+  await expect(driverRow).not.toHaveClass(/ds-interaction-fill/);
+  await expect(driverRow.locator('[data-menu-handle]')).toHaveClass(/ds-interaction-fill/);
 
-  await menu.getByRole('menuitemcheckbox', { name: 'Status' }).press('Alt+ArrowUp');
+  await statusRow.getByRole('button', { name: 'Hide Status' }).press('Alt+ArrowUp');
   await expect
     .poll(() =>
       table
@@ -119,19 +121,59 @@ test('owns a caption-bar column customizer menu for live show/hide and reorder',
     .toEqual(['status', 'name', 'vehicle', 'score', 'action']);
   await expect(menu).toBeVisible();
 
-  await menu.getByRole('menuitemcheckbox', { name: 'Status' }).click();
+  await menu.getByRole('button', { name: 'Pin Status' }).click();
+  await expect(menu.getByRole('button', { name: 'Unpin Status' })).not.toHaveAttribute(
+    'aria-pressed'
+  );
+  await expect(menu.getByText('Columns', { exact: true })).toHaveCount(1);
+  await expect(menu.getByText('Pinned columns', { exact: true })).toBeVisible();
+  await expect(menu.getByText('Other columns', { exact: true })).toBeVisible();
+  await expect(menu.locator('.menu-subsection-divider')).toBeVisible();
+  await expect(statusRow.locator('[data-menu-handle]')).toBeVisible();
+  await expect(statusRow.locator('[data-menu-handle]')).toHaveClass(/menu-item__handle--inactive/);
+  await expect(statusRow.locator('[data-menu-handle]')).not.toHaveClass(/ds-interaction-fill/);
+  await expect(
+    table.locator(
+      '.ds-table__head .ds-table__header-cell[data-column-id="status"].ds-table__cell--sticky-start'
+    )
+  ).toBeVisible();
+
+  await menu.getByRole('button', { name: 'Pin Vehicle' }).click();
+  await expect
+    .poll(() =>
+      table
+        .locator('.ds-table__head .ds-table__header-cell[data-column-id]')
+        .evaluateAll(cells => cells.map(cell => cell.getAttribute('data-column-id')))
+    )
+    .toEqual(['status', 'vehicle', 'name', 'score', 'action']);
+  await expect(statusRow.locator('[data-menu-handle]')).toBeVisible();
+  await expect(statusRow.locator('[data-menu-handle]')).not.toHaveClass(
+    /menu-item__handle--inactive/
+  );
+
+  await menu.getByRole('button', { name: 'Unpin Status' }).click();
+  await expect
+    .poll(() =>
+      table
+        .locator('.ds-table__head .ds-table__header-cell[data-column-id]')
+        .evaluateAll(cells => cells.map(cell => cell.getAttribute('data-column-id')))
+    )
+    .toEqual(['vehicle', 'status', 'name', 'score', 'action']);
+
+  await menu.getByRole('button', { name: 'Hide Status' }).click();
   await expect(table.getByRole('columnheader', { name: /Status/ })).toHaveCount(0);
   await expect(menu).toBeVisible();
   await expect(trigger).toHaveAccessibleName('Customize table');
 
-  await menu.getByRole('menuitemcheckbox', { name: 'Driver' }).click();
-  await menu.getByRole('menuitemcheckbox', { name: 'Vehicle' }).click();
-  const lastVisible = menu.getByRole('menuitemcheckbox', { name: 'Safety score' });
-  await expect(lastVisible).toHaveAttribute('aria-disabled', 'true');
-  await expect(lastVisible).toHaveAttribute('aria-checked', 'true');
+  await menu.getByRole('button', { name: 'Hide Driver' }).click();
+  await menu.getByRole('button', { name: 'Hide Vehicle' }).click();
+  const lastVisible = menu.getByRole('button', { name: 'Hide Safety score' });
+  await expect(lastVisible).toBeDisabled();
+  await expect(lastVisible).not.toHaveAttribute('aria-pressed');
   await expect(table.getByRole('columnheader', { name: /Safety score/ })).toBeVisible();
-  await lastVisible.focus();
-  await expect(lastVisible).toBeFocused();
+  const lastVisiblePin = menu.getByRole('button', { name: 'Pin Safety score' });
+  await lastVisiblePin.focus();
+  await expect(lastVisiblePin).toBeFocused();
   await page.keyboard.press('Alt+ArrowUp');
   await expect(table.locator('ds-menu').getByRole('status')).toContainText(
     'Safety score moved to position'
@@ -149,10 +191,8 @@ test('keeps the Customize control neutral when columns are customized at typical
   const trigger = table.getByRole('button', { name: 'Customize table' });
   await trigger.click();
   await page
-    .getByRole('menu', { name: 'Customize table' })
-    .getByRole('menuitemcheckbox', {
-      name: 'Status',
-    })
+    .getByRole('dialog', { name: 'Customize table' })
+    .getByRole('button', { name: 'Hide Status', exact: true })
     .click();
   await expect(trigger).toHaveAccessibleName('Customize table');
   await expect(trigger.locator('.ds-button__label')).toHaveJSProperty('emphasis', false);
@@ -214,10 +254,8 @@ test('uses an icon-only neutral Customize control below 900px when customized', 
 
   await trigger.click();
   await page
-    .getByRole('menu', { name: 'Customize table' })
-    .getByRole('menuitemcheckbox', {
-      name: 'Status',
-    })
+    .getByRole('dialog', { name: 'Customize table' })
+    .getByRole('button', { name: 'Hide Status', exact: true })
     .click();
   await expect(trigger).toHaveAccessibleName('Customize table');
 
@@ -1173,7 +1211,7 @@ test('owns a controlled caption-bar data mode switcher for supported modes', asy
 
   await table.getByRole('button', { name: 'Customize table' }).click();
   await expect(page.getByRole('menu', { name: 'Table variation' })).toHaveCount(0);
-  await expect(page.getByRole('menu', { name: 'Customize table' })).toBeVisible();
+  await expect(page.getByRole('dialog', { name: 'Customize table' })).toBeVisible();
 });
 
 test('defaults to adjacent-page controls and supports opting into first and last', async ({

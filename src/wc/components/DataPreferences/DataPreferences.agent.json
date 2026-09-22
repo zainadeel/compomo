@@ -16,9 +16,9 @@
     "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback.",
     "Apply-required filtering stages edits locally, including match mode. Clear immediately clears all filters and discards pending edits. The footer appears when filters are selected or applied; Apply stays in place and inactive without pending changes; applying emits controlled changes. Closing discards unapplied edits.",
     "Embedded presentation delegates its active tab, draft state, Apply, Reset, and dismissal to the owning panel; it renders vertical filter and grouping content without a popup trigger.",
-    "Customize builds its catalog from fields. catalogReorderable defaults to true for a table: rows drag to reorder and the last visible entry stays locked. Pass false for a show-and-hide catalog, where rows are switches with no drag handle and every entry may be hidden.",
+    "Customize builds its catalog from fields. catalogReorderable defaults to true for a table: each row independently controls visibility and left-side pinning, pinned and unpinned sections constrain drag reorder to their own partition, and the last visible entry stays locked. Pass false for a show-and-hide catalog, where rows are switches with no drag handle or pin action and every entry may be hidden.",
     "catalogHeader overrides the catalog section header, which otherwise reads Columns whenever customizeOptions supply a second section. customizeLabel names the Customize menu, so a non-table surface can announce Customize view rather than Customize table.",
-    "Both catalog modes emit dsFieldsConfigChange with hiddenFieldIds and fieldOrder, so a consumer that never reorders can ignore fieldOrder and keep using hiddenFieldIds."
+    "Both catalog modes emit dsFieldsConfigChange with hiddenFieldIds, fieldOrder, and pinnedFieldIds. Toggle-only catalogs preserve pin state unchanged; table catalogs report pin and partitioned order intent."
   ],
   "accessibility": [
     "An icon-only Preferences trigger opens a named dialog. TabGroup owns section keyboard navigation; Escape and outside activation dismiss, returning focus to the trigger."

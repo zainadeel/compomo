@@ -36,12 +36,96 @@
   );
 }
 
+.menu-item-row {
+  display: contents;
+}
+
+.menu-item-row--trailing-toggle {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.menu-item-row--actions {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  padding-inline-end: var(--dimension-space-025);
+}
+
+.menu-item-row--trailing-toggle > .menu-item {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+}
+
+.menu-item-row__trailing-toggle {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.menu-item-row__divider {
+  flex-shrink: 0;
+  width: var(--dimension-stroke-width-012);
+  height: var(--dimension-size-250);
+  margin-inline: var(--dimension-space-025);
+  background: var(--color-border-tertiary);
+}
+
+.menu-item-row__trailing-toggle > ds-button-unfilled {
+  flex-shrink: 0;
+}
+
+.menu-item-row__actions,
+.menu-item-row__action {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.menu-item-row__action > ds-button-unfilled {
+  flex-shrink: 0;
+}
+
+.menu-subsection-divider {
+  display: block;
+  flex-shrink: 0;
+  height: var(--dimension-stroke-width-012);
+  margin-inline: calc(
+    var(--ds-control-padding-inline, var(--dimension-space-075)) +
+      var(--ds-control-label-inset, var(--dimension-space-025))
+  );
+  background: var(--color-border-tertiary);
+}
+
 /* ── Prefix icon / reorder handle ────────────────────────────────────────── */
 
 .menu-item > .menu-item__handle {
   pointer-events: auto;
   cursor: grab;
   touch-action: none;
+}
+
+.menu-item > .menu-item__handle--action-row {
+  --ds-menu-action-handle-size: calc(
+    var(--ds-control-height, var(--dimension-size-400)) - var(--dimension-space-050)
+  );
+
+  width: var(--ds-menu-action-handle-size);
+  height: var(--ds-menu-action-handle-size);
+  margin-inline: calc(
+    (var(--ds-control-icon, var(--dimension-iconography-md)) - var(--ds-menu-action-handle-size)) /
+      2
+  );
+  border-radius: var(--ds-control-radius, var(--dimension-radius-025));
+}
+
+.menu-item > .menu-item__handle--inactive {
+  color: var(--color-foreground-quaternary);
+  pointer-events: none;
+  cursor: default;
+  touch-action: auto;
 }
 
 .menu-item > .menu-item__handle:active,
@@ -74,6 +158,14 @@
 }
 
 @media (forced-colors: active) {
+  .menu-item-row__divider {
+    background: var(--ds-forced-color-content);
+  }
+
+  .menu-subsection-divider {
+    background: var(--ds-forced-color-content);
+  }
+
   .menu-item__drop-rail {
     background: var(--ds-forced-color-selected);
   }

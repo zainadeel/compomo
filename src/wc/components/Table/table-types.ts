@@ -12,6 +12,7 @@ export type TableCellAlign = 'start' | 'center' | 'end';
 export type TableCellLinkTarget = '_self' | '_blank';
 export type TableColumnSticky = 'start' | 'end';
 export type TableCaptionVisibility = 'visible' | 'hidden';
+export type TableChromeLayout = 'contained' | 'edge-to-edge';
 export type TableLoadMoreMode = 'auto' | 'manual';
 export type TableDataMode = 'infinite' | 'pagination' | 'virtual';
 export interface TableDataModeChangeDetail {
@@ -545,10 +546,11 @@ export interface TableRowActivateDetail {
   rowId: string;
 }
 
-/** Controlled show/hide and data-column order for the table-owned customizer. */
+/** Controlled visibility, display order, and user pinning for the table-owned customizer. */
 export interface DataFieldsConfigChangeDetail {
   hiddenFieldIds: string[];
   fieldOrder: string[];
+  pinnedFieldIds: string[];
 }
 
 /** Controlled top-level pagination state. Rows or groups contain only the active page. */

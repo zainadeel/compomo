@@ -18,6 +18,15 @@ export function snapshotMenuSections(sections: readonly MenuSection[]): MenuSect
           : {}),
       };
     }
-    return { ...section, items: section.items.map(item => ({ ...item })) };
+    return {
+      ...section,
+      items: section.items.map(item => ({
+        ...item,
+        ...(item.trailingToggle ? { trailingToggle: { ...item.trailingToggle } } : {}),
+        ...(item.trailingActions
+          ? { trailingActions: item.trailingActions.map(action => ({ ...action })) }
+          : {}),
+      })),
+    };
   });
 }

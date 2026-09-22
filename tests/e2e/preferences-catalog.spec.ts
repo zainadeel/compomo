@@ -32,20 +32,20 @@ test('customizes a non-table catalog with toggle-only rows', async ({ page }) =>
 
 test('keeps the table catalog reorderable with its last column locked', async ({ page }) => {
   const control = page.locator('#table-catalog');
-  const menu = control.getByRole('menu', { name: 'Customize table' });
+  const menu = control.getByRole('dialog', { name: 'Customize table' });
 
   await expect(menu).toBeVisible();
   // Drag handles and the default menu name are unchanged for a table.
   await expect(control.locator('.menu-item__handle').first()).toBeVisible();
 
   // Driver is the only visible data column left, so the table locks it.
-  const driver = menu.getByRole('menuitemcheckbox').filter({ hasText: 'Driver' }).first();
-  await expect(driver).toHaveAttribute('aria-disabled', 'true');
-  await expect(driver).toHaveAttribute('aria-checked', 'true');
+  const driver = menu.getByRole('button', { name: 'Hide Driver' });
+  await expect(driver).toBeDisabled();
+  await expect(driver).not.toHaveAttribute('aria-pressed');
 
   // A hidden column stays togglable back on.
-  const status = menu.getByRole('menuitemcheckbox').filter({ hasText: 'Status' }).first();
-  await expect(status).not.toHaveAttribute('aria-disabled', 'true');
+  const status = menu.getByRole('button', { name: 'Show Status' });
+  await expect(status).toBeEnabled();
   await status.click();
   await expect
     .poll(() => control.evaluate((element: HTMLDsDataPreferencesElement) => element.hiddenFieldIds))

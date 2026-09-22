@@ -37,11 +37,12 @@ import {
 } from './table-action-menu';
 import {
   nextTableColumnCustomizerElementId,
-  resolveTableColumnOrder,
-  resolveTableHiddenColumnIds,
+  reorderTableColumnPartition,
+  resolveTableFieldsConfiguration,
   resolveTableVisibleColumns,
-  tableColumnCustomizerMenuItems,
+  tableColumnCustomizerSections,
   toggleTableColumnHidden,
+  toggleTableColumnPinned,
 } from './table-column-customizer';
 import {
   nextTableDataModeSwitcherElementId,
@@ -69,7 +70,11 @@ import type {
 } from './table-types';
 import { renderTableSkeletonBody } from './table-skeleton-view';
 import { renderTableLoadContent } from './table-load-view';
-import { TableLayoutController } from './table-layout-controller';
+import {
+  isTableCardViewport,
+  TABLE_CARD_VIEWPORT_BREAKPOINT,
+  TableLayoutController,
+} from './table-layout-controller';
 import { TableLoadController } from './table-load-controller';
 import { TableGroupLoadController } from './table-group-load-controller';
 import {
@@ -84,7 +89,7 @@ import {
 } from './table-virtual-model';
 import { TableVirtualController } from './table-virtual-controller';
 import type { PaginationChangeDetail } from '../Pagination/pagination-types';
-import type { MenuItemData, MenuReorderDetail } from '../Menu/menu-types';
+import type { MenuItemData, MenuItemToggleDetail, MenuReorderDetail } from '../Menu/menu-types';
 import { resolvePaginationState } from '../Pagination/pagination-model';
 import { resolveCssLengthPx } from '../../utils/resolve-css-length-px';
 import { isElementTruncated } from '../../utils/is-element-truncated';
@@ -101,6 +106,7 @@ import {
 } from './table-viewport-fit-controller';
 import type {
   TableCaptionVisibility,
+  TableChromeLayout,
   TableCellActionDetail,
   TableColumn,
   DataFieldsConfigChangeDetail,
@@ -135,8 +141,10 @@ export class Table {
   @Element() el!: HTMLElement;
   /** Stable column definitions. Assign through JavaScript. */
   @Prop() columns: TableColumn[] = [];
-  /** Opt-in native card presentation below the 768px table container breakpoint. */
+  /** Opt-in native card presentation below the 768px browser viewport breakpoint. */
   @Prop() responsiveLayout: 'scroll' | 'cards' = 'scroll';
+  /** Keep all table chrome contained, or let the caption and footer span edge to edge around an inset data frame. */
+  @Prop() chromeLayout: TableChromeLayout = 'contained';
   /** Explicit report merges; invalid combinations leave the original cells visible. */
   @Prop() cellSpans: TableCellSpan[] = [];
   /** Table is read-only; edit uses per-cell pencil buttons; grid adds cell selection and keyboard navigation. Grouped tables remain read-only. */
@@ -181,6 +189,8 @@ export class Table {
   @Prop() hiddenFieldIds: string[] = [];
   /** Controlled data-column identities in display order. Omitted ids append in catalog order. */
   @Prop() fieldOrder: string[] = [];
+  /** Controlled user-pinned data-column identities. Hidden columns retain their pin state. */
+  @Prop() pinnedFieldIds: string[] = [];
   /**
    * Optional result summary footer. When both `displayedCount` and `totalCount`
    * are finite numbers, infinite mode shows “Displaying {displayed} of {total}”.
@@ -699,6 +709,7 @@ export class Table {
     columnCustomizer: boolean;
     hiddenFieldIds: string[];
     fieldOrder: string[];
+    pinnedFieldIds: string[];
     value: TableColumn[];
   } | null = null;
   private renderModelCache: {
@@ -746,6 +757,7 @@ export class Table {
   private fitObservedViewport: HTMLElement | null = null;
   private fitObservedTable: HTMLTableElement | null = null;
   private fitMeasurementPending = false;
+  private cardViewportQuery: MediaQueryList | null = null;
   private readonly bodyRenderer = new TableBodyRenderer();
   private readonly layoutController = new TableLayoutController({
     elements: () => ({
@@ -762,9 +774,6 @@ export class Table {
       clampVerticalOverscroll: this.fitViewport && this.viewportFitSettled,
     }),
     verticalEdgeWheel: deltaY => this.viewportFitController.scrollOuterBy(deltaY),
-    narrowChanged: narrow => {
-      if (this.narrowViewport !== narrow) this.narrowViewport = narrow;
-    },
     overflowChanged: state => {
       if (state.start !== this.overflowStart) this.overflowStart = state.start;
       if (state.end !== this.overflowEnd) this.overflowEnd = state.end;
@@ -841,6 +850,7 @@ export class Table {
   });
 
   componentWillLoad(): void {
+    this.connectCardViewportQuery();
     // Reserve the final viewport-fit height before the first paint. The fitted
     // surface is connected after render, but the host can already resolve its
     // owning scrollport and prevent an initial auto-height frame.
@@ -951,6 +961,7 @@ export class Table {
 
   connectedCallback(): void {
     if (!this.hasLoaded) return;
+    this.connectCardViewportQuery();
     this.layoutController.connect();
     this.loadController.connect();
     this.groupLoadController.connect();
@@ -979,11 +990,35 @@ export class Table {
     this.disconnectFitObserver();
     this.disconnectCaptionCompactObserver();
     this.disconnectTruncateTooltip();
+    this.disconnectCardViewportQuery();
     this.closeColumnCustomizer();
     if (this.initialModelWarningFrame !== undefined) {
       cancelAnimationFrame(this.initialModelWarningFrame);
       this.initialModelWarningFrame = undefined;
     }
+  }
+
+  private readonly handleCardViewportChange = (event: MediaQueryListEvent): void => {
+    if (this.narrowViewport !== event.matches) this.narrowViewport = event.matches;
+  };
+
+  private connectCardViewportQuery(): void {
+    if (
+      this.cardViewportQuery ||
+      typeof window === 'undefined' ||
+      typeof window.matchMedia !== 'function'
+    )
+      return;
+    const query = window.matchMedia(`(max-width: ${TABLE_CARD_VIEWPORT_BREAKPOINT - 1}px)`);
+    this.cardViewportQuery = query;
+    const narrow = isTableCardViewport(window.innerWidth);
+    if (this.narrowViewport !== narrow) this.narrowViewport = narrow;
+    query.addEventListener('change', this.handleCardViewportChange);
+  }
+
+  private disconnectCardViewportQuery(): void {
+    this.cardViewportQuery?.removeEventListener('change', this.handleCardViewportChange);
+    this.cardViewportQuery = null;
   }
 
   private syncHeaderSlotPresence = () => {
@@ -1093,6 +1128,7 @@ export class Table {
   @Watch('grouping')
   @Watch('hiddenFieldIds')
   @Watch('fieldOrder')
+  @Watch('pinnedFieldIds')
   @Watch('columnCustomizer')
   @Watch('cellSpans')
   @Watch('interactionMode')
@@ -1230,7 +1266,8 @@ export class Table {
       cached.columns === this.columns &&
       cached.columnCustomizer === this.columnCustomizer &&
       cached.hiddenFieldIds === this.hiddenFieldIds &&
-      cached.fieldOrder === this.fieldOrder
+      cached.fieldOrder === this.fieldOrder &&
+      cached.pinnedFieldIds === this.pinnedFieldIds
     ) {
       return cached.value;
     }
@@ -1238,12 +1275,14 @@ export class Table {
       columnCustomizer: this.columnCustomizer,
       hiddenFieldIds: this.hiddenFieldIds,
       fieldOrder: this.fieldOrder,
+      pinnedFieldIds: this.pinnedFieldIds,
     });
     this.visibleColumnsCache = {
       columns: this.columns,
       columnCustomizer: this.columnCustomizer,
       hiddenFieldIds: this.hiddenFieldIds,
       fieldOrder: this.fieldOrder,
+      pinnedFieldIds: this.pinnedFieldIds,
       value,
     };
     return value;
@@ -3072,14 +3111,12 @@ export class Table {
         menuLabel="Customize table"
         initialFocusVisible={this.columnCustomizerInitialFocusVisible}
         sections={[
-          {
-            header: 'Columns',
-            items: tableColumnCustomizerMenuItems(
-              this.columns,
-              this.hiddenFieldIds,
-              this.fieldOrder
-            ),
-          },
+          ...tableColumnCustomizerSections(
+            this.columns,
+            this.hiddenFieldIds,
+            this.fieldOrder,
+            this.pinnedFieldIds
+          ),
           ...(this.customizeOptions.length
             ? [{ header: 'Options', items: this.customizeOptions }]
             : []),
@@ -3093,6 +3130,9 @@ export class Table {
             this.dsCustomizeOptionChange.emit(event.detail.value!);
           } else this.handleColumnCustomizerSelect(event.detail);
         }}
+        onDsItemToggle={(event: CustomEvent<MenuItemToggleDetail>) =>
+          this.handleColumnCustomizerAction(event.detail)
+        }
         onDsReorder={event => this.handleColumnCustomizerReorder(event.detail)}
       />
     );
@@ -3115,11 +3155,14 @@ export class Table {
     this.columnCustomizerOpen = false;
   }
 
-  private emitColumnsConfigChange(hiddenFieldIds: string[], fieldOrder: string[]): void {
-    this.dsFieldsConfigChange.emit({
-      hiddenFieldIds: resolveTableHiddenColumnIds(this.columns, hiddenFieldIds),
-      fieldOrder: resolveTableColumnOrder(this.columns, fieldOrder),
-    });
+  private emitColumnsConfigChange(
+    hiddenFieldIds: string[],
+    fieldOrder: string[],
+    pinnedFieldIds: string[] = this.pinnedFieldIds
+  ): void {
+    this.dsFieldsConfigChange.emit(
+      resolveTableFieldsConfiguration(this.columns, hiddenFieldIds, fieldOrder, pinnedFieldIds)
+    );
   }
 
   private handleColumnCustomizerReorder(detail: MenuReorderDetail): void {
@@ -3127,7 +3170,34 @@ export class Table {
       .filter(item => item.reorderable)
       .map(item => item.value)
       .filter((id): id is string => !!id);
-    this.emitColumnsConfigChange(this.hiddenFieldIds, order);
+    this.dsFieldsConfigChange.emit(
+      reorderTableColumnPartition(
+        this.columns,
+        this.hiddenFieldIds,
+        this.fieldOrder,
+        this.pinnedFieldIds,
+        order
+      )
+    );
+  }
+
+  private handleColumnCustomizerAction(detail: MenuItemToggleDetail): void {
+    if (detail.action?.id === 'visibility') {
+      this.handleColumnCustomizerSelect(detail.item);
+      return;
+    }
+    if (detail.action?.id !== 'pin') return;
+    const fieldId = detail.item.value;
+    if (!fieldId) return;
+    this.dsFieldsConfigChange.emit(
+      toggleTableColumnPinned(
+        this.columns,
+        this.hiddenFieldIds,
+        this.fieldOrder,
+        this.pinnedFieldIds,
+        fieldId
+      )
+    );
   }
 
   private handleColumnCustomizerSelect(item: MenuItemData): void {
@@ -3135,7 +3205,7 @@ export class Table {
     if (!fieldId || item.isInactive) return;
     this.emitColumnsConfigChange(
       toggleTableColumnHidden(this.columns, this.hiddenFieldIds, fieldId),
-      resolveTableColumnOrder(this.columns, this.fieldOrder)
+      this.fieldOrder
     );
   }
 
@@ -3200,6 +3270,7 @@ export class Table {
             'ds-table--document-sticky-header': this.documentStickyHeader,
             'ds-table--contained-sticky-header': this.stickyHeader && !this.documentStickyHeader,
             'ds-table--caption-visible': this.captionVisibility === 'visible',
+            'ds-table--chrome-edge-to-edge': this.chromeLayout === 'edge-to-edge',
             'ds-table--super-headers': this.structure.bands.length > 0,
             'ds-table--responsive-cards':
               this.responsiveLayout === 'cards' &&
@@ -3226,6 +3297,7 @@ export class Table {
               'ds-table__frame--overflow-start': this.overflowStart,
               'ds-table__frame--overflow-end': this.overflowEnd,
             }}
+            data-narrow={String(this.narrowViewport)}
             ref={element => {
               this.frameEl = element ?? null;
             }}

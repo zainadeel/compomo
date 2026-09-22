@@ -64,10 +64,12 @@ const applyColumnsConfig = (event: Event) => {
   const table = event.currentTarget as HTMLElement & {
     hiddenFieldIds: string[];
     fieldOrder: string[];
+    pinnedFieldIds: string[];
   };
   const detail = (event as CustomEvent<DataFieldsConfigChangeDetail>).detail;
   table.hiddenFieldIds = detail.hiddenFieldIds;
   table.fieldOrder = detail.fieldOrder;
+  table.pinnedFieldIds = detail.pinnedFieldIds;
 };
 
 const renderToolbar = (options?: {

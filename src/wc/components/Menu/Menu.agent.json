@@ -7,7 +7,7 @@
   "tag": "ds-menu",
   "audience": "general",
   "status": "stable",
-  "summary": "Anchored action menu with flat commands, grouped sections, single-selection choices, supplemental notification dots or trailing tags, prefix icons, reorderable rows, switches, and destructive actions.",
+  "summary": "Anchored action menu with flat commands, grouped sections, single-selection choices, supplemental notification dots or trailing tags, prefix icons, reorderable rows, switches, independent trailing actions, separate trailing toggles, and destructive actions.",
   "useWhen": [
     "A trigger reveals a short contextual list of commands or state-changing actions.",
     "Actions need grouping, mutually exclusive selected state, supplemental notification dots or trailing tags, prefix icons, reorderable switch or command rows, or destructive treatment."
@@ -52,7 +52,9 @@
     "When the anchor is inside an open shadow tree, pass its HTMLElement through anchor. Outside activation, focus return, and forward Tab continuation follow the composed tree across that boundary.",
     "Use notification dots only as supplemental status and not as the sole indication of important information.",
     "Trailing tags are non-interactive supplemental content; their visible label remains part of the menu item's accessible name.",
-    "Reorderable rows keep a presentation Drag handle. Pointer drag on the handle and Alt+Arrow Up or Down emit dsReorder without closing. Pointer cancellation abandons the pending move. Hide-locked reorderable rows expose aria-disabled for the unavailable toggle but stay focusable so they can move; fully locked rows stay out of the contiguous reorderable run.",
+    "Reorderable rows keep a presentation Drag handle. Pointer drag on the handle and Alt+Arrow Up or Down emit dsReorder without closing. Pointer cancellation abandons the pending move. Hide-locked reorderable rows expose aria-disabled for the unavailable toggle but stay focusable so they can move; fully locked rows stay out of the contiguous reorderable run. Use reorderHandleInactive to retain quaternary Drag dots without exposing drag interaction when a temporarily fixed row still needs visual alignment.",
+    "A row may append one separately focusable icon toggle after a decorative tertiary divider. The popup uses non-modal dialog semantics for this composite content, the row retains its primary command or visibility toggle, and dsItemToggle reports the requested controlled state without closing the surface.",
+    "A composite row may expose independent trailing icon actions without making its non-actionable row surface appear clickable. Active Drag handles and trailing actions own separate inset hover and pressed feedback. Each action has its own accessible name, does not use aria-pressed, and reports its stable action identity through dsItemToggle without closing the surface.",
     "Announce the new position through a polite live region that is a sibling of the role=menu popup, so the menu retains only permitted descendants."
   ],
   "states": [
@@ -66,7 +68,7 @@
     "Use a swatch-picker section for a small curated visual preference and apply dsSwatchSelect immediately without closing the popup.",
     "Ordinary rows, section headings, and supporting text consume the Menu size. At xs, both the primary label and supporting text use caption metrics.",
     "A trailing tag resolves one density smaller than its menu row and uses the inset recipe so it nests without changing row height. Do not combine tag, dot, and switch suffixes on one item.",
-    "Reorderable rows use the Drag prefix and ignore icon. Prefix and drag-handle icons inherit the choice-popup secondary foreground, matching Select. When any row in a section has an icon or is reorderable, the remaining rows get a spacer so labels align.",
+    "Reorderable rows use the Drag prefix and ignore icon. Active drag handles inherit the choice-popup secondary foreground; inactive drag handles use quaternary foreground. When any row in a section has an icon, an active handle, or an inactive handle, the remaining rows get a spacer so labels align.",
     "Embedded mode renders the same controlled content inside a parent-owned surface; the parent owns positioning, initial focus, Escape, Tab exit, and dismissal."
   ],
   "responsiveBehavior": [
@@ -80,13 +82,13 @@
   "frameworkCaveats": {
     "customElements": [
       "Assign items, sections, and HTMLElement anchors as properties after the element is defined.",
-      "Handle dsReorder by replacing the items or section items with the emitted items array; Menu never mutates order."
+      "Handle dsReorder by replacing the items or section items with the emitted items array; Menu never mutates order. Handle dsItemToggle by replacing either the controlled trailingToggle state or the requested trailingActions state without changing unrelated row state."
     ],
     "react": [
-      "Pass arrays and objects as wrapper props and handle generated onDsSelect, onDsReorder, and onDsClose event props."
+      "Pass arrays and objects as wrapper props and handle generated onDsSelect, onDsItemToggle, onDsReorder, and onDsClose event props."
     ],
     "angular": [
-      "Use property bindings for arrays, objects, and anchors and event bindings for dsSelect, dsReorder, and dsClose."
+      "Use property bindings for arrays, objects, and anchors and event bindings for dsSelect, dsItemToggle, dsReorder, and dsClose."
     ]
   },
   "references": [

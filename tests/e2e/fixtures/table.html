@@ -6,22 +6,35 @@
     <title>Table test</title>
     <link rel="stylesheet" href="/tokens/index.css" />
     <style>
-      body { margin: 24px; }
-      main { display: grid; gap: 32px; }
-      #overflow-owner { width: 360px; }
+      body {
+        margin: 24px;
+      }
+      main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 32px;
+      }
+      #overflow-owner {
+        width: 360px;
+      }
       #viewport-fit-owner {
         --fixture-table-fit-start: 80px;
         height: 480px;
         overflow: auto;
         overscroll-behavior: none;
       }
-      #viewport-fit-header { height: 120px; background: var(--color-background-secondary); }
-      #viewport-fit-content { padding: 32px; }
+      #viewport-fit-header {
+        height: 120px;
+        background: var(--color-background-secondary);
+      }
+      #viewport-fit-content {
+        padding: 32px;
+      }
     </style>
   </head>
   <body>
     <main>
-      <div style="inline-size: 240px;">
+      <div style="inline-size: 240px">
         <ds-data-toolbar id="table-toolbar" label="Fleet table controls">
           <button slot="start" type="button">Saved views</button>
           <button slot="leading" type="button">Search fleet records</button>
@@ -36,7 +49,7 @@
         <div
           slot="header"
           data-table-header
-          style="display: flex; align-items: center; justify-content: space-between; min-width: 0;"
+          style="display: flex; align-items: center; justify-content: space-between; min-width: 0"
         >
           <span>Filtered drivers</span>
           <button type="button">Filter drivers</button>
@@ -44,20 +57,40 @@
         <button slot="footer-trailing" type="button">Export drivers</button>
       </ds-table>
       <ds-table id="footer" caption="Drivers with result summary" caption-visibility="hidden">
-        <ds-text slot="footer-leading" as="span" variant="text-body-medium" color="secondary" line-truncation="1">
-          Last updated: Aug 13, 2026  7:00 PM PT
+        <ds-text
+          slot="footer-leading"
+          as="span"
+          variant="text-body-medium"
+          color="secondary"
+          line-truncation="1"
+        >
+          Last updated: Aug 13, 2026 7:00 PM PT
         </ds-text>
       </ds-table>
-      <ds-table id="footer-nested" caption="Drivers with nested dialog footer" caption-visibility="hidden">
+      <ds-table
+        id="footer-nested"
+        caption="Drivers with nested dialog footer"
+        caption-visibility="hidden"
+      >
         <ds-data-toolbar slot="header" label="Driver table controls">
           <ds-data-saved-views slot="start"></ds-data-saved-views>
         </ds-data-toolbar>
-        <ds-text slot="footer-leading" as="span" variant="text-body-medium" color="secondary" line-truncation="1">
-          Last updated: Aug 13, 2026  7:00 PM PT
+        <ds-text
+          slot="footer-leading"
+          as="span"
+          variant="text-body-medium"
+          color="secondary"
+          line-truncation="1"
+        >
+          Last updated: Aug 13, 2026 7:00 PM PT
         </ds-text>
       </ds-table>
       <ds-table id="grouped" caption="Grouped drivers"></ds-table>
-      <ds-table id="severity-grouped" caption="Safety events by severity" caption-visibility="hidden"></ds-table>
+      <ds-table
+        id="severity-grouped"
+        caption="Safety events by severity"
+        caption-visibility="hidden"
+      ></ds-table>
       <ds-table id="compound" caption="Compound safety events"></ds-table>
       <ds-table id="cell-types" caption="Tag cell variants" selection-mode="multiple"></ds-table>
       <ds-table id="single-track" caption="Single-track cells" selection-mode="multiple"></ds-table>
@@ -67,22 +100,69 @@
       <ds-table id="wrap-three" caption="Wrapping primary three tracks"></ds-table>
       <ds-table id="wrap-secondary-two" caption="Wrapping secondary two lines"></ds-table>
       <ds-table id="wrap-secondary-three" caption="Wrapping secondary three lines"></ds-table>
-      <div style="width: 280px;">
+      <div style="width: 280px">
         <ds-table id="truncate-tooltip" caption="Truncation tooltip"></ds-table>
       </div>
       <ds-table id="selectable" caption="Selectable drivers" selection-mode="multiple"></ds-table>
       <ds-table id="interactive" caption="Interactive drivers" selection-mode="multiple"></ds-table>
-      <ds-table id="linked-text" caption="Linked vehicle names" selection-mode="multiple"></ds-table>
-      <ds-table id="lazy" caption="Lazy drivers" data-mode="infinite" load-more-mode="manual" has-more></ds-table>
-      <ds-table id="lazy-guard" caption="Guarded lazy drivers" data-mode="infinite" load-more-mode="manual" has-more></ds-table>
-      <ds-table id="lazy-retry" caption="Retry lazy drivers" data-mode="infinite" load-more-mode="manual" has-more load-more-error="More rows failed to load."></ds-table>
-      <ds-table id="lazy-auto" caption="Automatic lazy drivers" data-mode="infinite" load-more-mode="auto" has-more></ds-table>
-      <ds-table id="paginated" caption="Paginated drivers" data-mode="pagination" selection-mode="multiple" max-height="480px">
-        <ds-text slot="footer-leading" as="span" variant="text-body-medium" color="secondary" line-truncation="1">
+      <ds-table
+        id="linked-text"
+        caption="Linked vehicle names"
+        selection-mode="multiple"
+      ></ds-table>
+      <ds-table
+        id="lazy"
+        caption="Lazy drivers"
+        data-mode="infinite"
+        load-more-mode="manual"
+        has-more
+      ></ds-table>
+      <ds-table
+        id="lazy-guard"
+        caption="Guarded lazy drivers"
+        data-mode="infinite"
+        load-more-mode="manual"
+        has-more
+      ></ds-table>
+      <ds-table
+        id="lazy-retry"
+        caption="Retry lazy drivers"
+        data-mode="infinite"
+        load-more-mode="manual"
+        has-more
+        load-more-error="More rows failed to load."
+      ></ds-table>
+      <ds-table
+        id="lazy-auto"
+        caption="Automatic lazy drivers"
+        data-mode="infinite"
+        load-more-mode="auto"
+        has-more
+      ></ds-table>
+      <ds-table
+        id="paginated"
+        caption="Paginated drivers"
+        data-mode="pagination"
+        selection-mode="multiple"
+        max-height="480px"
+      >
+        <ds-text
+          slot="footer-leading"
+          as="span"
+          variant="text-body-medium"
+          color="secondary"
+          line-truncation="1"
+        >
           Last updated: just now
         </ds-text>
       </ds-table>
-      <ds-table id="grouped-paginated" caption="Paginated fleets" data-mode="pagination" load-more-mode="manual" max-height="480px"></ds-table>
+      <ds-table
+        id="grouped-paginated"
+        caption="Paginated fleets"
+        data-mode="pagination"
+        load-more-mode="manual"
+        max-height="480px"
+      ></ds-table>
       <div id="overflow-owner">
         <ds-table
           id="overflow"
@@ -99,6 +179,25 @@
         sticky-header
         height="320px"
       ></ds-table>
+      <div id="edge-to-edge-owner" style="inline-size: 800px">
+        <ds-table
+          id="edge-to-edge"
+          caption="Edge-to-edge drivers"
+          caption-visibility="visible"
+          chrome-layout="edge-to-edge"
+          responsive-layout="cards"
+          sticky-header
+          height="320px"
+        >
+          <ds-data-toolbar slot="header" label="Edge-to-edge driver controls">
+            <button slot="start" type="button">Saved views</button>
+            <button slot="trailing" type="button">Filter</button>
+          </ds-data-toolbar>
+          <ds-text slot="footer-leading" as="span" variant="text-body-medium" color="secondary">
+            Last updated: just now
+          </ds-text>
+        </ds-table>
+      </div>
       <div id="viewport-fit-owner">
         <div id="viewport-fit-header">Expanded page header</div>
         <div id="viewport-fit-content">
@@ -152,21 +251,32 @@
           ></ds-select>
         </ds-data-toolbar>
       </ds-table>
-      <div style="width: 360px;">
+      <div style="width: 360px">
         <ds-table
           id="document-sticky"
           caption="Document-flow drivers"
           selection-mode="multiple"
           sticky-header
           caption-visibility="visible"
-          style="--ds-table-sticky-header-offset: var(--dimension-size-600);"
+          style="--ds-table-sticky-header-offset: var(--dimension-size-600)"
         >
           <div slot="header" data-table-header>Driver controls</div>
         </ds-table>
       </div>
       <ds-table id="loading" caption="Loading drivers" loading></ds-table>
-      <ds-table id="empty" caption="Empty drivers" empty-heading="No matching drivers" height="320px"></ds-table>
-      <ds-table id="error" caption="Unavailable drivers" error error-heading="Drivers unavailable" height="320px"></ds-table>
+      <ds-table
+        id="empty"
+        caption="Empty drivers"
+        empty-heading="No matching drivers"
+        height="320px"
+      ></ds-table>
+      <ds-table
+        id="error"
+        caption="Unavailable drivers"
+        error
+        error-heading="Drivers unavailable"
+        height="320px"
+      ></ds-table>
       <ds-table
         id="virtual"
         caption="Virtual drivers"
@@ -184,8 +294,12 @@
         sticky-header
         height="240px"
       ></ds-table>
-      <ds-table id="virtual-unbounded" caption="Virtual without height" data-mode="virtual"></ds-table>
-      <div id="virtual-fit-owner" style="height: 360px; overflow: auto;">
+      <ds-table
+        id="virtual-unbounded"
+        caption="Virtual without height"
+        data-mode="virtual"
+      ></ds-table>
+      <div id="virtual-fit-owner" style="height: 360px; overflow: auto">
         <ds-table
           id="virtual-fit"
           caption="Virtual fitted drivers"

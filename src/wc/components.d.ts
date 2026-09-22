@@ -36,11 +36,11 @@ import { CheckboxGroupSize } from "./components/CheckboxGroup/CheckboxGroup";
 import { ChipSize, ChipState } from "./components/Chip/Chip";
 import { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
 import { DataField } from "./utils/data-field";
-import { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
+import { MenuItemData, MenuItemToggleDetail, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
 import { DataCustomizeChangeDetail } from "./components/DataCustomize/DataCustomize";
 import { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuMatchModeChangeDetail, FilterMenuMatchModes, FilterMenuValues } from "./components/FilterMenu/FilterMenu";
 import { DataGroupOption } from "./components/DataGroup/DataGroup";
-import { DataFieldsConfigChangeDetail, DataGroup, DataGroupingState, DataSortChangeDetail, DataSortState, TableCaptionVisibility, TableCellActionDetail, TableCellRange, TableCellsChangeDetail, TableCellSpan, TableColumn, TableDataMode, TableDataModeChangeDetail, TableGroupCollapseChangeDetail, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode } from "./components/Table/table-types";
+import { DataFieldsConfigChangeDetail, DataGroup, DataGroupingState, DataSortChangeDetail, DataSortState, TableCaptionVisibility, TableCellActionDetail, TableCellRange, TableCellsChangeDetail, TableCellSpan, TableChromeLayout, TableColumn, TableDataMode, TableDataModeChangeDetail, TableGroupCollapseChangeDetail, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode } from "./components/Table/table-types";
 import { DataGroupOption as DataGroupOption1 } from "./components/DataGroup/DataGroup";
 import { PreferencesTab } from "./components/DataPreferences/DataPreferences";
 import { DataSavedView, DataSavedViewChangeDetail, DataSavedViewCreateDetail, DataSavedViewDiscardDetail, DataSavedViewRemoveDetail, DataSavedViewRenameDetail, DataSavedViewSaveDetail } from "./components/DataSavedViews/data-saved-views-types";
@@ -124,11 +124,11 @@ export { CheckboxGroupSize } from "./components/CheckboxGroup/CheckboxGroup";
 export { ChipSize, ChipState } from "./components/Chip/Chip";
 export { ChoicePopupAnchorAlignment, ControlInsetDepth as ControlInsetDepth1 } from "./utils";
 export { DataField } from "./utils/data-field";
-export { MenuItemData, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
+export { MenuItemData, MenuItemToggleDetail, MenuReorderDetail, MenuSection } from "./components/Menu/menu-types";
 export { DataCustomizeChangeDetail } from "./components/DataCustomize/DataCustomize";
 export { FilterMenuChangeDetail, FilterMenuFilter, FilterMenuMatchModeChangeDetail, FilterMenuMatchModes, FilterMenuValues } from "./components/FilterMenu/FilterMenu";
 export { DataGroupOption } from "./components/DataGroup/DataGroup";
-export { DataFieldsConfigChangeDetail, DataGroup, DataGroupingState, DataSortChangeDetail, DataSortState, TableCaptionVisibility, TableCellActionDetail, TableCellRange, TableCellsChangeDetail, TableCellSpan, TableColumn, TableDataMode, TableDataModeChangeDetail, TableGroupCollapseChangeDetail, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode } from "./components/Table/table-types";
+export { DataFieldsConfigChangeDetail, DataGroup, DataGroupingState, DataSortChangeDetail, DataSortState, TableCaptionVisibility, TableCellActionDetail, TableCellRange, TableCellsChangeDetail, TableCellSpan, TableChromeLayout, TableColumn, TableDataMode, TableDataModeChangeDetail, TableGroupCollapseChangeDetail, TableGroupLoadMoreDetail, TableLoadMoreDetail, TableLoadMoreMode, TablePaginationState, TableRow, TableRowActivateDetail, TableSelectionChangeDetail, TableSelectionMode } from "./components/Table/table-types";
 export { DataGroupOption as DataGroupOption1 } from "./components/DataGroup/DataGroup";
 export { PreferencesTab } from "./components/DataPreferences/DataPreferences";
 export { DataSavedView, DataSavedViewChangeDetail, DataSavedViewCreateDetail, DataSavedViewDiscardDetail, DataSavedViewRemoveDetail, DataSavedViewRenameDetail, DataSavedViewSaveDetail } from "./components/DataSavedViews/data-saved-views-types";
@@ -1774,6 +1774,11 @@ export namespace Components {
           * @default {}
          */
         "matchModes": FilterMenuMatchModes;
+        /**
+          * Controlled user-pinned table-column identities. Ignored for toggle-only catalogs.
+          * @default []
+         */
+        "pinnedFieldIds": string[];
         /**
           * @default null
          */
@@ -4367,6 +4372,11 @@ export namespace Components {
          */
         "cellSpans": TableCellSpan[];
         /**
+          * Keep all table chrome contained, or let the caption and footer span edge to edge around an inset data frame.
+          * @default 'contained'
+         */
+        "chromeLayout": TableChromeLayout;
+        /**
           * Replace opted-in table-owned caption controls with same-size visual skeletons.
           * @default false
          */
@@ -4573,7 +4583,12 @@ export namespace Components {
          */
         "paginationModeLabel": string;
         /**
-          * Opt-in native card presentation below the 768px table container breakpoint.
+          * Controlled user-pinned data-column identities. Hidden columns retain their pin state.
+          * @default []
+         */
+        "pinnedFieldIds": string[];
+        /**
+          * Opt-in native card presentation below the 768px browser viewport breakpoint.
           * @default 'scroll'
          */
         "responsiveLayout": 'scroll' | 'cards';
@@ -6164,6 +6179,7 @@ declare global {
         "dsClose": void;
         "dsAfterClose": void;
         "dsSelect": MenuItemData;
+        "dsItemToggle": MenuItemToggleDetail;
         "dsSwatchSelect": string;
         "dsReorder": MenuReorderDetail;
     }
@@ -8733,6 +8749,11 @@ declare namespace LocalJSX {
         "onDsPreferencesTabChange"?: (event: DsDataPreferencesCustomEvent<PreferencesTab>) => void;
         "onDsSortChange"?: (event: DsDataPreferencesCustomEvent<DataSortChangeDetail>) => void;
         /**
+          * Controlled user-pinned table-column identities. Ignored for toggle-only catalogs.
+          * @default []
+         */
+        "pinnedFieldIds"?: string[];
+        /**
           * @default null
          */
         "sort"?: DataSortState | null;
@@ -9658,6 +9679,10 @@ declare namespace LocalJSX {
          */
         "onDsAfterClose"?: (event: DsMenuCustomEvent<void>) => void;
         "onDsClose"?: (event: DsMenuCustomEvent<void>) => void;
+        /**
+          * Emitted when a row's separate trailing toggle requests a controlled state change.
+         */
+        "onDsItemToggle"?: (event: DsMenuCustomEvent<MenuItemToggleDetail>) => void;
         /**
           * Emitted after a pointer drop or keyboard move; Menu never mutates item order.
          */
@@ -11559,6 +11584,11 @@ declare namespace LocalJSX {
          */
         "cellSpans"?: TableCellSpan[];
         /**
+          * Keep all table chrome contained, or let the caption and footer span edge to edge around an inset data frame.
+          * @default 'contained'
+         */
+        "chromeLayout"?: TableChromeLayout;
+        /**
           * Replace opted-in table-owned caption controls with same-size visual skeletons.
           * @default false
          */
@@ -11778,7 +11808,12 @@ declare namespace LocalJSX {
          */
         "paginationModeLabel"?: string;
         /**
-          * Opt-in native card presentation below the 768px table container breakpoint.
+          * Controlled user-pinned data-column identities. Hidden columns retain their pin state.
+          * @default []
+         */
+        "pinnedFieldIds"?: string[];
+        /**
+          * Opt-in native card presentation below the 768px browser viewport breakpoint.
           * @default 'scroll'
          */
         "responsiveLayout"?: 'scroll' | 'cards';
@@ -13231,6 +13266,7 @@ declare namespace LocalJSX {
     }
     interface DsTableAttributes {
         "responsiveLayout": 'scroll' | 'cards';
+        "chromeLayout": TableChromeLayout;
         "interactionMode": 'table' | 'edit' | 'grid';
         "caption": string;
         "captionVisibility": TableCaptionVisibility;

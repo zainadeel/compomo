@@ -1,6 +1,7 @@
 import '/dist/components/ds-data-preferences.js';
 await customElements.whenDefined('ds-data-preferences');
 const control = document.querySelector('#preferences');
+const embedded = document.querySelector('#embedded');
 control.fields = [
   { id: 'driver', label: 'Driver', sortable: true },
   { id: 'status', label: 'Status', sortable: true },
@@ -36,4 +37,6 @@ control.addEventListener('dsGroupClear', () => {
 control.addEventListener('dsFieldsConfigChange', e => {
   Object.assign(control, e.detail);
 });
+embedded.activeTab = 'customize';
+embedded.fields = control.fields;
 document.documentElement.dataset.ready = 'true';
