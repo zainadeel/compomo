@@ -62,7 +62,7 @@ import { PanelNavChildSelectDetail, PanelNavGroup, PanelNavItem, PanelNavPresent
 import { MobileBarNavDestinationDetail } from "./components/MobileBarNav/mobile-bar-nav-types";
 import { MobileHeaderHeadingLevel, MobileHeaderSectionsPresentation, MobileHeaderTone } from "./components/MobileHeader/mobile-header-types";
 import { TabGroupItem, TabItem } from "./components/TabGroup/tab-item-utils";
-import { TabGroupSize } from "./components/TabGroup/TabGroup";
+import { TabGroupSize, TabGroupWidth } from "./components/TabGroup/TabGroup";
 import { ModalCloseDetail, ModalWidth } from "./components/Modal/Modal";
 import { PaginationChangeDetail, PaginationPageSizeMode } from "./components/Pagination/pagination-types";
 import { ChromeTransitionDetail } from "./shell/chrome-transition";
@@ -87,7 +87,7 @@ import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, Text
 import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderTick, SliderValue } from "./components/Slider/Slider";
 import { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 import { SwitchSize } from "./components/Switch/Switch";
-import { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
+import { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth as TabGroupWidth1 } from "./components/TabGroup/TabGroup";
 import { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 import { TextareaResize, TextareaSize, TextareaWidth } from "./components/Textarea/Textarea";
 import { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
@@ -151,7 +151,7 @@ export { PanelNavChildSelectDetail, PanelNavGroup, PanelNavItem, PanelNavPresent
 export { MobileBarNavDestinationDetail } from "./components/MobileBarNav/mobile-bar-nav-types";
 export { MobileHeaderHeadingLevel, MobileHeaderSectionsPresentation, MobileHeaderTone } from "./components/MobileHeader/mobile-header-types";
 export { TabGroupItem, TabItem } from "./components/TabGroup/tab-item-utils";
-export { TabGroupSize } from "./components/TabGroup/TabGroup";
+export { TabGroupSize, TabGroupWidth } from "./components/TabGroup/TabGroup";
 export { ModalCloseDetail, ModalWidth } from "./components/Modal/Modal";
 export { PaginationChangeDetail, PaginationPageSizeMode } from "./components/Pagination/pagination-types";
 export { ChromeTransitionDetail } from "./shell/chrome-transition";
@@ -176,7 +176,7 @@ export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, Text
 export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderTick, SliderValue } from "./components/Slider/Slider";
 export { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
 export { SwitchSize } from "./components/Switch/Switch";
-export { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth } from "./components/TabGroup/TabGroup";
+export { TabBackground, TabGroupSize as TabGroupSize1, TabGroupWidth as TabGroupWidth1 } from "./components/TabGroup/TabGroup";
 export { TagContrast, TagIntent, TagSize } from "./components/Tag/Tag";
 export { TextareaResize, TextareaSize, TextareaWidth } from "./components/Textarea/Textarea";
 export { ToastActionEventDetail, ToastCloseEventDetail, ToastEventDetail, ToastManager, ToastSwipeDirection } from "./toast";
@@ -3025,6 +3025,30 @@ export namespace Components {
          */
         "open": boolean;
     }
+    interface DsNavigationTabGroup {
+        /**
+          * @default null
+         */
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+        /**
+          * @default 'md'
+         */
+        "size": TabGroupSize;
+        /**
+          * @default []
+         */
+        "tabs": TabGroupItem[];
+        /**
+          * Currently selected local view. User activation updates this value.
+          * @default ''
+         */
+        "value": string;
+        /**
+          * @default 'hug'
+         */
+        "width": TabGroupWidth;
+    }
     interface DsPagination {
         /**
           * Effective whole-item capacity to request when Fit is selected.
@@ -4393,7 +4417,7 @@ export namespace Components {
           * Width fit — hug content (default) or fill the parent with equal-width segments.
           * @default 'hug'
          */
-        "width": TabGroupWidth;
+        "width": TabGroupWidth1;
     }
     interface DsTable {
         /**
@@ -5320,6 +5344,10 @@ export interface DsMobileSheetNavCustomEvent<T> extends CustomEvent<T> {
 export interface DsModalCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsModalElement;
+}
+export interface DsNavigationTabGroupCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsNavigationTabGroupElement;
 }
 export interface DsPaginationCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -6412,6 +6440,23 @@ declare global {
         prototype: HTMLDsModalElement;
         new (): HTMLDsModalElement;
     };
+    interface HTMLDsNavigationTabGroupElementEventMap {
+        "dsChange": string;
+    }
+    interface HTMLDsNavigationTabGroupElement extends Components.DsNavigationTabGroup, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsNavigationTabGroupElementEventMap>(type: K, listener: (this: HTMLDsNavigationTabGroupElement, ev: DsNavigationTabGroupCustomEvent<HTMLDsNavigationTabGroupElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsNavigationTabGroupElementEventMap>(type: K, listener: (this: HTMLDsNavigationTabGroupElement, ev: DsNavigationTabGroupCustomEvent<HTMLDsNavigationTabGroupElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsNavigationTabGroupElement: {
+        prototype: HTMLDsNavigationTabGroupElement;
+        new (): HTMLDsNavigationTabGroupElement;
+    };
     interface HTMLDsPaginationElementEventMap {
         "dsChange": PaginationChangeDetail;
     }
@@ -7031,6 +7076,7 @@ declare global {
         "ds-mobile-section-switcher": HTMLDsMobileSectionSwitcherElement;
         "ds-mobile-sheet-nav": HTMLDsMobileSheetNavElement;
         "ds-modal": HTMLDsModalElement;
+        "ds-navigation-tab-group": HTMLDsNavigationTabGroupElement;
         "ds-pagination": HTMLDsPaginationElement;
         "ds-panel-nav": HTMLDsPanelNavElement;
         "ds-panel-sub-nav": HTMLDsPanelSubNavElement;
@@ -10178,6 +10224,31 @@ declare namespace LocalJSX {
          */
         "open"?: boolean;
     }
+    interface DsNavigationTabGroup {
+        /**
+          * @default null
+         */
+        "ariaLabel"?: string | null;
+        "ariaLabelledby"?: string | undefined;
+        "onDsChange"?: (event: DsNavigationTabGroupCustomEvent<string>) => void;
+        /**
+          * @default 'md'
+         */
+        "size"?: TabGroupSize;
+        /**
+          * @default []
+         */
+        "tabs"?: TabGroupItem[];
+        /**
+          * Currently selected local view. User activation updates this value.
+          * @default ''
+         */
+        "value"?: string;
+        /**
+          * @default 'hug'
+         */
+        "width"?: TabGroupWidth;
+    }
     interface DsPagination {
         /**
           * Effective whole-item capacity to request when Fit is selected.
@@ -11680,7 +11751,7 @@ declare namespace LocalJSX {
           * Width fit — hug content (default) or fill the parent with equal-width segments.
           * @default 'hug'
          */
-        "width"?: TabGroupWidth;
+        "width"?: TabGroupWidth1;
     }
     interface DsTable {
         /**
@@ -13105,6 +13176,13 @@ declare namespace LocalJSX {
         "modalWidth": ModalWidth | string;
         "ariaDescribedby": string | undefined;
     }
+    interface DsNavigationTabGroupAttributes {
+        "value": string;
+        "size": TabGroupSize;
+        "width": TabGroupWidth;
+        "ariaLabel": string | null;
+        "ariaLabelledby": string | undefined;
+    }
     interface DsPaginationAttributes {
         "pageIndex": number;
         "pageSize": number;
@@ -13632,6 +13710,7 @@ declare namespace LocalJSX {
         "ds-mobile-section-switcher": Omit<DsMobileSectionSwitcher, keyof DsMobileSectionSwitcherAttributes> & { [K in keyof DsMobileSectionSwitcher & keyof DsMobileSectionSwitcherAttributes]?: DsMobileSectionSwitcher[K] } & { [K in keyof DsMobileSectionSwitcher & keyof DsMobileSectionSwitcherAttributes as `attr:${K}`]?: DsMobileSectionSwitcherAttributes[K] } & { [K in keyof DsMobileSectionSwitcher & keyof DsMobileSectionSwitcherAttributes as `prop:${K}`]?: DsMobileSectionSwitcher[K] };
         "ds-mobile-sheet-nav": Omit<DsMobileSheetNav, keyof DsMobileSheetNavAttributes> & { [K in keyof DsMobileSheetNav & keyof DsMobileSheetNavAttributes]?: DsMobileSheetNav[K] } & { [K in keyof DsMobileSheetNav & keyof DsMobileSheetNavAttributes as `attr:${K}`]?: DsMobileSheetNavAttributes[K] } & { [K in keyof DsMobileSheetNav & keyof DsMobileSheetNavAttributes as `prop:${K}`]?: DsMobileSheetNav[K] };
         "ds-modal": Omit<DsModal, keyof DsModalAttributes> & { [K in keyof DsModal & keyof DsModalAttributes]?: DsModal[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `attr:${K}`]?: DsModalAttributes[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `prop:${K}`]?: DsModal[K] } & OneOf<"heading", DsModal["heading"], DsModalAttributes["heading"]>;
+        "ds-navigation-tab-group": Omit<DsNavigationTabGroup, keyof DsNavigationTabGroupAttributes> & { [K in keyof DsNavigationTabGroup & keyof DsNavigationTabGroupAttributes]?: DsNavigationTabGroup[K] } & { [K in keyof DsNavigationTabGroup & keyof DsNavigationTabGroupAttributes as `attr:${K}`]?: DsNavigationTabGroupAttributes[K] } & { [K in keyof DsNavigationTabGroup & keyof DsNavigationTabGroupAttributes as `prop:${K}`]?: DsNavigationTabGroup[K] };
         "ds-pagination": Omit<DsPagination, keyof DsPaginationAttributes> & { [K in keyof DsPagination & keyof DsPaginationAttributes]?: DsPagination[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `attr:${K}`]?: DsPaginationAttributes[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `prop:${K}`]?: DsPagination[K] };
         "ds-panel-nav": Omit<DsPanelNav, keyof DsPanelNavAttributes> & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes]?: DsPanelNav[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `attr:${K}`]?: DsPanelNavAttributes[K] } & { [K in keyof DsPanelNav & keyof DsPanelNavAttributes as `prop:${K}`]?: DsPanelNav[K] };
         "ds-panel-sub-nav": Omit<DsPanelSubNav, keyof DsPanelSubNavAttributes> & { [K in keyof DsPanelSubNav & keyof DsPanelSubNavAttributes]?: DsPanelSubNav[K] } & { [K in keyof DsPanelSubNav & keyof DsPanelSubNavAttributes as `attr:${K}`]?: DsPanelSubNavAttributes[K] } & { [K in keyof DsPanelSubNav & keyof DsPanelSubNavAttributes as `prop:${K}`]?: DsPanelSubNav[K] };
@@ -13760,6 +13839,7 @@ declare module "@stencil/core" {
             "ds-mobile-section-switcher": LocalJSX.IntrinsicElements["ds-mobile-section-switcher"] & JSXBase.HTMLAttributes<HTMLDsMobileSectionSwitcherElement>;
             "ds-mobile-sheet-nav": LocalJSX.IntrinsicElements["ds-mobile-sheet-nav"] & JSXBase.HTMLAttributes<HTMLDsMobileSheetNavElement>;
             "ds-modal": LocalJSX.IntrinsicElements["ds-modal"] & JSXBase.HTMLAttributes<HTMLDsModalElement>;
+            "ds-navigation-tab-group": LocalJSX.IntrinsicElements["ds-navigation-tab-group"] & JSXBase.HTMLAttributes<HTMLDsNavigationTabGroupElement>;
             "ds-pagination": LocalJSX.IntrinsicElements["ds-pagination"] & JSXBase.HTMLAttributes<HTMLDsPaginationElement>;
             "ds-panel-nav": LocalJSX.IntrinsicElements["ds-panel-nav"] & JSXBase.HTMLAttributes<HTMLDsPanelNavElement>;
             "ds-panel-sub-nav": LocalJSX.IntrinsicElements["ds-panel-sub-nav"] & JSXBase.HTMLAttributes<HTMLDsPanelSubNavElement>;
