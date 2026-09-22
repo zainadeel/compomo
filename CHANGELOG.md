@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.7.0](https://github.com/zainadeel/compomo/compare/v15.6.0...v15.7.0) (2026-09-22)
+
+
+### Added
+
+* refresh controls and navigation selectors ([#647](https://github.com/zainadeel/compomo/issues/647)) ([dba39ad](https://github.com/zainadeel/compomo/commit/dba39ad4dfff1463c75c74f19b4310b01bbc69a2))
+
 ## [15.6.0](https://github.com/zainadeel/compomo/compare/v15.5.1...v15.6.0) (2026-09-22)
 
 
