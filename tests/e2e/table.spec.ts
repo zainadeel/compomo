@@ -3523,6 +3523,40 @@ test('fits to a collapsing page scrollport before handing vertical scroll to nat
     .toBeCloseTo(0, 1);
 });
 
+test('updates viewport fit when an ancestor changes the inherited inset @pr-critical @cross-browser', async ({
+  page,
+}) => {
+  const owner = page.locator('#viewport-fit-owner');
+  const table = page.locator('#viewport-fit');
+  const surface = table.locator('.ds-table');
+  await owner.scrollIntoViewIfNeeded();
+  await owner.evaluate(element => {
+    element.scrollTop = 0;
+  });
+  await expect(table).toHaveCSS('height', '368px');
+
+  // The scrollport keeps the same size. Only its inherited CSS variable changes.
+  await owner.evaluate(element => {
+    (element as HTMLElement).style.setProperty('--fixture-table-fit-start', '64px');
+  });
+  await expect(table).toHaveCSS('height', '384px');
+  await owner.evaluate(element => {
+    element.scrollTop = element.scrollHeight;
+  });
+  await expect(surface).toHaveClass(/ds-table--viewport-fit-settled/);
+  await expect
+    .poll(() =>
+      table.evaluate(element => {
+        const owner = element.closest('#viewport-fit-owner')!.getBoundingClientRect();
+        const footer = element
+          .querySelector<HTMLElement>('.ds-table__footer')!
+          .getBoundingClientRect();
+        return footer.bottom - (owner.bottom - 32);
+      })
+    )
+    .toBeCloseTo(0, 1);
+});
+
 test('keeps native group push-off gapless through continuous scroll and resize frames', async ({
   page,
 }) => {
