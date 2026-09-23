@@ -8,6 +8,10 @@ export const config: Config = {
   namespace: 'ds-mo',
   srcDir: 'src/wc',
   sourceMap: true,
+  commonjs: {
+    // SAX's optional Node stream API is unused by the browser XML parser.
+    ignoreTryCatch: (id: string) => (id === 'stream' ? 'remove' : true),
+  } as Config['commonjs'],
   rollupPlugins: {
     before: [
       {
