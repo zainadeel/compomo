@@ -433,6 +433,11 @@ test.describe('Managed application shell', () => {
       await panel.evaluate(element => (element as HTMLDsPanelNavElement).toggleCollapsed());
       await expect(panelFrame).not.toHaveClass(/panel-nav--collapsed/);
       await expect(panelFrame).toHaveClass(/panel-nav--animating/);
+      const dividerExpandDuration = await trackingAfterDivider.evaluate(element =>
+        Number.parseFloat(getComputedStyle(element).transitionDuration)
+      );
+      expect(dividerExpandDuration).toBeGreaterThan(0);
+      expect(dividerExpandDuration).toBeCloseTo(panelCollapseDuration);
       await expect(trackingAfterDivider).toHaveAttribute('data-motion-identity', 'stable');
       await expect(trackingAccordion).toHaveCount(1);
       await page.waitForTimeout(100);
@@ -441,11 +446,6 @@ test.describe('Managed application shell', () => {
       );
       expect(midExpandHeight).toBeGreaterThan(0);
       expect(midExpandHeight).toBeLessThan(trackingAccordionBox!.height);
-      const dividerExpandDuration = await trackingAfterDivider.evaluate(element =>
-        Number.parseFloat(getComputedStyle(element).transitionDuration)
-      );
-      expect(dividerExpandDuration).toBeGreaterThan(0);
-      expect(dividerExpandDuration).toBeCloseTo(panelCollapseDuration);
       await expect(panelFrame).not.toHaveClass(/panel-nav--animating/, { timeout: 5000 });
       await expect(trackingAfterDivider).toHaveAttribute('data-motion-identity', 'stable');
       await expect(trackingAfterDivider).toHaveClass(/panel-nav__branch-divider--open/);

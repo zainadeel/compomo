@@ -14,6 +14,48 @@ test('keeps the embedded tab strip transparent so the owning panel highlight rem
   );
 });
 
+test('uses 8px section padding in every embedded preference tab @cross-browser', async ({
+  page,
+}) => {
+  const embedded = page.locator('#embedded');
+  await embedded.evaluate((element: HTMLDsDataPreferencesElement) => {
+    element.filters = [
+      {
+        id: 'status',
+        label: 'Status',
+        kind: 'multiple',
+        options: [{ label: 'Driving', value: 'driving' }],
+      },
+    ];
+    element.groupingOptions = [{ label: 'Status', value: 'status' }];
+  });
+  const sectionForTab = {
+    filters: '.filter-menu-vertical__section .ds-chrome-space--sm',
+    sort: '.menu-section',
+    group: '.data-group__list',
+    customize: '.menu-section',
+  } as const;
+  for (const tab of ['filters', 'sort', 'group', 'customize'] as const) {
+    await embedded.evaluate((element: HTMLDsDataPreferencesElement, nextTab) => {
+      element.activeTab = nextTab;
+    }, tab);
+    const section = embedded.locator(sectionForTab[tab]).first();
+    await expect(section).toBeVisible();
+    await expect(section).toHaveCSS('padding-left', '8px');
+  }
+});
+
+test('shows text-only direction choices in the sort menu @cross-browser', async ({ page }) => {
+  await page.getByRole('button', { name: 'Configure view' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Configure view', exact: true });
+  await dialog.getByRole('tab', { name: 'Sort', exact: true }).click();
+  for (const direction of ['Ascending', 'Descending']) {
+    const choice = dialog.getByRole('menuitem', { name: direction, exact: true });
+    await expect(choice).toBeVisible();
+    await expect(choice.locator('ds-icon')).toHaveCount(0);
+  }
+});
+
 test('shares controlled preferences across tabs and restores focus @cross-browser', async ({
   page,
 }) => {

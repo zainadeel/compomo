@@ -65,13 +65,11 @@ export function dataSortMenuSections(
         {
           label: 'Ascending',
           value: TABLE_SORT_DIRECTION_ASC,
-          icon: 'ArrowUp',
           isSelected: sort?.direction === 'asc',
         },
         {
           label: 'Descending',
           value: TABLE_SORT_DIRECTION_DESC,
-          icon: 'ArrowDown',
           isSelected: sort?.direction === 'desc',
         },
       ],

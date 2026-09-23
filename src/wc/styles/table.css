@@ -86,6 +86,14 @@
   min-block-size: var(--_table-viewport-fit-current-block-size, 100%);
 }
 
+/* At the settled position, the reserved host and visible surface have the same
+ * height. Follow the host directly so a resize cannot leave a stale strip below
+ * the footer while the viewport measurement catches up. */
+:where(.ds-table--viewport-fit-settled) {
+  block-size: 100%;
+  min-block-size: 100%;
+}
+
 :where(.ds-table--bounded .ds-table__frame),
 :where(.ds-table--bounded .ds-table__viewport) {
   min-block-size: 0;

@@ -48,6 +48,10 @@
   overscroll-behavior: contain;
 }
 
+.data-preferences-panel .data-preferences__body {
+  --ds-chrome-space-sm-padding: var(--dimension-space-100);
+}
+
 :host:has(.data-preferences-panel) {
   display: flex;
   flex: 1;
