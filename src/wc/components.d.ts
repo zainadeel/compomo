@@ -6870,6 +6870,7 @@ declare global {
         "dsCellRangeChange": TableCellRange;
         "dsCellsChange": TableCellsChangeDetail;
         "dsCustomizeOptionChange": string;
+        "dsAlternateViewRendered": { alternateView: boolean };
         "dsSortChange": DataSortChangeDetail;
         "dsGroupCollapseChange": TableGroupCollapseChangeDetail;
         "dsSelectionChange": TableSelectionChangeDetail;
@@ -11985,6 +11986,10 @@ declare namespace LocalJSX {
           * Maximum scroll-region height. Numbers resolve to CSS pixels.
          */
         "maxHeight"?: string | number | undefined;
+        /**
+          * Fires after a table/alternate-view switch has patched the frame and footer.
+         */
+        "onDsAlternateViewRendered"?: (event: DsTableCustomEvent<{ alternateView: boolean }>) => void;
         "onDsCellAction"?: (event: DsTableCustomEvent<TableCellActionDetail>) => void;
         "onDsCellRangeChange"?: (event: DsTableCustomEvent<TableCellRange>) => void;
         "onDsCellsChange"?: (event: DsTableCustomEvent<TableCellsChangeDetail>) => void;
