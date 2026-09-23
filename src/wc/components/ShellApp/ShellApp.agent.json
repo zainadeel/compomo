@@ -47,6 +47,7 @@
     "Render exactly one ShellApp as the workspace root and never nest it.",
     "Managed composition is the standard. Supply navigation, pageChrome, and tools objects plus named tool-view and default page-content slots.",
     "The application router owns the current route, authorization filtering, Dashboard or Settings context, destination collections, section collections, and localized content labels.",
+    "The wide-viewport host flag reserves a desktop range for future product experiments without changing responsive mode or chrome presentation.",
     "ShellApp renders the lower-level desktop, tablet, and mobile chrome, coordinates layout, gradient alignment, transitions, shortcuts, global surfaces, optional Inbox state, focus restoration, and mobile-stage visibility.",
     "Desktop and tablet PanelNav and PanelTools width motion is one continuous layout transition: the shell bar or title and routed page must follow the same intermediate lane widths without terminal-state snapping, overlapping chrome, transform scaling, or temporary replacement backgrounds.",
     "The application router owns authorization, current URLs, history, and route execution; ShellApp forwards navigation and page intent events without routing.",

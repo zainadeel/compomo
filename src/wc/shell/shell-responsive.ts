@@ -12,6 +12,8 @@ export type MobileDestination =
 export type ShellInboxToolId = PanelToolsToolId;
 
 export const SHELL_DESKTOP_BREAKPOINT = 1200;
+/** Reserved wide-desktop boundary; it does not change shell presentation. */
+export const SHELL_WIDE_DESKTOP_BREAKPOINT = 1920;
 export const SHELL_MOBILE_BREAKPOINT = 768;
 export const SHELL_DEFAULT_INBOX_TOOL: ShellInboxToolId = 'activity';
 

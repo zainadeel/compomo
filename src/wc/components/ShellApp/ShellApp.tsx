@@ -68,6 +68,7 @@ import {
   resolveManagedShellPageCapacity,
   resolveShellResponsiveMode,
   SHELL_DESKTOP_BREAKPOINT,
+  SHELL_WIDE_DESKTOP_BREAKPOINT,
   shellMobileDestinationForTool,
   type MobileDestination,
   type ShellInboxToolId,
@@ -190,6 +191,7 @@ export class ShellApp {
   @Element() el!: HTMLElement;
   @State() private toolsFullscreen = false;
   @State() private resolvedMode: ShellResponsiveMode = 'desktop';
+  @State() private wideViewport = false;
   @State() private managedToolsOpen = false;
   @State() private managedActiveTool: PanelToolsToolId | '' = '';
   @State() private managedToolPresentation: 'drawer' | 'fullscreen' = 'drawer';
@@ -268,6 +270,7 @@ export class ShellApp {
   componentWillLoad() {
     if (typeof window !== 'undefined') {
       this.resolvedMode = resolveShellResponsiveMode(window.innerWidth);
+      this.wideViewport = window.innerWidth >= SHELL_WIDE_DESKTOP_BREAKPOINT;
     }
     this.managedBrowseContext = this.navigation.browseContext ?? this.navStyle;
     this.managedMobileDestination = this.mobileDestination;
@@ -389,6 +392,7 @@ export class ShellApp {
   private updateResponsiveMode() {
     if (!this.el.isConnected || typeof window === 'undefined') return;
     const next = resolveShellResponsiveMode(window.innerWidth);
+    this.wideViewport = window.innerWidth >= SHELL_WIDE_DESKTOP_BREAKPOINT;
     if (next === this.resolvedMode) return;
     this.resolvedMode = next;
     this.syncSlottedMobileState();
@@ -1422,7 +1426,11 @@ export class ShellApp {
     fullscreen: boolean
   ) {
     return (
-      <Host class={shellCls} responsive-mode={this.resolvedMode}>
+      <Host
+        class={shellCls}
+        responsive-mode={this.resolvedMode}
+        data-wide-viewport={String(this.wideViewport)}
+      >
         <div class="shell-app__banner">
           <slot name="banner" />
         </div>
@@ -1515,7 +1523,11 @@ export class ShellApp {
     }
 
     return (
-      <Host class={shellCls} responsive-mode={this.resolvedMode}>
+      <Host
+        class={shellCls}
+        responsive-mode={this.resolvedMode}
+        data-wide-viewport={String(this.wideViewport)}
+      >
         <div class="shell-app__banner">
           <slot name="banner" />
         </div>
