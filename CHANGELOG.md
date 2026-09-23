@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.8.0](https://github.com/zainadeel/compomo/compare/v15.7.0...v15.8.0) (2026-09-23)
+
+
+### Added
+
+* add wide breakpoint and refine table controls ([#649](https://github.com/zainadeel/compomo/issues/649)) ([989f8bf](https://github.com/zainadeel/compomo/commit/989f8bf99d0cdd0e84afddc824102cf94ece630f))
+
 ## [15.7.0](https://github.com/zainadeel/compomo/compare/v15.6.0...v15.7.0) (2026-09-22)
 
 
