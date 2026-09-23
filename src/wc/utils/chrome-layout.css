@@ -8,7 +8,7 @@
 
 :host(.ds-chrome-space--sm),
 .ds-chrome-space--sm {
-  --ds-chrome-padding: var(--dimension-space-050);
+  --ds-chrome-padding: var(--ds-chrome-space-sm-padding, var(--dimension-space-050));
   --ds-chrome-gap: var(--dimension-space-050);
 }
 

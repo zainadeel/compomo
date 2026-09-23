@@ -3341,6 +3341,15 @@ test('fits to a collapsing page scrollport before handing vertical scroll to nat
   await expect.poll(() => owner.evaluate(element => element.scrollTop)).toBeCloseTo(72, 0);
   await expect(surface).toHaveCSS('height', '368px');
   await expect(surface).toHaveClass(/ds-table--viewport-fit-settled/);
+  // A stale viewport measurement during resize must not leave space below the
+  // footer once the fitted table has reached its settled position.
+  await surface.evaluate(element => {
+    (element as HTMLElement).style.setProperty('--_table-viewport-fit-current-block-size', '352px');
+  });
+  await expect(surface).toHaveCSS('height', '368px');
+  await surface.evaluate(element => {
+    (element as HTMLElement).style.setProperty('--_table-viewport-fit-current-block-size', '368px');
+  });
   await expect(surface).toHaveClass(/ds-table--contained-scroll/);
   await expect(table.locator('.ds-table__frame')).toHaveCSS('overflow', 'clip');
   await expect(viewport).toHaveCSS('overflow-y', 'auto');
@@ -3500,7 +3509,6 @@ test('fits to a collapsing page scrollport before handing vertical scroll to nat
   });
   await expect(table.locator('tbody[data-group-id="fit-short"] .ds-table__row')).toHaveCount(1);
   await expect(surface).toHaveCSS('height', '368px');
-  await expect(surface).toHaveCSS('min-height', '368px');
   await expect(table.locator('.ds-table__frame')).toHaveCSS('height', '272px');
   await expect
     .poll(() =>

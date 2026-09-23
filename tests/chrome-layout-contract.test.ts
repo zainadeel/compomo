@@ -6,10 +6,13 @@ import test from 'node:test';
 const root = path.resolve(import.meta.dirname, '..');
 const read = (relativePath: string) => fs.readFileSync(path.join(root, relativePath), 'utf8');
 
-test('chrome spacing defines matching padding and gap without owning size', () => {
+test('chrome spacing defines token padding and gap with an optional small-padding override', () => {
   const css = read('src/wc/utils/chrome-layout.css');
+  assert.match(
+    css,
+    /\.ds-chrome-space--sm[\s\S]*?--ds-chrome-padding: var\(--ds-chrome-space-sm-padding, var\(--dimension-space-050\)\);[\s\S]*?--ds-chrome-gap: var\(--dimension-space-050\);/
+  );
   const recipes = {
-    sm: '050',
     md: '100',
     lg: '200',
   } as const;
