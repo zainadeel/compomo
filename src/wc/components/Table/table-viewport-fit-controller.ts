@@ -63,6 +63,8 @@ export class TableViewportFitController {
   private connectedSurface: HTMLElement | null = null;
   private scrollRoot: HTMLElement | Window | null = null;
   private resizeObserver: ResizeObserver | null = null;
+  private ancestorMutationObserver: MutationObserver | null = null;
+  private connectionFrame: number | null = null;
   private metrics: TableViewportFitMetrics | null = null;
   private insetBlockStart: string | number | null = null;
   private insetBlockEnd: string | number | null = null;
@@ -72,10 +74,20 @@ export class TableViewportFitController {
   connect(): void {
     this.connected = true;
     this.refresh();
+    // WebKit can finish attaching an upgraded custom element after its first
+    // layout read. Verify the owning scrollport on the next animation frame.
+    if (this.connectionFrame === null && typeof requestAnimationFrame !== 'undefined') {
+      this.connectionFrame = requestAnimationFrame(() => {
+        this.connectionFrame = null;
+        this.refresh();
+      });
+    }
   }
 
   disconnect(): void {
     this.connected = false;
+    if (this.connectionFrame !== null) cancelAnimationFrame(this.connectionFrame);
+    this.connectionFrame = null;
     this.disconnectRuntime();
     this.clearGeometry();
   }
@@ -91,8 +103,12 @@ export class TableViewportFitController {
     const { host, surface } = this.options.elements();
     if (!host) return;
     const elementsChanged = host !== this.connectedHost || surface !== this.connectedSurface;
+    // A web component can be reconnected under a different scroll owner while
+    // retaining the same host and rendered surface nodes.
     const nextScrollRoot =
-      elementsChanged || !this.scrollRoot ? this.findScrollRoot(host) : this.scrollRoot;
+      elementsChanged || forceGeometry || !this.scrollRoot
+        ? this.findScrollRoot(host)
+        : this.scrollRoot;
     const rootChanged = nextScrollRoot !== this.scrollRoot;
     if (nextScrollRoot !== this.scrollRoot) {
       this.disconnectRuntime();
@@ -106,6 +122,7 @@ export class TableViewportFitController {
     }
     this.connectedHost = host;
     this.connectedSurface = surface;
+    if (elementsChanged || rootChanged || forceGeometry) this.observeAncestorInsets(host);
     const insets = this.options.insets();
     const insetsChanged =
       insets.blockStart !== this.insetBlockStart || insets.blockEnd !== this.insetBlockEnd;
@@ -143,8 +160,28 @@ export class TableViewportFitController {
     this.connectedSurface = null;
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
+    this.ancestorMutationObserver?.disconnect();
+    this.ancestorMutationObserver = null;
     this.insetBlockStart = null;
     this.insetBlockEnd = null;
+  }
+
+  private observeAncestorInsets(host: HTMLElement): void {
+    this.ancestorMutationObserver?.disconnect();
+    this.ancestorMutationObserver = null;
+    if (typeof MutationObserver === 'undefined') return;
+
+    // A page shell can replace its inset class after the table first measures.
+    // Its inherited CSS variable then changes without resizing the scrollport,
+    // so ResizeObserver alone cannot update the reserved table height.
+    const observer = new MutationObserver(this.sync);
+    let ancestor = this.composedParent(host);
+    while (ancestor) {
+      observer.observe(ancestor, { attributes: true });
+      if (ancestor === document.documentElement) break;
+      ancestor = this.composedParent(ancestor);
+    }
+    this.ancestorMutationObserver = observer;
   }
 
   private clearGeometry(): void {

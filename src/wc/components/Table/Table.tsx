@@ -177,6 +177,8 @@ export class Table {
   @Prop() captionVisibility: TableCaptionVisibility = 'hidden';
   /** Replace only the data frame with application-owned content; caption and footer remain shared. */
   @Prop() alternateView: boolean = false;
+  /** Fires after a table/alternate-view switch has patched the frame and footer. */
+  @Event() dsAlternateViewRendered!: EventEmitter<{ alternateView: boolean }>;
   /**
    * Opt in to the table-owned column customizer. The `columns` prop remains the
    * catalog; hidden and ordered columns are controlled separately. The trigger
@@ -706,6 +708,7 @@ export class Table {
   private truncateTooltipBound = false;
   private focusedRowId: string | null = null;
   private virtualRenderFocus: HTMLElement | null = null;
+  private renderedAlternateView: boolean | null = null;
   private virtualItems: TableVirtualItem[] = [];
   private visibleColumnsCache: {
     columns: TableColumn[];
@@ -934,6 +937,10 @@ export class Table {
     this.connectCaptionCompactObserver();
     this.syncFitPageSize();
     if (this.stickyGroupConnected) this.updateStickyGroup();
+    if (this.renderedAlternateView !== this.alternateView) {
+      this.renderedAlternateView = this.alternateView;
+      this.dsAlternateViewRendered.emit({ alternateView: this.alternateView });
+    }
   }
 
   /**

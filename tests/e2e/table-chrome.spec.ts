@@ -6,13 +6,24 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('keeps caption actions while replacing the semantic table with an alternate view', async ({
+test('keeps caption actions while replacing the semantic table with an alternate view @cross-browser', async ({
   page,
 }) => {
   const table = page.locator('#column-customizer');
   await expect(table.getByRole('table')).toBeVisible();
 
   await table.evaluate(element => {
+    const snapshots: { alternateView: boolean; tablePresent: boolean; mapPresent: boolean }[] = [];
+    (element as HTMLElement & { renderSnapshots: typeof snapshots }).renderSnapshots = snapshots;
+    element.addEventListener('dsAlternateViewRendered', event => {
+      const frame = element.querySelector('.ds-table__frame');
+      const map = element.querySelector('[role="application"]');
+      snapshots.push({
+        alternateView: (event as CustomEvent<{ alternateView: boolean }>).detail.alternateView,
+        tablePresent: !!element.querySelector('.ds-table__viewport table'),
+        mapPresent: !!frame && !!map && frame.contains(map),
+      });
+    });
     const switcher = document.createElement('span');
     switcher.slot = 'caption-trailing';
     switcher.textContent = 'Table / Map';
@@ -29,9 +40,26 @@ test('keeps caption actions while replacing the semantic table with an alternate
   await expect(table.getByText('Table / Map')).toBeVisible();
   await expect(table.getByRole('application', { name: 'Events map' })).toBeVisible();
   await expect(table.getByRole('table')).toHaveCount(0);
+  await expect
+    .poll(() =>
+      table.evaluate(
+        element => (element as HTMLElement & { renderSnapshots: unknown[] }).renderSnapshots
+      )
+    )
+    .toEqual([{ alternateView: true, tablePresent: false, mapPresent: true }]);
 
   await table.evaluate(element => ((element as HTMLDsTableElement).alternateView = false));
   await expect(table.getByRole('table')).toBeVisible();
+  await expect
+    .poll(() =>
+      table.evaluate(
+        element => (element as HTMLElement & { renderSnapshots: unknown[] }).renderSnapshots
+      )
+    )
+    .toEqual([
+      { alternateView: true, tablePresent: false, mapPresent: true },
+      { alternateView: false, tablePresent: true, mapPresent: false },
+    ]);
 });
 
 test('groups through two dependent panes and keeps order unavailable until data is selected', async ({
