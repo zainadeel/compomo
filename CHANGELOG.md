@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.8.1](https://github.com/zainadeel/compomo/compare/v15.8.0...v15.8.1) (2026-09-23)
+
+
+### Fixed
+
+* synchronize table view rendering and shell geometry ([#651](https://github.com/zainadeel/compomo/issues/651)) ([0ad123f](https://github.com/zainadeel/compomo/commit/0ad123fc6931c391aed9be687699819cc862120b))
+
 ## [15.8.0](https://github.com/zainadeel/compomo/compare/v15.7.0...v15.8.0) (2026-09-23)
 
 
