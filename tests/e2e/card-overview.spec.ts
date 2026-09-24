@@ -194,6 +194,7 @@ test('truncates long metric labels and values while preserving the complete tren
   page,
 }) => {
   const metric = page.locator('#long-copy .card-overview__metric').first();
+  const shortMetric = page.locator('#long-copy .card-overview__metric').nth(1);
   const label = metric.locator('.card-overview__metric-label');
   const value = metric.locator('.card-overview__metric-value');
   const trend = metric.locator('.card-overview__trend');
@@ -241,6 +242,15 @@ test('truncates long metric labels and values while preserving the complete tren
   expect(geometry.trend.clientWidth).toBe(geometry.trend.scrollWidth);
   expect(geometry.trend.flexShrink).toBe('0');
   expect(geometry.trend.whiteSpace).toBe('nowrap');
+
+  const trendGap = await shortMetric.evaluate(element => {
+    const valueGlyphs = element.querySelector<HTMLElement>('.card-overview__metric-value > *')!;
+    const trendGlyphs = element.querySelector<HTMLElement>('.card-overview__trend > *')!;
+    const valueRange = document.createRange();
+    valueRange.selectNodeContents(valueGlyphs);
+    return trendGlyphs.getBoundingClientRect().left - valueRange.getBoundingClientRect().right;
+  });
+  expect(trendGap).toBeCloseTo(8, 1);
 });
 
 test('keeps loading placeholders in the resolved content geometry', async ({ page }) => {
