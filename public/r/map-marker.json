@@ -1,0 +1,288 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "map-marker",
+  "title": "MapMarker",
+  "description": "Engine-independent map marker button for an application-defined point, location, or event with semantic intent color and a hover or focus caption.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/map-marker",
+    "source": "src/wc/components/MapMarker/MapMarker.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Engine-independent map marker button for an application-defined point, location, or event with semantic intent color and a hover or focus caption.",
+      "useWhen": [
+        "An application map needs an interactive marker whose icon and semantic intent describe an application-defined point, location, or event.",
+        "The map engine can mount a custom element and retain ownership of coordinates, anchoring, and camera behavior."
+      ],
+      "avoidWhen": [
+        "The marker represents a vehicle, asset, person, or travel group with an operating state; use MapEntityMarker.",
+        "Several nearby points must be represented as one count; use MapClusterMarker.",
+        "The content is a legend item or non-interactive status swatch.",
+        "The component would be asked to own geographic coordinates, clustering, map-engine adapters, or selected-item business state."
+      ],
+      "alternatives": [
+        {
+          "when": "One map entity needs operating state, bearing, and an optional dashed outline.",
+          "component": "component:ds-map-entity-marker",
+          "reason": "MapEntityMarker owns entity operating-state semantics and geometry."
+        },
+        {
+          "when": "Several nearby points are represented by a compact count.",
+          "component": "component:ds-map-cluster-marker",
+          "reason": "MapClusterMarker owns cluster count formatting and cluster interaction geometry."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-map-entity-marker",
+        "component:ds-map-cluster-marker",
+        "component:ds-icon"
+      ],
+      "accessibility": [
+        "The component renders a native button and label is its accessible action name. Prefer an action-oriented label such as ‘Open harsh braking event’.",
+        "Caption is a supplemental visual identifier and is hidden from assistive technology to avoid duplicating label.",
+        "Keyboard focus reveals the same caption as hover and uses the shared visible focus ring.",
+        "Intent meaning must be present in nearby map legend or application detail content; do not rely on marker color alone."
+      ],
+      "states": [
+        "intent is application-controlled and selects the semantic map-marker color without inferring business state.",
+        "icon is application-controlled and accepts a canonical IcoMo icon name appropriate to the mapped point.",
+        "dimmed is visual de-emphasis only. The map owner decides when selection context should dim peer markers and keeps every marker operable. A dimmed marker returns to full opacity while hovered or keyboard-focused so its revealed caption remains legible.",
+        "Activation emits dsClick without changing application selection internally."
+      ],
+      "responsiveBehavior": [
+        "Marker geometry stays fixed across breakpoints so map-engine anchors remain stable.",
+        "The map owner controls collision handling, overlays, and viewport-aware caption placement."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "A map engine that accepts an Element for a custom marker or div icon can mount ds-map-marker directly.",
+          "Listen for dsClick and keep selected item, z-index, coordinates, and camera movement in application state."
+        ],
+        "react": [
+          "Handle dsClick through the generated event binding."
+        ],
+        "angular": [
+          "Keep map-engine marker lifecycle in the owning map adapter."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook examples",
+          "path": "src/wc/components/MapMarker/MapMarker.stories.ts"
+        }
+      ],
+      "styling": {
+        "rationale": "The component owns stable map anchoring geometry and semantic intent recipes; the map engine owns host placement and stacking.",
+        "protected": [
+          {
+            "properties": [
+              "width",
+              "height",
+              "min-width",
+              "padding",
+              "border",
+              "border-radius",
+              "background",
+              "color",
+              "opacity"
+            ],
+            "reason": "Marker geometry, semantic-intent colors, interaction treatment, and de-emphasis are one accessible visual recipe.",
+            "props": [
+              "intent",
+              "dimmed"
+            ]
+          }
+        ],
+        "customProperties": []
+      }
+    },
+    "api": {
+      "props": {
+        "caption": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "caption",
+          "default": "''",
+          "required": false,
+          "mutable": false,
+          "description": "Short visible identifier revealed on hover or keyboard focus."
+        },
+        "dimmed": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "dimmed",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "De-emphasizes this marker when an owner-managed selection is active elsewhere."
+        },
+        "icon": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "icon",
+          "default": "'MapTarget'",
+          "required": false,
+          "mutable": false,
+          "description": "Canonical IcoMo icon name for the represented map point."
+        },
+        "intent": {
+          "type": "MapMarkerIntent",
+          "resolvedType": "\"brand\" | \"caution\" | \"negative\" | \"neutral\" | \"positive\" | \"warning\"",
+          "attribute": "intent",
+          "default": "'neutral'",
+          "required": false,
+          "mutable": false,
+          "description": "Semantic intent that selects the marker color."
+        },
+        "label": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "label",
+          "required": true,
+          "mutable": false,
+          "description": "Accessible action label. Describe what activating the marker opens."
+        }
+      },
+      "events": [
+        {
+          "name": "dsClick",
+          "detail": "MouseEvent",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Fired when the marker's native button is activated."
+        }
+      ],
+      "methods": [
+        {
+          "name": "setFocus",
+          "signature": "setFocus() => Promise<void>",
+          "description": "Moves keyboard focus to the marker button."
+        }
+      ],
+      "slots": []
+    },
+    "props": {
+      "caption": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "caption",
+        "default": "''",
+        "required": false,
+        "mutable": false,
+        "description": "Short visible identifier revealed on hover or keyboard focus."
+      },
+      "dimmed": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "dimmed",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "De-emphasizes this marker when an owner-managed selection is active elsewhere."
+      },
+      "icon": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "icon",
+        "default": "'MapTarget'",
+        "required": false,
+        "mutable": false,
+        "description": "Canonical IcoMo icon name for the represented map point."
+      },
+      "intent": {
+        "type": "MapMarkerIntent",
+        "resolvedType": "\"brand\" | \"caution\" | \"negative\" | \"neutral\" | \"positive\" | \"warning\"",
+        "attribute": "intent",
+        "default": "'neutral'",
+        "required": false,
+        "mutable": false,
+        "description": "Semantic intent that selects the marker color."
+      },
+      "label": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "label",
+        "required": true,
+        "mutable": false,
+        "description": "Accessible action label. Describe what activating the marker opens."
+      }
+    },
+    "events": [
+      {
+        "name": "dsClick",
+        "detail": "MouseEvent",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Fired when the marker's native button is activated."
+      }
+    ],
+    "methods": [
+      {
+        "name": "setFocus",
+        "signature": "setFocus() => Promise<void>",
+        "description": "Moves keyboard focus to the marker button."
+      }
+    ],
+    "slots": [],
+    "exports": {
+      "customElement": "ds-map-marker",
+      "react": "DsMapMarker",
+      "vue": "DsMapMarker",
+      "angular": "DsMapMarker"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-map-marker.js';",
+        "example": "<ds-map-marker></ds-map-marker>"
+      },
+      "react": {
+        "import": "import { DsMapMarker } from '@ds-mo/ui/react';",
+        "example": "<DsMapMarker />"
+      },
+      "vue": {
+        "import": "import { DsMapMarker } from '@ds-mo/ui/vue';",
+        "example": "<DsMapMarker />"
+      },
+      "angular": {
+        "import": "import { DsMapMarker } from '@ds-mo/ui/angular/ds-map-marker';",
+        "example": "<ds-map-marker></ds-map-marker>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^8.0.0",
+          "@ds-mo/icons ^8.1.1"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens",
+    "@ds-mo/icons"
+  ],
+  "registryDependencies": [
+    "icon",
+    "text"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/MapMarker/MapMarker.css",
+      "content": "@import '../../utils/focus-ring.css';\n@import '../../utils/map-marker.css';\n\n:host {\n  --_map-marker-background: var(--color-map-marker-intent-background-neutral);\n  --_map-marker-foreground: var(--color-map-marker-intent-foreground);\n  --_map-marker-interaction-hover: var(--color-map-marker-intent-interaction-hover);\n  --_map-marker-interaction-pressed: var(--color-map-marker-intent-interaction-pressed);\n}\n\n:host([intent='brand']) {\n  --_map-marker-background: var(--color-map-marker-intent-background-brand);\n}\n\n:host([intent='positive']) {\n  --_map-marker-background: var(--color-map-marker-intent-background-positive);\n}\n\n:host([intent='warning']) {\n  --_map-marker-background: var(--color-map-marker-intent-background-warning);\n}\n\n:host([intent='caution']) {\n  --_map-marker-background: var(--color-map-marker-intent-background-caution);\n}\n\n:host([intent='negative']) {\n  --_map-marker-background: var(--color-map-marker-intent-background-negative);\n}\n\n.map-marker__button {\n  width: var(--dimension-size-300);\n  border-radius: var(--dimension-radius-half);\n}\n\n.map-marker__glyph {\n  position: relative;\n  z-index: 2;\n  display: inline-flex;\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/MapMarker/MapMarker.tsx",
+      "content": "import { Component, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';\n\nexport type MapMarkerIntent = 'brand' | 'neutral' | 'positive' | 'warning' | 'caution' | 'negative';\n\n@Component({\n  tag: 'ds-map-marker',\n  styleUrl: 'MapMarker.css',\n  scoped: true,\n})\nexport class MapMarker {\n  /** Accessible action label. Describe what activating the marker opens. */\n  @Prop() label!: string;\n\n  /** Short visible identifier revealed on hover or keyboard focus. */\n  @Prop() caption: string = '';\n\n  /** Canonical IcoMo icon name for the represented map point. */\n  @Prop() icon: string = 'MapTarget';\n\n  /** Semantic intent that selects the marker color. */\n  @Prop({ reflect: true }) intent: MapMarkerIntent = 'neutral';\n\n  /** De-emphasizes this marker when an owner-managed selection is active elsewhere. */\n  @Prop({ reflect: true }) dimmed: boolean = false;\n\n  /** Fired when the marker's native button is activated. */\n  @Event() dsClick!: EventEmitter<MouseEvent>;\n\n  private buttonEl?: HTMLButtonElement;\n\n  /** Moves keyboard focus to the marker button. */\n  @Method()\n  async setFocus(): Promise<void> {\n    this.buttonEl?.focus();\n  }\n\n  private handleClick = (event: MouseEvent) => {\n    this.dsClick.emit(event);\n  };\n\n  render() {\n    const caption = this.caption.trim();\n\n    return (\n      <Host class={{ 'map-marker': true, 'map-marker--dimmed': this.dimmed }}>\n        <button\n          ref={element => (this.buttonEl = element)}\n          type=\"button\"\n          class=\"map-marker__button ds-focus-ring\"\n          aria-label={this.label}\n          onClick={this.handleClick}\n        >\n          <span class=\"map-marker__glyph\" aria-hidden=\"true\">\n            <ds-icon name={this.icon} size=\"sm\" color=\"inherit\"></ds-icon>\n          </span>\n        </button>\n        {caption && (\n          <ds-text\n            class=\"map-marker__caption\"\n            as=\"span\"\n            variant=\"text-caption\"\n            color=\"inherit\"\n            aria-hidden=\"true\"\n          >\n            {caption}\n          </ds-text>\n        )}\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

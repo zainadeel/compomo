@@ -16,7 +16,7 @@ test('uses Unknown color independently from the optional dashed outline @cross-b
       const style = getComputedStyle(element);
       return (
         style.getPropertyValue('--_map-marker-background').trim() ===
-        style.getPropertyValue('--color-entity-marker-background-stale').trim()
+        style.getPropertyValue('--color-map-marker-entity-background-stale').trim()
       );
     })
   ).toBe(true);

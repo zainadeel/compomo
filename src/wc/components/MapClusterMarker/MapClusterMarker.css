@@ -2,10 +2,10 @@
 @import '../../utils/map-marker.css';
 
 :host {
-  --_map-marker-background: var(--color-entity-cluster-marker-background);
-  --_map-marker-foreground: var(--color-entity-cluster-marker-foreground);
-  --_map-marker-interaction-hover: var(--color-entity-cluster-marker-interaction-hover);
-  --_map-marker-interaction-pressed: var(--color-entity-cluster-marker-interaction-pressed);
+  --_map-marker-background: var(--color-map-marker-cluster-background);
+  --_map-marker-foreground: var(--color-map-marker-cluster-foreground);
+  --_map-marker-interaction-hover: var(--color-map-marker-cluster-interaction-hover);
+  --_map-marker-interaction-pressed: var(--color-map-marker-cluster-interaction-pressed);
 }
 
 .map-marker__button {

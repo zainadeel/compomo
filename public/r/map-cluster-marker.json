@@ -20,10 +20,16 @@
       ],
       "avoidWhen": [
         "The marker represents one vehicle, asset, person, or travel group; use MapEntityMarker.",
+        "The marker represents one application-defined point, location, or event; use MapMarker.",
         "The count is a notification attached to another control; use Badge.",
         "The component would be asked to calculate clusters or own geographic and selected-entity business state."
       ],
       "alternatives": [
+        {
+          "when": "One application-defined point needs semantic intent color and an arbitrary map icon.",
+          "component": "component:ds-map-marker",
+          "reason": "MapMarker owns single-point and event marker semantics and geometry."
+        },
         {
           "when": "One map entity needs operating state, bearing, and an optional dashed outline.",
           "component": "component:ds-map-entity-marker",
@@ -36,6 +42,7 @@
         }
       ],
       "commonlyComposedWith": [
+        "component:ds-map-marker",
         "component:ds-map-entity-marker",
         "component:ds-text"
       ],
@@ -234,7 +241,7 @@
       },
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens ^7.0.0",
+          "@ds-mo/tokens ^8.0.0",
           "@ds-mo/icons ^8.1.1"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
@@ -251,7 +258,7 @@
   "files": [
     {
       "path": "src/wc/components/MapClusterMarker/MapClusterMarker.css",
-      "content": "@import '../../utils/focus-ring.css';\n@import '../../utils/map-marker.css';\n\n:host {\n  --_map-marker-background: var(--color-entity-cluster-marker-background);\n  --_map-marker-foreground: var(--color-entity-cluster-marker-foreground);\n  --_map-marker-interaction-hover: var(--color-entity-cluster-marker-interaction-hover);\n  --_map-marker-interaction-pressed: var(--color-entity-cluster-marker-interaction-pressed);\n}\n\n.map-marker__button {\n  width: max-content;\n  padding-inline: 0;\n  border-radius: var(--dimension-radius-half);\n}\n\n.map-marker__button,\n.map-marker__caption {\n  -webkit-backdrop-filter: blur(var(--effect-blur-md));\n  backdrop-filter: blur(var(--effect-blur-md));\n}\n\n.map-cluster-marker__button--padded {\n  padding-inline: var(--dimension-space-100);\n}\n\n.map-cluster-marker__count {\n  position: relative;\n  z-index: 2;\n  display: inline-flex;\n  white-space: nowrap;\n}\n",
+      "content": "@import '../../utils/focus-ring.css';\n@import '../../utils/map-marker.css';\n\n:host {\n  --_map-marker-background: var(--color-map-marker-cluster-background);\n  --_map-marker-foreground: var(--color-map-marker-cluster-foreground);\n  --_map-marker-interaction-hover: var(--color-map-marker-cluster-interaction-hover);\n  --_map-marker-interaction-pressed: var(--color-map-marker-cluster-interaction-pressed);\n}\n\n.map-marker__button {\n  width: max-content;\n  padding-inline: 0;\n  border-radius: var(--dimension-radius-half);\n}\n\n.map-marker__button,\n.map-marker__caption {\n  -webkit-backdrop-filter: blur(var(--effect-blur-md));\n  backdrop-filter: blur(var(--effect-blur-md));\n}\n\n.map-cluster-marker__button--padded {\n  padding-inline: var(--dimension-space-100);\n}\n\n.map-cluster-marker__count {\n  position: relative;\n  z-index: 2;\n  display: inline-flex;\n  white-space: nowrap;\n}\n",
       "type": "registry:ui"
     },
     {

@@ -1,0 +1,40 @@
+@import '../../utils/focus-ring.css';
+@import '../../utils/map-marker.css';
+
+:host {
+  --_map-marker-background: var(--color-map-marker-intent-background-neutral);
+  --_map-marker-foreground: var(--color-map-marker-intent-foreground);
+  --_map-marker-interaction-hover: var(--color-map-marker-intent-interaction-hover);
+  --_map-marker-interaction-pressed: var(--color-map-marker-intent-interaction-pressed);
+}
+
+:host([intent='brand']) {
+  --_map-marker-background: var(--color-map-marker-intent-background-brand);
+}
+
+:host([intent='positive']) {
+  --_map-marker-background: var(--color-map-marker-intent-background-positive);
+}
+
+:host([intent='warning']) {
+  --_map-marker-background: var(--color-map-marker-intent-background-warning);
+}
+
+:host([intent='caution']) {
+  --_map-marker-background: var(--color-map-marker-intent-background-caution);
+}
+
+:host([intent='negative']) {
+  --_map-marker-background: var(--color-map-marker-intent-background-negative);
+}
+
+.map-marker__button {
+  width: var(--dimension-size-300);
+  border-radius: var(--dimension-radius-half);
+}
+
+.map-marker__glyph {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+}

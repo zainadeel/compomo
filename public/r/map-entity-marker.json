@@ -20,10 +20,16 @@
       ],
       "avoidWhen": [
         "Several nearby entities must be represented as one count; use MapClusterMarker.",
+        "An application-defined point, location, or event needs a semantic intent and arbitrary map icon; use MapMarker.",
         "The content is a legend item or non-interactive status swatch.",
         "The component would be asked to own geographic coordinates, clustering, map-engine adapters, or selected-entity business state."
       ],
       "alternatives": [
+        {
+          "when": "An application-defined map point needs semantic intent color and an arbitrary map icon.",
+          "component": "component:ds-map-marker",
+          "reason": "MapMarker owns generic intent-based point and event semantics without entity motion behavior."
+        },
         {
           "when": "Several nearby entities are represented by a compact count.",
           "component": "component:ds-map-cluster-marker",
@@ -31,6 +37,7 @@
         }
       ],
       "commonlyComposedWith": [
+        "component:ds-map-marker",
         "component:ds-map-cluster-marker",
         "component:ds-icon"
       ],
@@ -290,7 +297,7 @@
       },
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens ^7.0.0",
+          "@ds-mo/tokens ^8.0.0",
           "@ds-mo/icons ^8.1.1"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
@@ -309,7 +316,7 @@
   "files": [
     {
       "path": "src/wc/components/MapEntityMarker/MapEntityMarker.css",
-      "content": "@import '../../utils/focus-ring.css';\n@import '../../utils/map-marker.css';\n\n:host([state='moving']) {\n  --_map-marker-background: var(--color-entity-marker-background-in-motion);\n}\n\n:host([state='idling']) {\n  --_map-marker-background: var(--color-entity-marker-background-idling);\n}\n\n:host([state='stationary']) {\n  --_map-marker-background: var(--color-entity-marker-background-stationary);\n}\n\n:host([state='immobilized']) {\n  --_map-marker-background: var(--color-entity-marker-background-immobilized);\n}\n\n:host([state='unknown']) {\n  --_map-marker-background: var(--color-entity-marker-background-stale);\n}\n\n.map-marker__button {\n  width: var(--dimension-size-300);\n  border-radius: var(--dimension-radius-half);\n}\n\n:host(.map-entity-marker--dashed) .map-marker__button::after {\n  display: none;\n}\n\n.map-entity-marker__dashed-outline {\n  position: absolute;\n  z-index: 3;\n  inset: 0;\n  width: 100%;\n  height: 100%;\n  overflow: visible;\n  pointer-events: none;\n  transform: rotate(-90deg);\n  fill: none;\n  stroke: currentcolor;\n  stroke-width: 1;\n  stroke-linecap: butt;\n}\n\n.map-entity-marker__glyph {\n  position: relative;\n  z-index: 2;\n  display: inline-flex;\n  transform: rotate(var(--ds-map-entity-marker-bearing));\n}\n\n@media (forced-colors: active) {\n  :host(.map-entity-marker--dashed) .map-marker__button::after {\n    display: block;\n    outline-style: dashed;\n  }\n\n  .map-entity-marker__dashed-outline {\n    display: none;\n  }\n}\n",
+      "content": "@import '../../utils/focus-ring.css';\n@import '../../utils/map-marker.css';\n\n:host([state='moving']) {\n  --_map-marker-background: var(--color-map-marker-entity-background-in-motion);\n}\n\n:host([state='idling']) {\n  --_map-marker-background: var(--color-map-marker-entity-background-idling);\n}\n\n:host([state='stationary']) {\n  --_map-marker-background: var(--color-map-marker-entity-background-stationary);\n}\n\n:host([state='immobilized']) {\n  --_map-marker-background: var(--color-map-marker-entity-background-immobilized);\n}\n\n:host([state='unknown']) {\n  --_map-marker-background: var(--color-map-marker-entity-background-stale);\n}\n\n.map-marker__button {\n  width: var(--dimension-size-300);\n  border-radius: var(--dimension-radius-half);\n}\n\n:host(.map-entity-marker--dashed) .map-marker__button::after {\n  display: none;\n}\n\n.map-entity-marker__dashed-outline {\n  position: absolute;\n  z-index: 3;\n  inset: 0;\n  width: 100%;\n  height: 100%;\n  overflow: visible;\n  pointer-events: none;\n  transform: rotate(-90deg);\n  fill: none;\n  stroke: currentcolor;\n  stroke-width: 1;\n  stroke-linecap: butt;\n}\n\n.map-entity-marker__glyph {\n  position: relative;\n  z-index: 2;\n  display: inline-flex;\n  transform: rotate(var(--ds-map-entity-marker-bearing));\n}\n\n@media (forced-colors: active) {\n  :host(.map-entity-marker--dashed) .map-marker__button::after {\n    display: block;\n    outline-style: dashed;\n  }\n\n  .map-entity-marker__dashed-outline {\n    display: none;\n  }\n}\n",
       "type": "registry:ui"
     },
     {
