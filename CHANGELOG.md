@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.10.1](https://github.com/zainadeel/compomo/compare/v15.10.0...v15.10.1) (2026-09-24)
+
+
+### Fixed
+
+* keep overview trends beside values ([#660](https://github.com/zainadeel/compomo/issues/660)) ([539588a](https://github.com/zainadeel/compomo/commit/539588ac5d99f6deafcdb83887aba0598ef8cb74))
+
 ## [15.10.0](https://github.com/zainadeel/compomo/compare/v15.9.1...v15.10.0) (2026-09-24)
 
 
