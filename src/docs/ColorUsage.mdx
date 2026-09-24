@@ -40,16 +40,18 @@ Choose semantic tokens by purpose rather than hue.
 
 ### Base surfaces and hierarchy
 
-| Role                                                   | Token                                                |
-| ------------------------------------------------------ | ---------------------------------------------------- |
-| Primary page or card body                              | `--color-background-primary`                         |
-| Secondary surface or card chrome                       | `--color-background-secondary`                       |
-| Primary content                                        | `--color-foreground-primary`                         |
-| Supporting content                                     | `--color-foreground-secondary`                       |
-| Inactive/disabled UI content                           | `--color-foreground-tertiary`                        |
-| Fainter inactive/disabled or purely decorative content | `--color-foreground-quaternary`                      |
-| Structural border                                      | `--color-border-primary`, `secondary`, or `tertiary` |
-| Internal content rule                                  | `--color-divider-divider`                            |
+| Role                                                   | Token                           |
+| ------------------------------------------------------ | ------------------------------- |
+| Primary page or card body                              | `--color-background-primary`    |
+| Secondary surface or card chrome                       | `--color-background-secondary`  |
+| Primary content                                        | `--color-foreground-primary`    |
+| Supporting content                                     | `--color-foreground-secondary`  |
+| Inactive/disabled UI content                           | `--color-foreground-tertiary`   |
+| Fainter inactive/disabled or purely decorative content | `--color-foreground-quaternary` |
+| Decorative edge or fill-identified control             | `--color-border-tertiary`       |
+| Default control boundary                               | `--color-border-secondary`      |
+| Stronger structural edge                               | `--color-border-primary`        |
+| Internal content rule                                  | `--color-divider-divider`       |
 
 Use border tokens for container and control edges. Use divider tokens only for
 rules that separate content inside a surface; prefer `ds-divider` when the rule
@@ -64,10 +66,10 @@ restricted hierarchy. Prefer the owning component's `isInactive` API or native
 alone does not make meaningful visible content decorative.
 
 Component-owned non-text recipes are a narrow exception. A control may resolve
-one of these tokens internally for a boundary or state mark only when that exact
-rendered treatment is verified to meet its 3:1 requirement on every supported
-surface. Checkbox does this for its unchecked outline. Product code should use
-the component API rather than copying that internal token choice.
+`--color-foreground-tertiary` internally for a boundary or state mark only when
+that exact rendered treatment is verified to meet its 3:1 requirement on every
+supported surface. Checkbox does this for its unchecked outline. Product code
+should use the component API rather than copying that internal token choice.
 
 ### Intent and contrast
 
@@ -75,12 +77,30 @@ The semantic intent set is `neutral`, `brand`, `ai`, `negative`, `warning`,
 `caution`, `positive`, `guide`, and `walkthrough`.
 
 Intent backgrounds, borders, and foregrounds use the `faint`, `medium`, `bold`,
-and `strong` contrast scale:
+and `strong` contrast scale. On a faint surface, default to the Banner pattern:
+primary foreground for primary content, secondary foreground for supporting
+content, and a tertiary decorative edge.
 
 ```css
-.positive-status {
+.positive-banner {
+  background: var(--color-background-faint-positive);
+  color: var(--color-foreground-primary);
+  border-color: var(--color-border-tertiary);
+}
+
+.positive-banner__supporting {
+  color: var(--color-foreground-secondary);
+}
+```
+
+Use a same-intent bold foreground when the treatment should be deliberately
+tinted. A matching medium intent border is optional:
+
+```css
+.positive-status--tinted {
   background: var(--color-background-faint-positive);
   color: var(--color-foreground-bold-positive);
+  /* Add only when the edge should share the intent tint. */
   border-color: var(--color-border-medium-positive);
 }
 ```
@@ -155,20 +175,22 @@ Use data colors for chart marks, legend keys, heatmaps, map overlays, and
 value-encoding ramps. Do not use them for general UI surfaces, text hierarchy,
 buttons, toasts, or form validation.
 
-| Family                                 | Purpose                          |
-| -------------------------------------- | -------------------------------- | ------ | ------------------------ | ------------------------- |
-| `--color-data-category-1` … `12`       | Unordered categories             |
-| `--color-data-sequence-blue-{2         | 3                                | 4}-\*` | Ordered blue ramps       |
-| `--color-data-diverging-blue-orange-{5 | 7                                | 9}-\*` | Values around a midpoint |
-| `--color-data-win-loss-*`              | Outcome polarity                 |
-| `--color-data-misc-{strong             | bold                             | medium | faint}`                  | Axes and supporting marks |
-| `--color-data-intent-*`                | Intent-aware visualization marks |
-| `--color-data-status-device-*`         | Device-status visualization      |
-| `--color-data-score-safety-*`          | Safety-score visualization       |
+| Family                                                            | Purpose                                |
+| ----------------------------------------------------------------- | -------------------------------------- |
+| `--color-data-category-1` … `12`                                  | Unordered categories                   |
+| `--color-data-sequence-blue-{steps}-*` (2, 3, or 4 steps)         | Ordered blue ramps                     |
+| `--color-data-diverging-blue-orange-{steps}-*` (5, 7, or 9 steps) | Values around a midpoint               |
+| `--color-data-win-loss-*`                                         | Outcome polarity                       |
+| `--color-data-misc-*` (`strong`, `bold`, `medium`, or `faint`)    | Neutral supporting marks drawn as data |
+| `--color-data-intent-*`                                           | Intent-aware visualization marks       |
+| `--color-data-status-device-*`                                    | Device-status visualization            |
+| `--color-data-score-safety-*`                                     | Safety-score visualization             |
 
 Use category colors in numeric order, especially when marks touch in a donut
-or stacked chart. Chart containers, titles, axes, and alert chrome still use
-semantic tokens.
+or stacked chart. Chart chrome follows the foreground hierarchy: primary for
+axis titles and annotations, secondary for labels and zero lines, tertiary for
+axis and rule lines, and quaternary for grids, matching the
+[Charts guide](?path=/docs/guides-charts--docs).
 
 ## Product-domain semantics
 
