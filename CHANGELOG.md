@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.9.0](https://github.com/zainadeel/compomo/compare/v15.8.1...v15.9.0) (2026-09-24)
+
+
+### Added
+
+* **storybook:** add responsive overview playground ([#653](https://github.com/zainadeel/compomo/issues/653)) ([e201c17](https://github.com/zainadeel/compomo/commit/e201c17d88b931a1f1c4c3bafa67d7e1417dc6e9))
+
 ## [15.8.1](https://github.com/zainadeel/compomo/compare/v15.8.0...v15.8.1) (2026-09-23)
 
 
