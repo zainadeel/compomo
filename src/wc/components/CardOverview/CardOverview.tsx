@@ -401,6 +401,7 @@ export class CardOverview {
         class="card-overview__metric-label ds-control-label-box"
         variant="text-body-small"
         color={ALWAYS_DARK_SECONDARY}
+        wrap="nowrap"
       >
         {metric.label}
       </ds-text>
@@ -440,6 +441,7 @@ export class CardOverview {
                 class="card-overview__metric-value ds-control-label-box"
                 variant="text-body-medium"
                 color={ALWAYS_DARK_PRIMARY}
+                wrap="nowrap"
                 fontFeature="tabular-nums"
               >
                 {metric.value}

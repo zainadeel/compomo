@@ -67,6 +67,24 @@ document.getElementById('good').score = score(80);
 document.getElementById('excellent').score = score(81);
 document.getElementById('no-score').metrics = metrics.slice(0, 2);
 document.getElementById('no-trend').score = { value: 87 };
+const longCopy = document.getElementById('long-copy');
+longCopy.metricMinWidth = '180px';
+longCopy.score = score(87);
+longCopy.metrics = [
+  {
+    id: 'long-copy',
+    label: 'Preventable collision rate per million kilometres driven',
+    labelTooltip: 'Preventable collision rate per million kilometres driven',
+    value: '1,234,567.89 kilometres',
+    trend: { direction: 'down', value: '12.3%', tone: 'positive' },
+  },
+  {
+    id: 'short-copy',
+    label: 'Inspections',
+    value: 96,
+    trend: { direction: 'up', value: '4', tone: 'positive' },
+  },
+];
 document.getElementById('score-error').metrics = metrics.slice(0, 2);
 document.getElementById('loading-with-metrics').metrics = metrics.slice(0, 3);
 
