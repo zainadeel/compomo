@@ -1,9 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { ref } from 'lit/directives/ref.js';
+import { useArgs } from 'storybook/preview-api';
 import '../../../../dist/components/ds-card-overview.js';
 import '../../../../dist/components/ds-select.js';
 import '../../../../dist/components/ds-button-unfilled.js';
+import '../../../../dist/components/ds-slider.js';
+import '../../../../dist/components/ds-text.js';
 import { resolveMetricTrend } from '../../utils/metric-change';
 import type { OverviewMetric, OverviewScore } from './card-overview-types';
 
@@ -142,6 +145,110 @@ export const RangeComparison: Story = {
       </ds-card-overview>
     </div>
   `,
+};
+
+export const ResponsivePlayground: Story = {
+  args: { width: 880 },
+  argTypes: {
+    width: {
+      name: 'Container width (px)',
+      control: { type: 'range', min: 280, max: 1680, step: 20 },
+      description: 'Shared container width for all eight examples, including the score cell.',
+    },
+  },
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        story:
+          'Resize all eight cards together with the slider or width presets. Each count includes the safety score, followed by up to seven metrics. Cards use their intrinsic responsive layout; the story changes only their container width. Wide examples can be scrolled horizontally when the preview is narrower than the selected width.',
+      },
+    },
+  },
+  render: args => {
+    const [, updateArgs] = useArgs();
+    const metrics: OverviewMetric[] = [
+      ...METRICS,
+      {
+        id: 'seat-belt',
+        label: 'Seat belt use',
+        value: '96%',
+        trend: resolveMetricTrend(96, 93) ?? undefined,
+      },
+      {
+        id: 'harsh-braking',
+        label: 'Harsh braking',
+        value: 12,
+        trend: resolveMetricTrend(12, 16, { inverted: true }) ?? undefined,
+      },
+    ];
+    return html`
+      <div>
+        <div
+          style="position:sticky;top:0;z-index:var(--dimension-z-index-raised);display:grid;gap:var(--dimension-space-150);padding:var(--dimension-space-200);background:var(--color-background-primary);border-bottom:var(--dimension-stroke-width-012) solid var(--color-border-tertiary);"
+        >
+          <ds-text as="h2" variant="text-title-medium">Responsive overview</ds-text>
+          <ds-text as="p" variant="text-body-small" color="secondary">
+            One to eight data points, including the safety score. Resize every card together to
+            compare how each count wraps.
+          </ds-text>
+          <div style="width:min(100%,var(--dimension-form-width-lg));">
+            <ds-slider
+              label="Container width"
+              value-suffix=" px"
+              .min=${280}
+              .max=${1680}
+              .step=${20}
+              .value=${args['width']}
+              @dsChange=${(event: CustomEvent<number | number[]>) => {
+                if (typeof event.detail === 'number') updateArgs({ width: event.detail });
+              }}
+            ></ds-slider>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:var(--dimension-space-100);">
+            ${[880, 640, 440, 280].map(
+              width => html`
+                <ds-button-unfilled
+                  label=${`${width} px`}
+                  @dsClick=${() => updateArgs({ width })}
+                ></ds-button-unfilled>
+              `
+            )}
+          </div>
+          <ds-text as="p" variant="text-body-small" color="secondary">
+            Scroll sideways if a card is wider than the preview.
+          </ds-text>
+        </div>
+        <div
+          role="region"
+          aria-label="Responsive card examples"
+          tabindex="0"
+          style="overflow-x:auto;padding:var(--dimension-space-200);"
+        >
+          <div style=${`display:grid;gap:var(--dimension-space-300);width:${args['width']}px;`}>
+            ${Array.from({ length: 8 }, (_, index) => {
+              const count = index + 1;
+              const label = `${count} data point${count === 1 ? '' : 's'}`;
+              return html`
+                <section style="display:grid;gap:var(--dimension-space-100);">
+                  <ds-text as="h3" variant="text-title-small">${label}</ds-text>
+                  <ds-card-overview
+                    overview-label=${`Safety summary with ${label}`}
+                    period-label="Jul 27"
+                    comparison-label="vs."
+                    .score=${SCORE}
+                    .metrics=${metrics.slice(0, index)}
+                  >
+                    ${comparisonSelect()}
+                  </ds-card-overview>
+                </section>
+              `;
+            })}
+          </div>
+        </div>
+      </div>
+    `;
+  },
 };
 
 export const ScorePalette: Story = {
