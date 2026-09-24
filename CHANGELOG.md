@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.10.0](https://github.com/zainadeel/compomo/compare/v15.9.1...v15.10.0) (2026-09-24)
+
+
+### Added
+
+* add generic intent map marker ([#658](https://github.com/zainadeel/compomo/issues/658)) ([cba3ab6](https://github.com/zainadeel/compomo/commit/cba3ab61453b5c470d4e33b0fda577e0cf5024ce))
+
 ## [15.9.1](https://github.com/zainadeel/compomo/compare/v15.9.0...v15.9.1) (2026-09-24)
 
 
