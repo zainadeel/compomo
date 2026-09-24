@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.9.1](https://github.com/zainadeel/compomo/compare/v15.9.0...v15.9.1) (2026-09-24)
+
+
+### Fixed
+
+* truncate overview metrics and align with tokomo 7 ([#655](https://github.com/zainadeel/compomo/issues/655)) ([71222c1](https://github.com/zainadeel/compomo/commit/71222c1c74be573f974fe72f3dae845661696fb7))
+
 ## [15.9.0](https://github.com/zainadeel/compomo/compare/v15.8.1...v15.9.0) (2026-09-24)
 
 
