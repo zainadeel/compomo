@@ -1,8 +1,8 @@
 :host {
-  --_map-marker-background: var(--color-entity-marker-background-in-motion);
-  --_map-marker-foreground: var(--color-entity-marker-foreground);
-  --_map-marker-interaction-hover: var(--color-entity-marker-interaction-hover);
-  --_map-marker-interaction-pressed: var(--color-entity-marker-interaction-pressed);
+  --_map-marker-background: var(--color-map-marker-entity-background-in-motion);
+  --_map-marker-foreground: var(--color-map-marker-entity-foreground);
+  --_map-marker-interaction-hover: var(--color-map-marker-entity-interaction-hover);
+  --_map-marker-interaction-pressed: var(--color-map-marker-entity-interaction-pressed);
 
   position: relative;
   display: inline-flex;

@@ -14,17 +14,27 @@
   ],
   "avoidWhen": [
     "Several nearby entities must be represented as one count; use MapClusterMarker.",
+    "An application-defined point, location, or event needs a semantic intent and arbitrary map icon; use MapMarker.",
     "The content is a legend item or non-interactive status swatch.",
     "The component would be asked to own geographic coordinates, clustering, map-engine adapters, or selected-entity business state."
   ],
   "alternatives": [
+    {
+      "when": "An application-defined map point needs semantic intent color and an arbitrary map icon.",
+      "component": "component:ds-map-marker",
+      "reason": "MapMarker owns generic intent-based point and event semantics without entity motion behavior."
+    },
     {
       "when": "Several nearby entities are represented by a compact count.",
       "component": "component:ds-map-cluster-marker",
       "reason": "MapClusterMarker owns cluster count formatting and cluster interaction geometry."
     }
   ],
-  "commonlyComposedWith": ["component:ds-map-cluster-marker", "component:ds-icon"],
+  "commonlyComposedWith": [
+    "component:ds-map-marker",
+    "component:ds-map-cluster-marker",
+    "component:ds-icon"
+  ],
   "accessibility": [
     "The component renders a native button and label is its accessible action name. Prefer an action-oriented label such as ‘Open vehicle 412’.",
     "Caption is a supplemental visual identifier and is hidden from assistive technology to avoid duplicating label.",

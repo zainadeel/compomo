@@ -12,7 +12,7 @@
     "themeSetup": "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     "peerDependencies": {
       "required": [
-        "@ds-mo/tokens ^7.0.0",
+        "@ds-mo/tokens ^8.0.0",
         "@ds-mo/icons ^8.1.1"
       ],
       "optional": [],
@@ -8969,10 +8969,16 @@
           ],
           "avoidWhen": [
             "The marker represents one vehicle, asset, person, or travel group; use MapEntityMarker.",
+            "The marker represents one application-defined point, location, or event; use MapMarker.",
             "The count is a notification attached to another control; use Badge.",
             "The component would be asked to calculate clusters or own geographic and selected-entity business state."
           ],
           "alternatives": [
+            {
+              "when": "One application-defined point needs semantic intent color and an arbitrary map icon.",
+              "component": "component:ds-map-marker",
+              "reason": "MapMarker owns single-point and event marker semantics and geometry."
+            },
             {
               "when": "One map entity needs operating state, bearing, and an optional dashed outline.",
               "component": "component:ds-map-entity-marker",
@@ -8985,6 +8991,7 @@
             }
           ],
           "commonlyComposedWith": [
+            "component:ds-map-marker",
             "component:ds-map-entity-marker",
             "component:ds-text"
           ],
@@ -9105,10 +9112,16 @@
           ],
           "avoidWhen": [
             "Several nearby entities must be represented as one count; use MapClusterMarker.",
+            "An application-defined point, location, or event needs a semantic intent and arbitrary map icon; use MapMarker.",
             "The content is a legend item or non-interactive status swatch.",
             "The component would be asked to own geographic coordinates, clustering, map-engine adapters, or selected-entity business state."
           ],
           "alternatives": [
+            {
+              "when": "An application-defined map point needs semantic intent color and an arbitrary map icon.",
+              "component": "component:ds-map-marker",
+              "reason": "MapMarker owns generic intent-based point and event semantics without entity motion behavior."
+            },
             {
               "when": "Several nearby entities are represented by a compact count.",
               "component": "component:ds-map-cluster-marker",
@@ -9116,6 +9129,7 @@
             }
           ],
           "commonlyComposedWith": [
+            "component:ds-map-marker",
             "component:ds-map-cluster-marker",
             "component:ds-icon"
           ],
@@ -9224,6 +9238,153 @@
           "react": "DsMapEntityMarker",
           "vue": "DsMapEntityMarker",
           "angular": "DsMapEntityMarker"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "icon",
+        "text"
+      ]
+    },
+    {
+      "name": "map-marker",
+      "title": "MapMarker",
+      "description": "Engine-independent map marker button for an application-defined point, location, or event with semantic intent color and a hover or focus caption.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/map-marker",
+        "source": "src/wc/components/MapMarker/MapMarker.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Engine-independent map marker button for an application-defined point, location, or event with semantic intent color and a hover or focus caption.",
+          "useWhen": [
+            "An application map needs an interactive marker whose icon and semantic intent describe an application-defined point, location, or event.",
+            "The map engine can mount a custom element and retain ownership of coordinates, anchoring, and camera behavior."
+          ],
+          "avoidWhen": [
+            "The marker represents a vehicle, asset, person, or travel group with an operating state; use MapEntityMarker.",
+            "Several nearby points must be represented as one count; use MapClusterMarker.",
+            "The content is a legend item or non-interactive status swatch.",
+            "The component would be asked to own geographic coordinates, clustering, map-engine adapters, or selected-item business state."
+          ],
+          "alternatives": [
+            {
+              "when": "One map entity needs operating state, bearing, and an optional dashed outline.",
+              "component": "component:ds-map-entity-marker",
+              "reason": "MapEntityMarker owns entity operating-state semantics and geometry."
+            },
+            {
+              "when": "Several nearby points are represented by a compact count.",
+              "component": "component:ds-map-cluster-marker",
+              "reason": "MapClusterMarker owns cluster count formatting and cluster interaction geometry."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-map-entity-marker",
+            "component:ds-map-cluster-marker",
+            "component:ds-icon"
+          ],
+          "accessibility": [
+            "The component renders a native button and label is its accessible action name. Prefer an action-oriented label such as ‘Open harsh braking event’.",
+            "Caption is a supplemental visual identifier and is hidden from assistive technology to avoid duplicating label.",
+            "Keyboard focus reveals the same caption as hover and uses the shared visible focus ring.",
+            "Intent meaning must be present in nearby map legend or application detail content; do not rely on marker color alone."
+          ],
+          "states": [
+            "intent is application-controlled and selects the semantic map-marker color without inferring business state.",
+            "icon is application-controlled and accepts a canonical IcoMo icon name appropriate to the mapped point.",
+            "dimmed is visual de-emphasis only. The map owner decides when selection context should dim peer markers and keeps every marker operable. A dimmed marker returns to full opacity while hovered or keyboard-focused so its revealed caption remains legible.",
+            "Activation emits dsClick without changing application selection internally."
+          ],
+          "responsiveBehavior": [
+            "Marker geometry stays fixed across breakpoints so map-engine anchors remain stable.",
+            "The map owner controls collision handling, overlays, and viewport-aware caption placement."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "A map engine that accepts an Element for a custom marker or div icon can mount ds-map-marker directly.",
+              "Listen for dsClick and keep selected item, z-index, coordinates, and camera movement in application state."
+            ],
+            "react": [
+              "Handle dsClick through the generated event binding."
+            ],
+            "angular": [
+              "Keep map-engine marker lifecycle in the owning map adapter."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook examples",
+              "path": "src/wc/components/MapMarker/MapMarker.stories.ts"
+            }
+          ],
+          "styling": {
+            "rationale": "The component owns stable map anchoring geometry and semantic intent recipes; the map engine owns host placement and stacking.",
+            "protected": [
+              {
+                "properties": [
+                  "width",
+                  "height",
+                  "min-width",
+                  "padding",
+                  "border",
+                  "border-radius",
+                  "background",
+                  "color",
+                  "opacity"
+                ],
+                "reason": "Marker geometry, semantic-intent colors, interaction treatment, and de-emphasis are one accessible visual recipe.",
+                "props": [
+                  "intent",
+                  "dimmed"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
+        },
+        "props": {
+          "caption": {
+            "type": "string",
+            "required": false
+          },
+          "dimmed": {
+            "type": "boolean",
+            "required": false
+          },
+          "icon": {
+            "type": "string",
+            "required": false
+          },
+          "intent": {
+            "type": "MapMarkerIntent",
+            "required": false
+          },
+          "label": {
+            "type": "string",
+            "required": true
+          }
+        },
+        "events": [
+          {
+            "name": "dsClick",
+            "detail": "MouseEvent"
+          }
+        ],
+        "slots": [],
+        "exports": {
+          "customElement": "ds-map-marker",
+          "react": "DsMapMarker",
+          "vue": "DsMapMarker",
+          "angular": "DsMapMarker"
         }
       },
       "dependencies": [

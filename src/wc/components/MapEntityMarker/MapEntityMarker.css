@@ -2,23 +2,23 @@
 @import '../../utils/map-marker.css';
 
 :host([state='moving']) {
-  --_map-marker-background: var(--color-entity-marker-background-in-motion);
+  --_map-marker-background: var(--color-map-marker-entity-background-in-motion);
 }
 
 :host([state='idling']) {
-  --_map-marker-background: var(--color-entity-marker-background-idling);
+  --_map-marker-background: var(--color-map-marker-entity-background-idling);
 }
 
 :host([state='stationary']) {
-  --_map-marker-background: var(--color-entity-marker-background-stationary);
+  --_map-marker-background: var(--color-map-marker-entity-background-stationary);
 }
 
 :host([state='immobilized']) {
-  --_map-marker-background: var(--color-entity-marker-background-immobilized);
+  --_map-marker-background: var(--color-map-marker-entity-background-immobilized);
 }
 
 :host([state='unknown']) {
-  --_map-marker-background: var(--color-entity-marker-background-stale);
+  --_map-marker-background: var(--color-map-marker-entity-background-stale);
 }
 
 .map-marker__button {

@@ -14,10 +14,16 @@
   ],
   "avoidWhen": [
     "The marker represents one vehicle, asset, person, or travel group; use MapEntityMarker.",
+    "The marker represents one application-defined point, location, or event; use MapMarker.",
     "The count is a notification attached to another control; use Badge.",
     "The component would be asked to calculate clusters or own geographic and selected-entity business state."
   ],
   "alternatives": [
+    {
+      "when": "One application-defined point needs semantic intent color and an arbitrary map icon.",
+      "component": "component:ds-map-marker",
+      "reason": "MapMarker owns single-point and event marker semantics and geometry."
+    },
     {
       "when": "One map entity needs operating state, bearing, and an optional dashed outline.",
       "component": "component:ds-map-entity-marker",
@@ -29,7 +35,11 @@
       "reason": "Badge owns compact notification and counter indicators."
     }
   ],
-  "commonlyComposedWith": ["component:ds-map-entity-marker", "component:ds-text"],
+  "commonlyComposedWith": [
+    "component:ds-map-marker",
+    "component:ds-map-entity-marker",
+    "component:ds-text"
+  ],
   "accessibility": [
     "The component renders a native button and label is its accessible action name. Prefer a label that includes the full count and outcome, such as ‘Zoom to 24 vehicles’.",
     "Caption is a supplemental visual identifier and is hidden from assistive technology to avoid duplicating label.",

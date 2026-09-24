@@ -703,7 +703,7 @@ const driverStatuses = [
   'yard-move',
 ] as const;
 const entityStatuses = ['in-motion', 'idling', 'stationary', 'stale', 'immobilized'] as const;
-const locationIntents = ['brand', 'neutral', 'positive', 'negative', 'warning', 'caution'] as const;
+const markerIntents = ['brand', 'neutral', 'positive', 'negative', 'warning', 'caution'] as const;
 const safetyGrades = ['excellent', 'good', 'fair'] as const;
 const markerInteraction = STATES;
 
@@ -762,14 +762,14 @@ function EntityMarkerColors(): TemplateResult {
       'Map vehicle/asset markers by motion state',
       html` <div style="${GRID}">
           ${entityStatuses.map(status =>
-            swatch(`color-entity-marker-background-${status}`, status)
+            swatch(`color-map-marker-entity-background-${status}`, status)
           )}
           <div style="${SWATCH}">
             <div
-              style="${COLOR} display: flex; align-items: center; justify-content: center; background-color: var(--color-entity-marker-background-in-motion);"
+              style="${COLOR} display: flex; align-items: center; justify-content: center; background-color: var(--color-map-marker-entity-background-in-motion);"
             >
               <span
-                style="color: var(--color-entity-marker-foreground); font-weight: 600; font-size: 14px;"
+                style="color: var(--color-map-marker-entity-foreground); font-weight: 600; font-size: 14px;"
                 >Aa</span
               >
             </div>
@@ -781,10 +781,10 @@ function EntityMarkerColors(): TemplateResult {
             state =>
               html` <div style="${SWATCH}">
                 <div
-                  style="${COLOR} position: relative; background-color: var(--color-entity-marker-background-in-motion); overflow: hidden;"
+                  style="${COLOR} position: relative; background-color: var(--color-map-marker-entity-background-in-motion); overflow: hidden;"
                 >
                   <div
-                    style="position: absolute; inset: 0; background-color: var(--color-entity-marker-interaction-${state});"
+                    style="position: absolute; inset: 0; background-color: var(--color-map-marker-entity-interaction-${state});"
                   ></div>
                 </div>
                 <span style="${LABEL}">interaction-${state}</span>
@@ -801,13 +801,13 @@ function EntityClusterMarkerColors(): TemplateResult {
       'Entity Cluster Marker',
       'Grouped asset cluster pin',
       html` <div style="${GRID}">
-        ${swatch('color-entity-cluster-marker-background', 'background')}
+        ${swatch('color-map-marker-cluster-background', 'background')}
         <div style="${SWATCH}">
           <div
-            style="${COLOR} display: flex; align-items: center; justify-content: center; background-color: var(--color-entity-cluster-marker-background);"
+            style="${COLOR} display: flex; align-items: center; justify-content: center; background-color: var(--color-map-marker-cluster-background);"
           >
             <span
-              style="color: var(--color-entity-cluster-marker-foreground); font-weight: 600; font-size: 14px;"
+              style="color: var(--color-map-marker-cluster-foreground); font-weight: 600; font-size: 14px;"
               >Aa</span
             >
           </div>
@@ -817,10 +817,10 @@ function EntityClusterMarkerColors(): TemplateResult {
           state =>
             html` <div style="${SWATCH}">
               <div
-                style="${COLOR} position: relative; background-color: var(--color-entity-cluster-marker-background); overflow: hidden;"
+                style="${COLOR} position: relative; background-color: var(--color-map-marker-cluster-background); overflow: hidden;"
               >
                 <div
-                  style="position: absolute; inset: 0; background-color: var(--color-entity-cluster-marker-interaction-${state});"
+                  style="position: absolute; inset: 0; background-color: var(--color-map-marker-cluster-interaction-${state});"
                 ></div>
               </div>
               <span style="${LABEL}">interaction-${state}</span>
@@ -831,21 +831,21 @@ function EntityClusterMarkerColors(): TemplateResult {
   </div>`;
 }
 
-function LocationMarkerColors(): TemplateResult {
+function IntentMarkerColors(): TemplateResult {
   return html` <div style="${PAGE}">
     ${section(
-      'Location Markers',
-      'Map location pins by intent',
+      'Intent Markers',
+      'Application-defined map markers by semantic intent',
       html` <div style="${GRID}">
-          ${locationIntents.map(intent =>
-            swatch(`color-location-marker-background-${intent}`, intent)
+          ${markerIntents.map(intent =>
+            swatch(`color-map-marker-intent-background-${intent}`, intent)
           )}
           <div style="${SWATCH}">
             <div
-              style="${COLOR} display: flex; align-items: center; justify-content: center; background-color: var(--color-location-marker-background-brand);"
+              style="${COLOR} display: flex; align-items: center; justify-content: center; background-color: var(--color-map-marker-intent-background-brand);"
             >
               <span
-                style="color: var(--color-location-marker-foreground); font-weight: 600; font-size: 14px;"
+                style="color: var(--color-map-marker-intent-foreground); font-weight: 600; font-size: 14px;"
                 >Aa</span
               >
             </div>
@@ -857,10 +857,10 @@ function LocationMarkerColors(): TemplateResult {
             state =>
               html` <div style="${SWATCH}">
                 <div
-                  style="${COLOR} position: relative; background-color: var(--color-location-marker-background-brand); overflow: hidden;"
+                  style="${COLOR} position: relative; background-color: var(--color-map-marker-intent-background-brand); overflow: hidden;"
                 >
                   <div
-                    style="position: absolute; inset: 0; background-color: var(--color-location-marker-interaction-${state});"
+                    style="position: absolute; inset: 0; background-color: var(--color-map-marker-intent-interaction-${state});"
                   ></div>
                 </div>
                 <span style="${LABEL}">interaction-${state}</span>
@@ -1379,9 +1379,9 @@ export const EntityClusterMarker: Story = {
   name: 'Entity Cluster Marker',
   render: () => EntityClusterMarkerColors(),
 };
-export const LocationMarker: Story = {
-  name: 'Location Markers',
-  render: () => LocationMarkerColors(),
+export const IntentMarker: Story = {
+  name: 'Intent Markers',
+  render: () => IntentMarkerColors(),
 };
 export const SafetyScore: Story = { name: 'Safety Score', render: () => SafetyScoreColors() };
 export const Navigation: Story = { name: 'Navigation', render: () => NavigationColors() };
