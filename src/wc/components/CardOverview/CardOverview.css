@@ -230,6 +230,11 @@
   min-width: 0;
 }
 
+.card-overview__metric-value {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 .card-overview__metric-figure {
   display: flex;
   align-items: baseline;

@@ -12,7 +12,7 @@
     "themeSetup": "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     "peerDependencies": {
       "required": [
-        "@ds-mo/tokens ^6.7.0",
+        "@ds-mo/tokens ^7.0.0",
         "@ds-mo/icons ^8.1.1"
       ],
       "optional": [],

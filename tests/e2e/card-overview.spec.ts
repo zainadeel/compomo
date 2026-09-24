@@ -190,6 +190,59 @@ test('keeps equal-height cell content with the inset, content, and text balance 
   expect(hoverFill).not.toBe('rgba(0, 0, 0, 0)');
 });
 
+test('truncates long metric labels and values while preserving the complete trend', async ({
+  page,
+}) => {
+  const metric = page.locator('#long-copy .card-overview__metric').first();
+  const label = metric.locator('.card-overview__metric-label');
+  const value = metric.locator('.card-overview__metric-value');
+  const trend = metric.locator('.card-overview__trend');
+
+  await expect(label).toHaveText('Preventable collision rate per million kilometres driven');
+  await expect(value).toHaveText('1,234,567.89 kilometres');
+  await expect(trend).toHaveText('↓ 12.3%');
+
+  const geometry = await metric.evaluate(element => {
+    const readTextGeometry = (selector: string) => {
+      const text = element.querySelector<HTMLElement>(selector)!;
+      const glyphs = text.firstElementChild as HTMLElement;
+      const style = getComputedStyle(glyphs);
+      return {
+        clientWidth: glyphs.clientWidth,
+        scrollWidth: glyphs.scrollWidth,
+        height: glyphs.getBoundingClientRect().height,
+        lineHeight: Number.parseFloat(style.lineHeight),
+        overflow: style.overflow,
+        textOverflow: style.textOverflow,
+        whiteSpace: style.whiteSpace,
+      };
+    };
+    const trendElement = element.querySelector<HTMLElement>('.card-overview__trend')!;
+    const trendGlyphs = trendElement.firstElementChild as HTMLElement;
+    return {
+      label: readTextGeometry('.card-overview__metric-label'),
+      value: readTextGeometry('.card-overview__metric-value'),
+      trend: {
+        clientWidth: trendGlyphs.clientWidth,
+        scrollWidth: trendGlyphs.scrollWidth,
+        flexShrink: getComputedStyle(trendElement).flexShrink,
+        whiteSpace: getComputedStyle(trendGlyphs).whiteSpace,
+      },
+    };
+  });
+
+  for (const copy of [geometry.label, geometry.value]) {
+    expect(copy.scrollWidth).toBeGreaterThan(copy.clientWidth);
+    expect(copy.height).toBeCloseTo(copy.lineHeight, 1);
+    expect(copy.overflow).toBe('hidden');
+    expect(copy.textOverflow).toBe('ellipsis');
+    expect(copy.whiteSpace).toBe('nowrap');
+  }
+  expect(geometry.trend.clientWidth).toBe(geometry.trend.scrollWidth);
+  expect(geometry.trend.flexShrink).toBe('0');
+  expect(geometry.trend.whiteSpace).toBe('nowrap');
+});
+
 test('keeps loading placeholders in the resolved content geometry', async ({ page }) => {
   const card = page.locator('#loading-overview');
   await expect(card.locator('ds-score')).toHaveJSProperty('variant', 'dense');

@@ -24,7 +24,7 @@ type Story = StoryObj;
 export const Playground: Story = {
   render: args => html`
     <div
-      style="padding:var(--dimension-space-200);height:240px;border:1px solid var(--color-border-primary);"
+      style="padding:var(--dimension-space-200);height:240px;border:var(--dimension-stroke-width-012) solid var(--color-border-tertiary);"
     >
       <ds-empty-state
         icon=${args['icon'] ?? ''}
