@@ -22,11 +22,11 @@
   width: min(var(--dimension-card-width-sm), calc(100vw - 2 * var(--dimension-space-200)));
 }
 
-@media (max-width: 767px) {
+@media (width < 768px) {
   :host([avoid-mobile-shell-bar]) .toast-viewport {
     bottom: calc(
-      var(--dimension-space-200) + var(--dimension-stroke-width-012) + var(--dimension-space-100) +
-        var(--dimension-size-500) + max(var(--dimension-space-100), env(safe-area-inset-bottom))
+      var(--dimension-space-200) + var(--dimension-space-100) + var(--dimension-size-400) +
+        max(var(--dimension-space-100), env(safe-area-inset-bottom))
     );
   }
 }

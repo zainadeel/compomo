@@ -76,7 +76,7 @@ export const TruncationPlayground: Story = {
             ? html`<ds-button-unfilled
                 slot="leading"
                 variant="icon"
-                size="lg"
+                size="md"
                 icon="ChevronLeft"
                 aria-label="Back"
                 .activeFill=${false}
@@ -87,7 +87,7 @@ export const TruncationPlayground: Story = {
             ? html`<ds-button-unfilled
                 slot="trailing"
                 variant="icon"
-                size="lg"
+                size="md"
                 icon="Ellipses"
                 aria-label="More options"
                 .activeFill=${false}
@@ -106,7 +106,7 @@ export const Foundation: Story = {
       <ds-button-unfilled
         slot="leading"
         variant="icon"
-        size="lg"
+        size="md"
         icon="ChevronLeft"
         aria-label="Back"
         .activeFill=${false}
@@ -115,7 +115,7 @@ export const Foundation: Story = {
       <ds-button-unfilled
         slot="trailing"
         variant="icon"
-        size="lg"
+        size="md"
         icon="Ellipses"
         aria-label="More options"
         .activeFill=${false}
@@ -151,7 +151,7 @@ export const PageWithSubtabs: Story = {
       <ds-button-unfilled
         slot="trailing"
         variant="icon"
-        size="lg"
+        size="md"
         icon="Ellipses"
         aria-label="More people actions"
         .activeFill=${false}
@@ -177,7 +177,7 @@ export const SegmentedToolSections: Story = {
         .sections=${inboxSections}
         value="activity"
         sections-presentation="segmented"
-        sections-size="lg"
+        sections-size="md"
         sections-aria-label="Inbox sections"
       ></ds-mobile-header>
     </div>
@@ -205,7 +205,7 @@ export const DetailWithPageSections: Story = {
       <ds-button-unfilled
         slot="leading"
         variant="icon"
-        size="lg"
+        size="md"
         icon="ChevronLeft"
         aria-label="Back to People"
         .activeFill=${false}
@@ -214,7 +214,7 @@ export const DetailWithPageSections: Story = {
       <ds-button-unfilled
         slot="trailing"
         variant="icon"
-        size="lg"
+        size="md"
         icon="Ellipses"
         aria-label="More driver actions"
         .activeFill=${false}
@@ -231,7 +231,7 @@ export const PlainPageTitle: Story = {
         <ds-button-unfilled
           slot="trailing"
           variant="icon"
-          size="lg"
+          size="md"
           icon="Ellipses"
           aria-label="More page actions"
           .activeFill=${false}

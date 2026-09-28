@@ -34,6 +34,7 @@
   ],
   "responsiveBehavior": [
     "Use only in the dedicated mobile header presentation.",
+    "Triggers, sheet rows, and labels use the medium baseline so the global responsive profile applies mobile enlargement once.",
     "While a section sheet is open or closing, an opaque bottom-edge surface matches the shade composited over the primary mobile bar background, allowing browsers that sample fixed edges to tint their controls independently of the top sheet. Browser tint remains best-effort and requires native-device verification."
   ],
   "references": [

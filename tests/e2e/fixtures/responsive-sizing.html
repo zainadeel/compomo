@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Responsive sizing contract</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+    <link rel="stylesheet" href="/tokens/reset.css" />
+    <link rel="stylesheet" href="/dist/styles/responsive.css" />
+    <style>
+      body { margin: 0; background: var(--color-background-primary); color: var(--color-foreground-primary); }
+      main { display: grid; gap: var(--dimension-space-200); padding: var(--dimension-space-200); }
+      section, form { min-width: 0; display: grid; gap: var(--dimension-space-100); }
+      #controls { display: flex; flex-wrap: wrap; gap: var(--dimension-space-100); }
+      #token-probe { position: absolute; visibility: hidden; pointer-events: none; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <ds-text as="h1" variant="text-title-large">Responsive sizing</ds-text>
+      <section id="controls" aria-label="Control sizes">
+        <ds-button-filled id="button-xs" size="xs" icon="Plus" label="Extra small"></ds-button-filled>
+        <ds-button-filled id="button-sm" size="sm" icon="Plus" label="Small"></ds-button-filled>
+        <ds-button-filled id="button-md" size="md" icon="Plus" label="Medium"></ds-button-filled>
+        <ds-button-filled id="button-lg" size="lg" icon="Plus" label="Large"></ds-button-filled>
+      </section>
+      <form id="form" aria-label="Review details">
+        <ds-input id="input" name="query" aria-label="Query" width="fill"></ds-input>
+        <ds-input id="small-input" size="sm" aria-label="Compact query" width="fill"></ds-input>
+        <ds-textarea id="notes" name="notes" aria-label="Notes" width="fill"></ds-textarea>
+        <ds-input-date id="date" aria-label="Review date"></ds-input-date>
+        <ds-input-time id="time" aria-label="Review time"></ds-input-time>
+      </form>
+      <ds-message-composer id="composer" label="Message"></ds-message-composer>
+      <ds-button-unfilled id="menu-trigger" label="Actions" aria-haspopup="menu"></ds-button-unfilled>
+      <ds-menu id="menu" anchor-id="menu-trigger" menu-label="Review actions"></ds-menu>
+      <ds-table id="table" caption="Drivers" caption-visibility="visible" responsive-layout="cards"></ds-table>
+      <ds-chart id="chart" label="Weekly events"></ds-chart>
+      <ds-card-overview id="overview" is-loading overview-label="Loading metrics"></ds-card-overview>
+      <ds-modal id="modal" heading="Review details">
+        <ds-text variant="text-body-medium">A long description wraps within the mobile dialog.</ds-text>
+      </ds-modal>
+    </main>
+    <div id="token-probe" aria-hidden="true"></div>
+    <script type="module" src="/responsive-sizing-setup.mjs"></script>
+  </body>
+</html>

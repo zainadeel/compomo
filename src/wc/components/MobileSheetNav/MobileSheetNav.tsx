@@ -123,7 +123,7 @@ export class MobileSheetNav {
             this.presentation === 'nested' &&
             this.expandedParentId !== '' &&
             this.expandedParentId !== item.id,
-          'ds-control--lg': true,
+          'ds-control--md': true,
           'ds-focus-ring-inset': true,
           'ds-interaction-fill': true,
         }}
@@ -136,11 +136,11 @@ export class MobileSheetNav {
             : this.dsAreaSelect.emit(item.id)
         }
       >
-        <ds-icon class="ds-interaction-fill__content" name={item.icon} size="lg" color="inherit" />
+        <ds-icon class="ds-interaction-fill__content" name={item.icon} size="md" color="inherit" />
         <ds-text
           class="mobile-sheet-nav__item-label ds-interaction-fill__content"
           as="span"
-          variant="text-body-large"
+          variant="text-body-medium"
           emphasis={selected}
           color="inherit"
           lineTruncation={1}
@@ -178,7 +178,7 @@ export class MobileSheetNav {
           'mobile-sheet-nav__child': true,
           'mobile-sheet-nav__item--selected': selected,
           'ds-nav-disclosure__item': true,
-          'ds-control--lg': true,
+          'ds-control--md': true,
           'ds-focus-ring-inset': true,
           'ds-interaction-fill': true,
         }}
@@ -206,7 +206,7 @@ export class MobileSheetNav {
         <ds-text
           class="mobile-sheet-nav__item-label ds-interaction-fill__content"
           as="span"
-          variant="text-body-large"
+          variant="text-body-medium"
           emphasis={selected}
           color="inherit"
           lineTruncation={1}
@@ -302,7 +302,7 @@ export class MobileSheetNav {
       <ds-tooltip label={label} side="bottom" size="sm">
         <ds-button-unfilled
           variant="icon"
-          size="lg"
+          size="md"
           icon={icon}
           aria-label={label}
           activeFill={false}
@@ -335,7 +335,7 @@ export class MobileSheetNav {
               class="mobile-sheet-nav__context"
               tabs={contextTabs}
               value={this.browseContext}
-              size="lg"
+              size="md"
               width={this.showAccount ? 'hug' : 'fill'}
               aria-label="Browse context"
               onDsChange={this.handleContextChange}

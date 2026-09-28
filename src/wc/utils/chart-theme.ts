@@ -55,16 +55,17 @@ export function resolveChartTheme(element?: Element): ChartTheme {
     : defaultChartTheme.heatmapMinimumOpacity;
   return {
     ...defaultChartTheme,
-    polarCornerRadius: resolveCssLengthPx(TOKEN_DEFAULTS.radius025, 2),
-    polarLabelGap: resolveCssLengthPx(TOKEN_DEFAULTS.space200, 16),
-    dotRadius: resolveCssLengthPx(TOKEN_DEFAULTS.strokeWidth025, 2),
-    dotHaloWidth: resolveCssLengthPx(TOKEN_DEFAULTS.strokeWidth012, 1),
-    focusDotRadius: resolveCssLengthPx(TOKEN_DEFAULTS.strokeWidth037, 3),
-    stackGap: resolveCssLengthPx(TOKEN_DEFAULTS.strokeWidth012, 1),
-    donutGap: resolveCssLengthPx(TOKEN_DEFAULTS.strokeWidth012, 1),
+    polarCornerRadius: resolveCssLengthPx(TOKEN_DEFAULTS.radius025, 2, element),
+    polarLabelGap: resolveCssLengthPx(TOKEN_DEFAULTS.space200, 16, element),
+    dotRadius: resolveCssLengthPx(TOKEN_DEFAULTS.strokeWidth025, 2, element),
+    dotHaloWidth: resolveCssLengthPx(TOKEN_DEFAULTS.strokeWidth012, 1, element),
+    focusDotRadius: resolveCssLengthPx(TOKEN_DEFAULTS.strokeWidth037, 3, element),
+    cellGap: resolveCssLengthPx(TOKEN_DEFAULTS.strokeWidth012, 1, element),
+    stackGap: resolveCssLengthPx(TOKEN_DEFAULTS.strokeWidth012, 1, element),
+    donutGap: resolveCssLengthPx(TOKEN_DEFAULTS.strokeWidth012, 1, element),
     areaOpacity: resolvedLowOpacity,
     boxFillOpacity: resolvedLowOpacity,
-    boxMaxWidth: resolveCssLengthPx(TOKEN_DEFAULTS.size800, 64),
+    boxMaxWidth: resolveCssLengthPx(TOKEN_DEFAULTS.size800, 64, element),
     heatmapMinimumOpacity: resolvedLowOpacity,
   };
 }

@@ -76,7 +76,9 @@ function describeFindings(findings: Result[]): string {
 }
 
 afterEach(async ({ task }) => {
-  if (!task.file.filepath.includes('/src/wc/components/')) return;
+  const isComponentStory = task.file.filepath.includes('/src/wc/components/');
+  const isResponsiveComposition = task.file.filepath.endsWith('/ResponsiveSizing.stories.ts');
+  if (!isComponentStory && !isResponsiveComposition) return;
 
   const components = await waitForStencil();
   await settleFiniteMotion();

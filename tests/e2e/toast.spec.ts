@@ -29,7 +29,9 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
-test('keeps the global stack 16px above the responsive shell bottom bar', async ({ page }) => {
+test('keeps the global stack above the medium shell bar with and without scaling @cross-browser', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 390, height: 760 });
 
   const bar = page.locator('#mobile-bar');
@@ -42,6 +44,10 @@ test('keeps the global stack 16px above the responsive shell bottom bar', async 
   );
   if (!barBox) throw new Error('Mobile shell bar did not render');
   expect(mobileBottom).toBeCloseTo(barBox.height + 16, 0);
+
+  await page.addStyleTag({ url: '/dist/styles/responsive.css' });
+  await expect(bar.locator('nav')).toHaveCSS('height', '60px');
+  await expect(viewport).toHaveCSS('bottom', '80px');
 
   await page.setViewportSize({ width: 768, height: 760 });
   await expect(bar).toBeHidden();

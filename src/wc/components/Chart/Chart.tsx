@@ -554,7 +554,7 @@ export class Chart {
           '--ds-chart-height':
             this.height || this.aspectRatio
               ? `${this.surfaceHeight}px`
-              : 'var(--ds-chart-container-height, 320px)',
+              : 'var(--ds-chart-container-height, calc(var(--dimension-size-base) * 40))',
         }}
       >
         {this.description && (

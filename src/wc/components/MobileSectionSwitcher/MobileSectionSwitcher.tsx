@@ -357,7 +357,7 @@ export class MobileSectionSwitcher {
                 tabIndex={section.id === this.focusedSection ? 0 : -1}
                 class={{
                   'mobile-section-sheet__item': true,
-                  'ds-control--lg': true,
+                  'ds-control--md': true,
                   'ds-interaction-fill': true,
                   'ds-focus-ring-inset': true,
                   'ds-focus-ring--visible':
@@ -375,7 +375,7 @@ export class MobileSectionSwitcher {
                 <ds-text
                   class="mobile-section-sheet__label ds-interaction-fill__content"
                   as="span"
-                  variant="text-body-large"
+                  variant="text-body-medium"
                   color="inherit"
                   emphasis={section.id === this.selectedSection?.id}
                   lineTruncation={1}
@@ -457,7 +457,7 @@ export class MobileSectionSwitcher {
                 <ds-text
                   class="mobile-section-switcher__page-label ds-interaction-fill__content"
                   as="span"
-                  variant="text-body-large"
+                  variant="text-body-medium"
                   emphasis
                   color="inherit"
                   lineTruncation={1}
@@ -467,7 +467,7 @@ export class MobileSectionSwitcher {
                 <ds-text
                   class="mobile-section-switcher__separator ds-interaction-fill__content"
                   as="span"
-                  variant="text-body-large"
+                  variant="text-body-medium"
                   color="inherit"
                   aria-hidden="true"
                 >
@@ -478,7 +478,7 @@ export class MobileSectionSwitcher {
           <ds-text
             class="mobile-section-switcher__label ds-interaction-fill__content"
             as="span"
-            variant={this.presentation === 'sheet' ? 'text-body-large' : 'text-body-medium'}
+            variant="text-body-medium"
             emphasis
             color="inherit"
             lineTruncation={1}

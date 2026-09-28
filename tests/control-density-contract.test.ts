@@ -176,10 +176,10 @@ test('shell navigation rows consume the shared control-density recipe', () => {
       sizeClass: /\[`ds-control--\$\{this\.size\}`\]: true/,
     },
     {
-      name: 'MobileSheetNav lg destinations',
+      name: 'MobileSheetNav md destinations',
       css: read('src/wc/components/MobileSheetNav/MobileSheetNav.css'),
       source: read('src/wc/components/MobileSheetNav/MobileSheetNav.tsx'),
-      sizeClass: /['"]ds-control--lg['"]: true/,
+      sizeClass: /['"]ds-control--md['"]: true/,
     },
   ];
 

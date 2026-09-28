@@ -293,7 +293,7 @@ export class ShellTools {
         value={tool}
         sectionsAriaLabel={this.inboxNavigationLabel}
         sectionsPresentation={inboxRoot ? 'segmented' : 'switcher'}
-        sectionsSize="lg"
+        sectionsSize="md"
         onDsSectionChange={this.selectInboxTool}
       >
         {header.showBack ? (

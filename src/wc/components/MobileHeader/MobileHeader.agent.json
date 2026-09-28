@@ -39,7 +39,7 @@
     "Brand tone changes surface and foreground without changing geometry or interaction ownership."
   ],
   "responsiveBehavior": [
-    "The primary 56px lane matches the Mobile Sheet Nav header and Mobile Bar Nav; optional subsections add one subordinate 48px lane.",
+    "The primary lane, subordinate lane, Mobile Sheet Nav header, and Mobile Bar Nav share a medium baseline; the global responsive profile supplies their mobile enlargement once.",
     "Equal flexible side lanes keep the center mathematically aligned when actions are asymmetric; segmented headers allocate the usable lane in a 1:4:1 ratio."
   ],
   "references": [

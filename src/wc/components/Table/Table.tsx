@@ -2979,7 +2979,7 @@ export class Table {
         {this.showsColumnCustomizer &&
         !this.hideColumnCustomizerTrigger &&
         this.showsDataModeSwitcher ? (
-          <ds-divider orientation="vertical" length="32px" />
+          <ds-divider orientation="vertical" length="var(--dimension-size-400)" />
         ) : null}
         {this.renderDataModeSwitcherTrigger()}
         <slot name="caption-trailing" />

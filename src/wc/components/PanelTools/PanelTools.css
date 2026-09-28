@@ -157,7 +157,7 @@
 /* Skip paint while fully closed; cleared during open/close motion for WYSIWYG slide. */
 :host(.panel-tools--drawer-resting) .panel-tools__body {
   content-visibility: auto;
-  contain-intrinsic-size: auto 200px;
+  contain-intrinsic-size: auto calc(var(--dimension-size-base) * 25);
 }
 
 .panel-tools__view {

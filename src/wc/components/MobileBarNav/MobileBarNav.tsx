@@ -204,6 +204,7 @@ export class MobileBarNav {
         type="button"
         class={{
           'mobile-bar-nav__item': true,
+          'ds-control--md': true,
           'mobile-bar-nav__item--selected': selected,
           'mobile-bar-nav__item--pressed': this.pressedItemId === item.id,
           'ds-focus-ring-inset': true,
@@ -215,7 +216,7 @@ export class MobileBarNav {
         {...this.pressHandlers(item.id)}
       >
         <span class="mobile-bar-nav__icon ds-interaction-fill__content">
-          <ds-icon name={item.icon} size="lg" color="inherit" />
+          <ds-icon name={item.icon} size="md" color="inherit" />
           {item.dot && (
             <ds-badge class="mobile-bar-nav__dot" variant="dot" label="" aria-hidden="true" />
           )}
@@ -236,6 +237,7 @@ export class MobileBarNav {
               type="button"
               class={{
                 'mobile-bar-nav__item': true,
+                'ds-control--md': true,
                 'mobile-bar-nav__item--selected': this.sheetNavExpanded,
                 'mobile-bar-nav__item--pressed': this.pressedItemId === 'sheet-nav',
                 'ds-focus-ring-inset': true,
@@ -250,7 +252,7 @@ export class MobileBarNav {
               <span class="mobile-bar-nav__icon ds-interaction-fill__content">
                 <ds-icon
                   name={this.sheetNavExpanded ? 'Cross' : 'Hamburger'}
-                  size="lg"
+                  size="md"
                   color="inherit"
                 />
               </span>

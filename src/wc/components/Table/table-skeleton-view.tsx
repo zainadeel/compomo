@@ -173,7 +173,7 @@ function renderSkeletonCellContent(skeleton: TableCellSkeleton) {
       <ds-skeleton
         variant="control"
         controlSize="sm"
-        width={skeleton.width ?? (iconOnly ? '24px' : '72%')}
+        width={skeleton.width ?? (iconOnly ? 'var(--dimension-size-300)' : '72%')}
       />
     );
   }

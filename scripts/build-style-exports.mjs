@@ -6,5 +6,8 @@ await mkdir('dist/styles', { recursive: true });
 await copyFile('src/wc/styles/control-elevation.css', 'dist/styles/control-elevation.css');
 await copyFile('src/wc/styles/prose.css', 'dist/styles/prose.css');
 await copyFile('src/wc/styles/table.css', 'dist/styles/table.css');
+await copyFile('src/wc/styles/responsive.css', 'dist/styles/responsive.css');
 
-console.log('  Built dist/styles exports (control-elevation.css, prose.css, table.css)');
+console.log(
+  '  Built dist/styles exports (control-elevation.css, prose.css, table.css, responsive.css)'
+);

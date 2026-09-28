@@ -19,6 +19,17 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
+test('default layout resolution follows body tokens while explicit root scope stays available @cross-browser', async ({
+  page,
+}) => {
+  await page.evaluate(() => {
+    document.documentElement.id = 'root-scope';
+    document.body.style.setProperty('--test-length', 'calc(12px * 1.25)');
+  });
+  expect(await resolve(page, '--test-length')).toBe(15);
+  expect(await resolve(page, '--test-length', 'root-scope')).toBe(12);
+});
+
 test('theme and scoped custom lengths stay live without clearing a cache @cross-browser', async ({
   page,
 }) => {
