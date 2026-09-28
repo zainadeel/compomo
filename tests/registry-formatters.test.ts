@@ -20,20 +20,29 @@ const loadPattern = (name: string) =>
   );
 
 test('formats compiler API, framework imports, and complete intent', () => {
-  const output = formatComponentDetail(loadComponent('button-filled'));
+  const component = loadComponent('button-filled');
+  const output = formatComponentDetail(component);
   assert.match(output, /# ds-button-filled, DsButtonFilled, DsButtonFilled/);
   assert.match(output, /@ds-mo\/ui\/dist\/components\/ds-button-filled\.js/);
   assert.match(output, /@ds-mo\/ui\/react/);
   assert.match(output, /@ds-mo\/ui\/vue/);
   assert.match(output, /@ds-mo\/ui\/angular\/ds-button-filled/);
-  assert.match(output, /The user initiates the single primary command in a local decision area/);
+  for (const text of [
+    ...component.meta.intent.useWhen,
+    ...component.meta.intent.avoidWhen,
+    ...component.meta.intent.accessibility,
+  ])
+    assert.ok(output.includes(text), text);
   assert.doesNotMatch(output, /\nundefined\n/);
 });
 
-test('formats completed semantic intent for migrated components', () => {
-  const output = formatComponentDetail(loadComponent('card-chart'));
-  assert.match(output, /Standard chart card chrome/);
-  assert.match(output, /A chart and static external legend need one standard card layout/);
+test('formats revised descriptions and intent without a copied prose snapshot', () => {
+  const component = loadComponent('card-chart');
+  component.description = 'Updated chart guidance.';
+  component.meta.intent.useWhen = ['A newly documented composition.'];
+  const output = formatComponentDetail(component);
+  assert.ok(output.includes(component.description));
+  assert.ok(output.includes(component.meta.intent.useWhen[0]));
   assert.doesNotMatch(output, /\nundefined\n/);
 });
 
@@ -49,7 +58,10 @@ test('formats pattern discovery and framework-specific executable recipes', () =
   const detail = formatPatternDetail(pattern, 'react');
 
   assert.match(list, /pattern:menu-trigger/);
-  assert.match(detail, /## react: Selected view menu/);
+  for (const recipe of pattern.implementations.react.recipes) {
+    assert.ok(detail.includes(`## react: ${recipe.title}`));
+    for (const file of recipe.files) assert.ok(detail.includes(file.content));
+  }
   assert.match(detail, /DsButtonUnfilled/);
   assert.match(detail, /DsMenu/);
   assert.doesNotMatch(detail, /## angular:/);

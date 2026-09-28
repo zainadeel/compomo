@@ -229,6 +229,8 @@ test('promotes the correct stacked toast without dismissal jitter', async ({ pag
 });
 
 test('pauses and resumes the remaining timeout on hover', async ({ page }) => {
+  await page.clock.install();
+  await page.clock.pauseAt(Date.now() + 1000);
   await page.evaluate(() => {
     (window as ToastTestWindow).__addToast({
       id: 'timed',
@@ -238,14 +240,17 @@ test('pauses and resumes the remaining timeout on hover', async ({ page }) => {
   });
 
   const surface = page.locator('[data-toast-id="timed"] .toast-surface');
+  await page.clock.runFor(400);
   await surface.hover();
-  await page.waitForTimeout(1200);
+  await page.clock.runFor(1200);
   await expect(surface).toBeVisible();
 
   await page.mouse.move(0, 0);
-  await expect(page.locator('[data-toast-id="timed"]')).toHaveCount(0);
+  await page.clock.runFor(700);
   const close = await page.evaluate(() => (window as ToastTestWindow).__toastEvents.closes.at(-1));
   expect(close).toEqual({ id: 'timed', reason: 'timeout' });
+  await page.clock.resume();
+  await expect(page.locator('[data-toast-id="timed"]')).toHaveCount(0);
 });
 
 test('supports F6 access, actions, Escape dismissal, and focus restoration @pr-critical', async ({

@@ -1,220 +1,71 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import test from 'node:test';
+import valueParser from 'postcss-value-parser';
+import {
+  assertClassesInWhere,
+  assertDeclarations,
+  cssImports,
+  parseCss,
+} from './helpers/css-contracts';
 
-const css = fs.readFileSync('src/wc/styles/table.css', 'utf8');
-const componentCss = fs.readFileSync('src/wc/components/Table/Table.css', 'utf8');
-const componentTsx = fs.readFileSync('src/wc/components/Table/Table.tsx', 'utf8');
-const rowViewTsx = fs.readFileSync('src/wc/components/Table/table-row-view.tsx', 'utf8');
-const bodyRendererTsx = fs.readFileSync('src/wc/components/Table/table-body-renderer.tsx', 'utf8');
-const skeletonViewTsx = fs.readFileSync('src/wc/components/Table/table-skeleton-view.tsx', 'utf8');
-const loadViewTsx = fs.readFileSync('src/wc/components/Table/table-load-view.tsx', 'utf8');
-const buttonUnfilledTsx = fs.readFileSync(
-  'src/wc/components/ButtonUnfilled/ButtonUnfilled.tsx',
-  'utf8'
-);
-const selectTsx = fs.readFileSync('src/wc/components/Select/Select.tsx', 'utf8');
-const filterMenuTsx = fs.readFileSync('src/wc/components/FilterMenu/FilterMenu.tsx', 'utf8');
-const tableFilterTsx = fs.readFileSync('src/wc/components/DataFilter/DataFilter.tsx', 'utf8');
-const tableSortTsx = fs.readFileSync('src/wc/components/DataSort/DataSort.tsx', 'utf8');
-const layoutController = fs.readFileSync(
-  'src/wc/components/Table/table-layout-controller.ts',
-  'utf8'
-);
-const viewportFitController = fs.readFileSync(
-  'src/wc/components/Table/table-viewport-fit-controller.ts',
-  'utf8'
-);
+const css = parseCss(fs.readFileSync('src/wc/styles/table.css', 'utf8'));
+const componentCss = parseCss(fs.readFileSync('src/wc/components/Table/Table.css', 'utf8'));
 const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 
+// Table behavior belongs to the model/controller tests and table*.spec.ts. These
+// contracts cover the published CSS recipe independently of its Stencil renderer.
 test('publishes one renderer-neutral table recipe consumed by the component', () => {
   assert.equal(packageJson.exports['./table.css'], './dist/styles/table.css');
-  assert.match(componentCss, /@import '\.\.\/\.\.\/styles\/table\.css'/);
-  assert.match(componentCss, /@import '\.\.\/\.\.\/styles\/control-elevation\.css'/);
-  assert.match(componentCss, /@import '\.\.\/\.\.\/utils\/text-decoration\.css'/);
-  assert.match(componentTsx, /focus-ring\.css/);
-  assert.match(componentTsx, /interaction-fill\.css/);
-  assert.doesNotMatch(componentTsx, /choice-list\.css/);
-  assert.match(componentTsx, /TableLayoutController/);
-  assert.doesNotMatch(componentTsx, /TableStickyGroupController/);
-  assert.match(componentTsx, /TableViewportFitController/);
-  assert.match(componentTsx, /TableLoadController/);
-  assert.match(componentTsx, /TableGroupLoadController/);
-  assert.match(componentTsx, /TableVirtualController/);
-  assert.match(componentTsx, /createTableRenderModel/);
-  assert.match(componentTsx, /renderTableRowView/);
-  assert.match(componentTsx, /TableBodyRenderer/);
-  assert.match(componentTsx, /renderTableSkeletonBody/);
-  assert.match(componentTsx, /ds-table__elastic-spacer-column/);
-  assert.match(componentTsx, /ds-table__elastic-spacer-cell/);
-  assert.match(componentTsx, /renderTableLoadContent/);
-  assert.match(rowViewTsx, /resolveTableCellPresentation/);
-  assert.match(bodyRendererTsx, /assignTableVirtualRowPoolKeys/);
-  assert.match(skeletonViewTsx, /resolveTableCellImageTracks/);
-  assert.match(loadViewTsx, /ds-table__load-content/);
-  assert.match(layoutController, /--ds-table-visible-inline-size/);
-  assert.doesNotMatch(layoutController, /elements\.table|observe\(table\)/);
-  assert.match(componentTsx, /ds-table__table--native-group-sticky/);
-  assert.match(viewportFitController, /--_table-viewport-fit-reserved-block-size/);
-  assert.doesNotMatch(componentTsx, /scroll-edge-fade\.css|ds-table__overflow-shadow/);
-  assert.match(componentTsx, /ds-table__selection-control ds-focus-ring/);
-  assert.match(componentTsx, /ds-table__header-label--interactive ds-focus-ring/);
-  assert.match(rowViewTsx, /'ds-focus-ring': rowInteractive/);
-  assert.match(componentTsx, /'ds-focus-ring': this\.scrollable/);
-  assert.match(componentTsx, /<slot\s+name="header"/);
-  assert.match(componentTsx, /ds-table__caption-leading/);
-  assert.match(componentTsx, /renderColumnCustomizerMenu/);
-  assert.match(componentTsx, /ds-table__caption-trailing/);
-  assert.match(componentTsx, /menuLabel="Customize table"/);
-  assert.doesNotMatch(componentTsx, /role="dialog"/);
-  assert.doesNotMatch(componentTsx, /<slot\s+name="header-leading"/);
-  assert.doesNotMatch(componentTsx, /<slot\s+name="header-trailing"/);
-  assert.match(componentTsx, /<slot name="footer"/);
-  assert.match(componentTsx, /<slot name="footer-leading"/);
-  assert.match(componentTsx, /<slot name="footer-trailing"/);
-  assert.match(rowViewTsx, /ds-table__cell--action-menu/);
-  assert.match(rowViewTsx, /data-elastic-spacer="true"/);
-  assert.match(rowViewTsx, /<mark class="ds-table__match"/);
-  assert.match(skeletonViewTsx, /data-elastic-spacer="true"/);
-  assert.match(componentTsx, /renderOverflowActionMenu/);
-  assert.match(componentTsx, /<ds-menu/);
-  assert.match(componentTsx, /renderTruncateTooltip/);
-  assert.match(componentTsx, /<ds-tooltip/);
-  assert.match(componentTsx, /label={this\.captionCompact \? 'Customize' : ''}/);
-  assert.match(buttonUnfilledTsx, /\{this\.collapseLabel \? \(\s*<ds-tooltip/);
-  assert.match(buttonUnfilledTsx, /label={this\.captionIconOnly/);
-  assert.match(selectTsx, /if \(!this\.collapseLabel\) return trigger/);
-  assert.match(selectTsx, /this\.captionIconOnly\s*\?\s*this\.ariaLabel/);
-  assert.match(filterMenuTsx, /if \(!this\.collapseLabel\) return trigger/);
-  assert.match(filterMenuTsx, /this\.captionIconOnly \? label : ''/);
-  assert.match(tableFilterTsx, /align="start"/);
-  assert.match(tableSortTsx, /align="start"/);
-  assert.match(
-    css,
-    /\.ds-table__cell--text-wrap \.ds-table__cell-track--text\)[\s\S]*?display: block/
-  );
-  assert.match(
-    componentCss,
-    /\.ds-table__cell--text-wrap ds-text\.ds-table__cell-track--text[\s\S]*?display: block/
-  );
-  assert.match(rowViewTsx, /variant === 'text-with-tag' \? 'sm' : 'md'/);
-  assert.match(rowViewTsx, /variant === 'text-with-tag' \? 'single' : 'double'/);
-  assert.match(componentTsx, /'ds-table--caption-visible'/);
-  assert.match(css, /\.ds-table__caption-content/);
-  assert.match(css, /\.ds-table__caption-content--trailing/);
-  assert.match(css, /\.ds-table__caption-content[\s\S]*?overflow-x: auto/);
-  assert.match(
-    css,
-    /:where\(\.ds-table__caption-bar\),\s*:where\(\.ds-table__footer\)\s*\{[\s\S]*?min-inline-size: 0;/
-  );
-  assert.match(css, /\.ds-table__caption-trailing/);
-  assert.match(css, /\.ds-table__caption-leading > slot/);
-  assert.match(css, /\.ds-table__bar-copy > slot/);
-  assert.match(css, /\.ds-table__bar-status/);
-  assert.match(css, /\.ds-table__footer-summary/);
-  assert.match(css, /ds-table--document-sticky-header\.ds-table--caption-visible/);
-  assert.match(css, /\.ds-table__sticky-group/);
-  assert.match(css, /\.ds-table__table--native-group-sticky/);
-  assert.match(css, /grid-template-columns: var\(--_table-grid-template-columns\)/);
-  assert.match(css, /\.ds-table__group-row--native-sticky/);
-  assert.match(css, /\.ds-table__virtual-spacer-cell/);
-  assert.doesNotMatch(css, /ds-table__group-cell--sticky-backstop/);
-  assert.match(css, /\.ds-table--contained-scroll \.ds-table__frame\)[\s\S]*?overflow: clip/);
-
-  for (const selector of [
-    'ds-table__header-cell',
-    'ds-table__caption-bar',
-    'ds-table__cell',
-    'ds-table__cell-link',
-    'ds-table__cell-icon-text',
-    'ds-table__cell-tertiary',
-    'ds-table__cell-track--runs',
-    'ds-table__cell--text-wrap',
-    'ds-table__group-content',
-    'ds-table__group-content--multi',
-    'ds-table__group-content--hero',
-    'ds-table__group-primary',
-    'ds-table__group-hero',
-    'ds-table__group-accessories',
-    'ds-table__collapse-all-overlay',
-    'ds-table__sticky-edge',
-    'ds-table__skeleton-row',
-    'ds-table__load-cell',
-    'ds-table__state-cell',
-    'ds-table__elastic-spacer-cell',
-    'ds-table__match',
-    'ds-table__footer',
-    'ds-table__caption-leading',
-    'ds-table__caption-trailing',
-  ]) {
-    assert.match(css, new RegExp(`\\.${selector}`));
-  }
-
-  assert.match(css, /--_table-cell-track-min-block-size: var\(--dimension-size-300\)/);
-  assert.match(
-    css,
-    /\.ds-table__match[\s\S]*?background-color: var\(--color-background-faint-brand\)[\s\S]*?color: var\(--color-foreground-bold-brand\)/
-  );
-  assert.match(css, /--_table-wrap-primary-line-height: var\(--_table-cell-track-min-block-size\)/);
-  assert.match(
-    css,
-    /\.ds-table__cell--text-wrap\.ds-table__cell--text-single \.ds-table__cell-primary\)[\s\S]*?line-height: var\(--_table-wrap-primary-line-height\)/
-  );
-  assert.match(
-    componentCss,
-    /\.ds-table__cell--text-wrap\.ds-table__cell--text-single \.ds-table__cell-primary[\s\S]*?line-height: var\(--_table-wrap-primary-line-height\)/
-  );
-  assert.match(
-    css,
-    /--_table-wrap-secondary-line-height: var\(--_table-cell-track-min-block-size\)/
-  );
-  assert.match(
-    css,
-    /\.ds-table__cell--text-wrap\.ds-table__cell--text-multi \.ds-table__cell-secondary\)[\s\S]*?line-height: var\(--_table-wrap-secondary-line-height\)/
-  );
-  assert.match(css, /\.ds-table__cell-icon-text\)[\s\S]*?gap: var\(--dimension-space-025\)/);
-  assert.match(
-    css,
-    /\.ds-table__cell-icon-text-icon\)[\s\S]*?padding: var\(--dimension-space-025\)/
-  );
-  assert.match(css, /\.ds-table__cell-image[\s\S]*?aspect-ratio: 16 \/ 9/);
-  assert.match(css, /--_table-image-block-size: var\(--_table-cell-track-min-block-size\)/);
-  assert.match(
-    css,
-    /\.ds-table__cell--image-multi \.ds-table__cell-image\)[\s\S]*?--_table-image-block-size-multi/
-  );
-  assert.match(
-    css,
-    /\.ds-table__cell--image-triple \.ds-table__cell-image\)[\s\S]*?--_table-image-block-size-triple/
-  );
-  assert.match(
-    css,
-    /\.ds-table__cell-track--text[\s\S]*?padding-inline: var\(--_table-cell-track-padding-inline\)/
-  );
-  assert.match(css, /\.ds-table__cell-primary[\s\S]*?padding-block: var\(--dimension-space-025\)/);
-  assert.match(css, /\.ds-table__cell--text-multi \.ds-table__cell-copy\)[\s\S]*?gap: 0/);
-  assert.match(css, /\.ds-table__cell-tags\)[\s\S]*?gap: 0 var\(--dimension-space-050\)/);
-  assert.match(
-    componentCss,
-    /ds-text\.ds-table__cell-track--text[\s\S]*?padding-inline: var\(--_table-cell-track-padding-inline\)/
-  );
-  assert.match(
-    css,
-    /\.ds-table__cell\.ds-table__selection-cell\)[\s\S]*?--_table-cell-padding-block/
-  );
+  const imports = cssImports(componentCss);
+  for (const recipe of [
+    '../../styles/table.css',
+    '../../styles/control-elevation.css',
+    '../../utils/text-decoration.css',
+  ])
+    assert.ok(imports.has(recipe), recipe);
 });
 
 test('keeps public table selectors and custom properties override-friendly', () => {
-  const selectorsOnly = css.replace(/\/\*[\s\S]*?\*\//g, '');
-  const withoutWhereClasses = selectorsOnly.replaceAll(/:where\(\s*\.ds-table[^)]*\)/g, '');
-  assert.equal(withoutWhereClasses.includes('.ds-table'), false);
-  assert.equal(css.includes('!important'), false);
-  assert.doesNotMatch(
-    css,
-    /^\s+--ds-table-[a-z-]+\s*:/m,
-    'public host overrides must remain inputs, not be reassigned by the recipe root'
-  );
+  const classes = assertClassesInWhere(css, 'ds-table');
+  for (const name of [
+    'header-cell',
+    'caption-bar',
+    'cell',
+    'cell-link',
+    'cell-icon-text',
+    'cell-tertiary',
+    'cell-track--runs',
+    'cell--text-wrap',
+    'group-content',
+    'group-content--multi',
+    'group-content--hero',
+    'group-primary',
+    'group-hero',
+    'group-accessories',
+    'collapse-all-overlay',
+    'sticky-edge',
+    'skeleton-row',
+    'load-cell',
+    'state-cell',
+    'elastic-spacer-cell',
+    'match',
+    'footer',
+    'caption-leading',
+    'caption-trailing',
+  ])
+    assert.ok(classes.has(`ds-table__${name}`), `public recipe includes ${name}`);
 
+  const inputs = new Set<string>();
+  css.walkDecls(declaration => {
+    assert.ok(!declaration.important, `${declaration.prop} must remain overrideable`);
+    assert.doesNotMatch(declaration.prop, /^--ds-table-/, 'public overrides must remain inputs');
+    valueParser(declaration.value).walk(node => {
+      if (node.type !== 'function' || node.value !== 'var') return;
+      const name = node.nodes.find(child => child.type === 'word');
+      if (name) inputs.add(name.value);
+    });
+  });
   for (const property of [
     '--ds-table-surface',
     '--ds-table-header-surface',
@@ -229,103 +80,122 @@ test('keeps public table selectors and custom properties override-friendly', () 
     '--ds-table-row-min-block-size',
     '--ds-table-cell-padding-block',
     '--ds-table-cell-padding-inline',
-  ]) {
-    assert.match(css, new RegExp(property));
-  }
-
-  assert.match(
-    css,
-    /--_table-sticky-border: var\(--ds-table-sticky-border, var\(--color-border-tertiary\)\)/
-  );
+  ])
+    assert.ok(inputs.has(property), `recipe consumes ${property}`);
+  assertDeclarations(css, ':where(.ds-table)', {
+    '--_table-sticky-border': 'var(--ds-table-sticky-border, var(--color-border-tertiary))',
+  });
 });
 
-test('retains the structural and accessibility fallbacks rendered tests depend on', () => {
-  assert.match(css, /overflow: auto/);
-  assert.match(css, /position: sticky/);
-  assert.match(css, /\.ds-table--state-fill/);
-  assert.match(componentTsx, /dotted-underline/);
-  assert.match(componentTsx, /data-header-help/);
-  assert.match(componentTsx, /ds-table--state-fill/);
-  assert.doesNotMatch(componentTsx, /CircleQuestion/);
-  assert.doesNotMatch(css, /\.ds-table__header-help/);
-  assert.match(css, /forced-colors: active/);
-  assert.match(css, /prefers-reduced-motion: reduce/);
-  assert.match(css, /\.ds-table__header-label--interactive:focus-visible/);
-  assert.match(css, /\.ds-table__selection-control:focus-visible/);
-  assert.match(css, /\.ds-visually-hidden/);
-  assert.doesNotMatch(css, /container-type: inline-size/);
-  assert.doesNotMatch(css, /--effect-shadow-elevated-panel-(?:left|right)/);
-  assert.doesNotMatch(css, /ds-table__collapse-column|ds-table__collapse-cell/);
-  assert.match(css, /\.ds-table__load-body \.ds-table__load-row:last-child \.ds-table__load-cell/);
-  assert.doesNotMatch(css, /:where\(\.ds-table__load-row:last-child \.ds-table__load-cell\)/);
-  assert.match(css, /\.ds-table__group-content[\s\S]*?cursor: default/);
-  assert.doesNotMatch(componentCss, /cursor: pointer/);
-  assert.match(
+test('shares text track and wrapping tokens with the component stylesheet', () => {
+  assertDeclarations(css, ':where(.ds-table)', {
+    '--_table-cell-track-min-block-size': 'var(--dimension-size-300)',
+    '--_table-wrap-primary-line-height': 'var(--_table-cell-track-min-block-size)',
+    '--_table-wrap-secondary-line-height': 'var(--_table-cell-track-min-block-size)',
+    '--_table-image-block-size': 'var(--_table-cell-track-min-block-size)',
+  });
+  for (const [recipe, textSelector, wrapSelector] of [
+    [
+      css,
+      ':where(.ds-table__cell-track--text)',
+      ':where(.ds-table__cell--text-wrap .ds-table__cell-track--text)',
+    ],
+    [
+      componentCss,
+      'ds-text.ds-table__cell-track--text',
+      '.ds-table__cell--text-wrap ds-text.ds-table__cell-track--text',
+    ],
+  ] as const) {
+    assertDeclarations(recipe, textSelector, {
+      'padding-inline': 'var(--_table-cell-track-padding-inline)',
+    });
+    assertDeclarations(recipe, wrapSelector, { display: 'block' });
+    for (const [kind, track] of [
+      ['single', 'primary'],
+      ['multi', 'secondary'],
+    ]) {
+      const selector = `.ds-table__cell--text-wrap.ds-table__cell--text-${kind} .ds-table__cell-${track}`;
+      assertDeclarations(recipe, recipe === css ? `:where(${selector})` : selector, {
+        'line-height': `var(--_table-wrap-${track}-line-height)`,
+      });
+    }
+  }
+  assertDeclarations(css, ':where(.ds-table__cell-primary)', {
+    'padding-block': 'var(--dimension-space-025)',
+  });
+  assertDeclarations(css, ':where(.ds-table__cell--text-multi .ds-table__cell-copy)', { gap: '0' });
+  assertDeclarations(css, ':where(.ds-table__cell-tags)', { gap: '0 var(--dimension-space-050)' });
+  assertDeclarations(css, ':where(.ds-table__cell-icon-text)', {
+    gap: 'var(--dimension-space-025)',
+  });
+  assertDeclarations(css, ':where(.ds-table__cell-icon-text-icon)', {
+    padding: 'var(--dimension-space-025)',
+  });
+  assertDeclarations(css, ':where(.ds-table__cell-image)', { 'aspect-ratio': '16 / 9' });
+  for (const kind of ['multi', 'triple'])
+    assertDeclarations(css, `:where(.ds-table__cell--image-${kind} .ds-table__cell-image)`, {
+      'block-size': `var(--_table-image-block-size-${kind})`,
+    });
+  assertDeclarations(css, ':where(.ds-table__match)', {
+    'background-color': 'var(--color-background-faint-brand)',
+    color: 'var(--color-foreground-bold-brand)',
+  });
+});
+
+test('retains scrollable chrome and token-backed group tracks', () => {
+  assertDeclarations(css, ':where(.ds-table__viewport)', { overflow: 'auto' });
+  assertDeclarations(css, ':where(.ds-table--contained-scroll .ds-table__frame)', {
+    overflow: 'clip',
+  });
+  assertDeclarations(css, ':where(.ds-table__caption-content)', { 'overflow-x': 'auto' });
+  for (const part of ['caption-bar', 'footer'])
+    assertDeclarations(css, `:where(.ds-table__${part})`, { 'min-inline-size': '0' });
+  assertDeclarations(
     css,
-    /\.ds-table__group-content\)::after[\s\S]*?background: var\(--_table-column-border\)/
+    ':where(.ds-table--document-sticky-header.ds-table--caption-visible > .ds-table__caption-bar)',
+    {
+      position: 'sticky',
+      'inset-block-start': 'var(--ds-table-sticky-header-offset, 0)',
+    }
   );
-  assert.match(css, /\.ds-table__group-content:hover\)::before[\s\S]*?--_table-row-hover/);
-  assert.match(
+  assertDeclarations(css, ':where(.ds-table__group-content--multi)', {
+    'align-items': 'flex-start',
+    'min-block-size':
+      'calc(var(--_table-row-min-block-size) + var(--_table-cell-track-min-block-size))',
+  });
+  assertDeclarations(css, ':where(.ds-table__group-accessories ds-tooltip)', {
+    'align-items': 'center',
+    'min-block-size': 'var(--_table-cell-track-min-block-size)',
+  });
+  // Group alignment, caption controls and sticky/virtual scrolling are measured in table/table-chrome e2e.
+});
+
+test('retains explicit focus, forced-colors and reduced-motion fallbacks', () => {
+  for (const part of ['header-label--interactive', 'selection-control']) {
+    const selector = `:where(.ds-table__${part}:focus-visible)`;
+    assertDeclarations(css, selector, {
+      outline: 'var(--dimension-stroke-width-025) solid var(--color-interaction-focus)',
+    });
+    assertDeclarations(css, selector, { 'outline-color': 'var(--ds-forced-color-selected)' }, [
+      '@media (forced-colors: active)',
+    ]);
+  }
+  assertDeclarations(css, ':where(.ds-visually-hidden)', {
+    position: 'absolute',
+    overflow: 'hidden',
+    clip: 'rect(0 0 0 0)',
+  });
+  assertDeclarations(
     css,
-    /\.ds-table__group-content--multi[\s\S]*?align-items: flex-start[\s\S]*?--_table-row-min-block-size[\s\S]*?--_table-cell-track-min-block-size/
+    ':where(.ds-table)',
+    {
+      '--_table-surface': 'var(--ds-forced-color-surface)',
+      color: 'var(--ds-forced-color-content)',
+    },
+    ['@media (forced-colors: active)']
   );
-  assert.match(css, /\.ds-table__group-content--hero[\s\S]*?align-items: flex-start/);
-  assert.match(css, /\.ds-table__group-hero[\s\S]*?align-self: flex-start/);
-  assert.match(
-    css,
-    /\.ds-table__group-content--hero-two-track \.ds-table__group-hero[\s\S]*?align-self: center/
-  );
-  assert.match(
-    css,
-    /\.ds-table__table[\s\S]*?:not\(:where\(\.ds-table__table--selectable\)\)[\s\S]*?\.ds-table__group-content--hero[\s\S]*?:not\([\s\S]*?\.ds-table__group-content--hero-two-track[\s\S]*?\.ds-table__group-hero[\s\S]*?margin-inline-start: 0/
-  );
-  assert.match(
-    css,
-    /\.ds-table__table--selectable[\s\S]*?\.ds-table__group-content--hero-two-track[\s\S]*?\.ds-table__group-hero[\s\S]*?margin-inline-start: 0/
-  );
-  assert.match(
-    css,
-    /\.ds-table__group-hero[\s\S]*?margin-inline-start: var\(--dimension-space-075\)/
-  );
-  assert.doesNotMatch(css, /\.ds-table__group-hero\)::after/);
-  assert.doesNotMatch(componentCss, /\.ds-table__group-hero::after/);
-  assert.match(
-    css,
-    /\.ds-table__table--selectable \.ds-table__group-hero[\s\S]*?margin-inline-end: var\(--dimension-space-100\)/
-  );
-  assert.match(
-    css,
-    /\.ds-table__table--selectable \.ds-table__group-copy[\s\S]*?padding-inline-start: calc\(\s*var\(--dimension-space-100\) \+ var\(--_table-cell-track-padding-inline\)/
-  );
-  assert.match(
-    css,
-    /\.ds-table__group-content--hero \.ds-table__group-copy[\s\S]*?padding-inline-start: var\(--dimension-space-050\)/
-  );
-  assert.match(
-    css,
-    /\.ds-table__group-accessories ds-tooltip[\s\S]*?align-items: center[\s\S]*?--_table-cell-track-min-block-size/
-  );
-  assert.match(css, /\.ds-table__group-toggle\)[\s\S]*?--color-interaction-hover: transparent/);
-  assert.match(css, /\.ds-table__group-toggle\)[\s\S]*?--color-interaction-pressed: transparent/);
-  assert.doesNotMatch(css, /\.ds-table__group-toggle\)\s*\{[^}]*align-self:/);
-  assert.match(
-    css,
-    /\.ds-table__group-action\)[\s\S]*?dimension-size-500[\s\S]*?dimension-space-100/
-  );
-  assert.match(
-    css,
-    /\.ds-table__group-action\)::before[\s\S]*?background: var\(--_table-column-border\)/
-  );
-  assert.match(
-    componentCss,
-    /ds-text\.ds-table__group-count[\s\S]*?min-block-size: var\(--_table-cell-track-min-block-size\)[\s\S]*?padding-inline-end: var\(--dimension-space-050\)/
-  );
-  assert.match(
-    css,
-    /\.ds-table__group:last-child > \.ds-table__group-row:last-child[\s\S]*?\.ds-table__group-content[\s\S]*?::after/
-  );
-  assert.match(
-    css,
-    /\.ds-table__group:last-child > \.ds-table__group-load-row:last-child[\s\S]*?\.ds-table__load-cell/
-  );
+  for (const edge of ['start', 'end'])
+    assertDeclarations(css, `:where(.ds-table__cell--sticky-${edge})`, { transition: 'none' }, [
+      '@media (prefers-reduced-motion: reduce)',
+    ]);
 });

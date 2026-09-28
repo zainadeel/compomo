@@ -14,7 +14,8 @@
 8. Atomically writes `dist/.package-ready.json` after the publish-shaped output
    is complete.
 
-The implementation is authoritative in `stencil.config.ts` and `scripts/`.
+`stencil.config.ts` owns the compiler output. `scripts/finalize-package.mjs`
+owns the ordered post-build steps shared by `npm run build` and `npm run dev`.
 Update this summary only when ownership changes.
 
 ## Generated boundaries

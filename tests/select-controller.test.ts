@@ -27,6 +27,7 @@ function setup(preferredIndex = -1) {
     host: {
       contains: () => false,
       querySelector: () => null,
+      isConnected: true,
     } as unknown as HTMLElement,
     generatedId: 'test-select',
     options,
@@ -34,6 +35,8 @@ function setup(preferredIndex = -1) {
     isLoading: false,
     isDisabled: false,
     preferredIndex,
+    popupAlign: 'start',
+    boundary: undefined,
     open: false,
     activeIndex: -1,
     searchTerm: '',
@@ -65,3 +68,69 @@ test('keyboard traversal wraps across enabled options and selects through the ow
   controller.handleListKeyDown(keyboardEvent('Enter'));
   assert.deepEqual(selected, ['charlie']);
 });
+
+test('disconnect clears buffered typeahead before the next connection', () => {
+  const { controller, state } = setup();
+  try {
+    for (let cycle = 0; cycle < 2; cycle++) {
+      controller.handleTriggerKeyDown(keyboardEvent('a'));
+      assert.equal(state.activeIndex, 0);
+      controller.closePopup();
+      Object.assign(state.host, { isConnected: false });
+      controller.disconnect();
+      Object.assign(state.host, { isConnected: true });
+      controller.connect();
+      controller.handleTriggerKeyDown(keyboardEvent('c'));
+      assert.equal(state.activeIndex, 2);
+      controller.closePopup();
+      controller.disconnect();
+    }
+  } finally {
+    controller.disconnect();
+  }
+});
+
+for (const searchable of [false, true]) {
+  test(`disconnect invalidates queued focus and permits new ${searchable ? 'search' : 'trigger'} focus`, () => {
+    const originalFrame = globalThis.requestAnimationFrame;
+    const originalCancel = globalThis.cancelAnimationFrame;
+    const frames: FrameRequestCallback[] = [];
+    globalThis.requestAnimationFrame = callback => frames.push(callback);
+    globalThis.cancelAnimationFrame = () => {};
+    const { controller, state } = setup();
+    const focused: string[] = [];
+    Object.assign(state, { searchable });
+    controller.setTriggerElement({ focus: () => focused.push('trigger') } as HTMLButtonElement);
+    controller.setSearchElement({
+      setFocus: async () => {
+        focused.push('search');
+      },
+    } as HTMLDsInputElement);
+    try {
+      controller.openPopup(true);
+      controller.closePopup(true);
+      controller.focusSearchOrTrigger();
+      Object.assign(state.host, { isConnected: false });
+      controller.disconnect();
+      controller.focusSearchOrTrigger();
+      Object.assign(state.host, { isConnected: true });
+      controller.connect();
+      // Already-dispatched callbacks must stay invalid after reconnection too.
+      frames.splice(0).forEach(callback => callback(0));
+      assert.deepEqual(focused, []);
+
+      controller.focusSearchOrTrigger();
+      frames.splice(0).forEach(callback => callback(0));
+      assert.deepEqual(focused, [searchable ? 'search' : 'trigger']);
+
+      controller.openPopup(true);
+      controller.closePopup(true);
+      frames.splice(0).forEach(callback => callback(0));
+      assert.deepEqual(focused, [searchable ? 'search' : 'trigger', 'trigger']);
+    } finally {
+      controller.disconnect();
+      globalThis.requestAnimationFrame = originalFrame;
+      globalThis.cancelAnimationFrame = originalCancel;
+    }
+  });
+}

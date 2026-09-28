@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import test from 'node:test';
 
 test('PR browser contracts cover every engine-sensitive behavior family', () => {
@@ -25,13 +25,28 @@ test('PR browser contracts cover every engine-sensitive behavior family', () => 
     'tooltip.spec.ts',
   ];
 
-  let contractCount = 0;
-  for (const spec of requiredSpecs) {
-    const source = fs.readFileSync(`tests/e2e/${spec}`, 'utf8');
-    const matches = source.match(/@(cross-browser|pr-critical)/g) ?? [];
-    contractCount += matches.length;
-    assert.ok(matches.length > 0, `engine-sensitive spec has no PR browser contract: ${spec}`);
-  }
-
-  assert.ok(contractCount >= 25, `PR browser contract set is unexpectedly small: ${contractCount}`);
+  // Ask Playwright what the configured gate actually collects. Comments and
+  // unused tag strings cannot stand in for runnable browser coverage.
+  const report = JSON.parse(
+    execFileSync(
+      process.execPath,
+      [
+        'node_modules/@playwright/test/cli.js',
+        'test',
+        '--list',
+        '--project=chromium',
+        '--grep',
+        '@(cross-browser|pr-critical)',
+        '--reporter=json',
+      ],
+      { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }
+    )
+  );
+  assert.deepEqual(report.errors, []);
+  const files = new Set(report.suites.map((suite: { file: string }) => suite.file));
+  for (const spec of requiredSpecs)
+    assert.ok(
+      files.has(spec),
+      `engine-sensitive spec has no collected PR browser contract: ${spec}`
+    );
 });

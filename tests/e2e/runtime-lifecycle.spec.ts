@@ -99,6 +99,44 @@ for (const [id, name] of [
   });
 }
 
+for (const [id, name] of [
+  ['date', 'Choose date'],
+  ['time', 'Choose time'],
+] as const) {
+  test(`${id} cancels interrupted exits when its picker reopens @cross-browser`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    const host = page.locator(`#${id}`);
+    const trigger = host.getByRole('button', { name, exact: true });
+    const popup = host.getByRole('dialog', { name, exact: true });
+    for (const detach of [false, true]) {
+      await trigger.click();
+      await expect(popup).toBeVisible();
+      await host.evaluate(async (element, detach) => {
+        const popup = element.querySelector<HTMLElement>('[popover="manual"]')!;
+        const duration = parseFloat(getComputedStyle(popup).animationDuration) * 1000;
+        element.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        if (detach) {
+          const parent = element.parentElement!;
+          element.remove();
+          parent.append(element);
+        }
+        element.querySelector<HTMLButtonElement>('ds-button-unfilled button')!.click();
+        // Let the canceled exit's deadline pass before checking the reopened popup.
+        await new Promise(resolve => setTimeout(resolve, duration + 50));
+      }, detach);
+      await expect(popup).toBeVisible();
+      await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+      await expect
+        .poll(() => popup.evaluate(element => element.matches(':popover-open')))
+        .toBe(true);
+      await page.locator('#outside').click();
+      await expect(popup).toBeHidden();
+    }
+  });
+}
+
 test('Markdown resumes cancelled parsing with the latest detached content @cross-browser', async ({
   page,
 }) => {

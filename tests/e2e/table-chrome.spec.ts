@@ -1270,6 +1270,62 @@ test('owns a controlled caption-bar data mode switcher for supported modes', asy
   await expect(page.getByRole('dialog', { name: 'Customize table' })).toBeVisible();
 });
 
+test('caption menus reset across reconnect and keep their focus lifecycle @cross-browser', async ({
+  page,
+}) => {
+  const table = page.locator('#column-customizer');
+  await table.evaluate(element => {
+    const outside = document.createElement('button');
+    outside.id = 'outside-caption';
+    outside.textContent = 'Outside caption';
+    element.parentElement!.append(outside);
+  });
+  for (const [triggerLabel, role, menuLabel] of [
+    ['Customize table', 'dialog', 'Customize table'],
+    ['Change table variation', 'menu', 'Table variation'],
+  ] as const) {
+    const trigger = table.getByRole('button', { name: triggerLabel });
+    const menu = table.getByRole(role, { name: menuLabel });
+    await trigger.click();
+    await expect(menu).toBeVisible();
+    await table.evaluate(element => {
+      const parent = element.parentElement!;
+      const next = element.nextSibling;
+      element.remove();
+      parent.insertBefore(element, next);
+      document.getElementById('outside-caption')!.focus();
+    });
+    await expect(menu).toHaveCount(0);
+    await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    await expect(trigger.locator('xpath=ancestor::ds-button-unfilled[1]')).toHaveJSProperty(
+      'surfaceOpen',
+      false
+    );
+    await expect(page.locator('#outside-caption')).toBeFocused();
+    await trigger.focus();
+    await trigger.press('Enter');
+    await expect(menu).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(menu).toHaveCount(0);
+    await expect(trigger).toBeFocused();
+  }
+  await table.getByRole('button', { name: 'Change table variation' }).click();
+  await table.getByRole('menuitem', { name: 'Pagination + Infinite groups' }).evaluate(item => {
+    const element = item.closest('ds-table')!;
+    const parent = element.parentElement!;
+    const next = element.nextSibling;
+    (item as HTMLElement).click();
+    element.remove();
+    parent.insertBefore(element, next);
+    document.getElementById('outside-caption')!.focus();
+  });
+  await table.evaluate(
+    () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+  );
+  await expect(table).toHaveJSProperty('dataMode', 'pagination');
+  await expect(page.locator('#outside-caption')).toBeFocused();
+});
+
 test('defaults to adjacent-page controls and supports opting into first and last', async ({
   page,
 }) => {

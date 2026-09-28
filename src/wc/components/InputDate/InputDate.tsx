@@ -21,7 +21,6 @@ import {
   parseLooseCalendarDate,
   resolveChoicePopupAlignOffset,
   resolveCssLengthPx,
-  resolveMotionTimeMs,
   restoreStringFormState,
   setFormControlValue,
   TOKEN_DEFAULTS,
@@ -31,6 +30,7 @@ import {
 import { AnchoredPositionController } from '../../utils/anchored-position-controller';
 import { AnchoredOverlayInteractionController } from '../../utils/anchored-overlay-interaction-controller';
 import { resolveAnchoredOverlayBoundaryRect } from '../../utils/anchored-overlay-boundary';
+import { PickerPopupController, type PickerPopupPhase } from '../../utils/picker-popup-controller';
 
 export type InputDateSize = ControlSize;
 export type InputDateWidth = ControlWidth;
@@ -83,14 +83,11 @@ export class InputDate {
   private inputEl?: HTMLInputElement;
   private controlEl?: HTMLElement;
   private calendarButton?: HTMLDsButtonUnfilledElement;
-  private closeTimer: ReturnType<typeof setTimeout> | null = null;
   @State() private formDisabled = false;
   @State() private focused = false;
   @State() private touched = false;
   @State() private draftText = '';
-  @State() private open = false;
-  @State() private shouldRender = false;
-  @State() private closing = false;
+  @State() private popupPhase: PickerPopupPhase = 'closed';
   @State() private positionReady = false;
   @State() private pos = { x: 0, y: 0 };
 
@@ -136,6 +133,26 @@ export class InputDate {
     getOwnerDocument: () => this.el.ownerDocument,
     onOutsideActivation: () => this.closePicker(false),
   });
+  private readonly pickerPopup = new PickerPopupController({
+    position: this.position,
+    interaction: this.interaction,
+    getPopup: () => this.el.querySelector<HTMLElement>('.input-date-popup'),
+    onPhaseChange: phase => {
+      this.popupPhase = phase;
+    },
+  });
+
+  private get open(): boolean {
+    return this.popupPhase === 'open';
+  }
+
+  private get shouldRender(): boolean {
+    return this.popupPhase !== 'closed';
+  }
+
+  private get closing(): boolean {
+    return this.popupPhase === 'closing';
+  }
 
   private get popupFallbackWidth(): number {
     return resolveCssLengthPx(TOKEN_DEFAULTS.menuWidthXs, TOKEN_DEFAULTS.menuWidthXs);
@@ -175,10 +192,7 @@ export class InputDate {
   }
 
   disconnectedCallback() {
-    this.teardownListeners();
-    this.open = false;
-    this.shouldRender = false;
-    this.closing = false;
+    this.pickerPopup.disconnect();
     this.positionReady = false;
     this.focused = false;
   }
@@ -278,58 +292,21 @@ export class InputDate {
     this.draftText = formatIsoCalendarDateLabel(iso);
   }
 
-  private teardownListeners() {
-    this.position.unobserve();
-    this.interaction.disconnect();
-    if (this.closeTimer) {
-      clearTimeout(this.closeTimer);
-      this.closeTimer = null;
-    }
-  }
-
   private openPicker() {
-    const inactive = this.isInactive || this.disabled || this.formDisabled || this.readOnly;
-    if (inactive || this.open || !this.el.isConnected) return;
-    this.shouldRender = true;
-    this.closing = false;
+    if (this.pickerInactive || this.open || !this.el.isConnected) return;
     this.positionReady = false;
-    this.open = true;
-    this.teardownListeners();
-    this.interaction.connect();
-    this.position.observe();
-    this.position.schedule();
+    this.pickerPopup.open();
   }
 
   private closePicker(restore: 'input' | 'button' | false) {
-    if (!this.shouldRender || this.closing) return;
-    this.open = false;
-    this.position.cancel();
-    this.closing = true;
-    this.interaction.disconnect();
-    this.position.unobserve();
-    if (restore === 'input') this.inputEl?.focus();
-    if (restore === 'button') void this.calendarButton?.setFocus();
-    const duration = resolveMotionTimeMs(
-      TOKEN_DEFAULTS.motionShort2,
-      TOKEN_DEFAULTS.animationDurationShort3
-    );
-    if (duration <= 0) {
-      this.finishClose();
-      return;
-    }
-    this.closeTimer = setTimeout(() => this.finishClose(), duration);
-  }
-
-  private finishClose() {
-    const popup = this.el.querySelector<HTMLElement>('.input-date-popup');
-    if (popup?.matches(':popover-open')) popup.hidePopover();
-    this.shouldRender = false;
-    this.closing = false;
-    this.closeTimer = null;
+    this.pickerPopup.close(() => {
+      if (restore === 'input') this.inputEl?.focus();
+      if (restore === 'button') void this.calendarButton?.setFocus();
+    });
   }
 
   private togglePicker = () => {
-    if (this.isInactive || this.disabled || this.formDisabled || this.readOnly) return;
+    if (this.pickerInactive) return;
     if (this.open) this.closePicker('button');
     else this.openPicker();
   };
