@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.11.2](https://github.com/zainadeel/compomo/compare/v15.11.1...v15.11.2) (2026-09-28)
+
+
+### Fixed
+
+* cancel stale component work on disconnect ([#668](https://github.com/zainadeel/compomo/issues/668)) ([d071785](https://github.com/zainadeel/compomo/commit/d0717854cfed3a9dd0777c2f987b814060ca2805))
+
 ## [15.11.1](https://github.com/zainadeel/compomo/compare/v15.11.0...v15.11.1) (2026-09-28)
 
 
