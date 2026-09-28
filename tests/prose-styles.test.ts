@@ -1,47 +1,24 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { assertClassesInWhere, parseCss } from './helpers/css-contracts';
 
-const css = fs.readFileSync('src/wc/styles/prose.css', 'utf8');
+const css = parseCss(fs.readFileSync('src/wc/styles/prose.css', 'utf8'));
 const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 
 describe('public prose style contract', () => {
-  it('publishes the renderer-neutral stylesheet from compiled output', () => {
+  it('exports the renderer-neutral stylesheet and preserves CSS side effects', () => {
     assert.equal(packageJson.exports['./prose.css'], './dist/styles/prose.css');
     assert.ok(packageJson.sideEffects.includes('**/*.css'));
   });
 
-  it('keeps the public selectors override-friendly', () => {
-    const selectorsOnly = css.replace(/\/\*[\s\S]*?\*\//g, '');
-    const withoutWhereRoots = selectorsOnly
-      .replaceAll(':where(.ds-prose)', '')
-      .replaceAll(':where(.ds-prose__table-scroll)', '');
-    assert.equal(withoutWhereRoots.includes('.ds-prose'), false);
-    assert.equal(css.includes('!important'), false);
-  });
-
-  it('keeps streaming flow one-directional and append-stable', () => {
-    assert.match(css, /margin-block-start/);
-    // A first-child heading marker stays stable as later content is appended.
-    const flowCss = css.replaceAll(':has(> :is(h3, h4):first-child)', '');
-    assert.doesNotMatch(flowCss, /:last-child|:empty|:has\(/);
-    assert.doesNotMatch(css, /margin-block-end/);
-  });
-
-  it('provides a subtree opt-out and a local table overflow owner', () => {
-    assert.match(css, /data-ds-prose='off'/);
-    assert.match(css, /\.ds-prose__table-scroll/);
-    assert.match(css, /overflow-x: auto/);
-  });
-
-  it('offers an override-friendly direct-text measure without constraining structures', () => {
-    assert.match(css, /max-inline-size:\s*var\(--ds-prose-text-max-inline-size,\s*100%\)/);
-    const measuredSelector = css.match(
-      />\s*:where\(([^)]+)\):not\([^}]+\{\s*max-inline-size:\s*var\(--ds-prose-text-max-inline-size,\s*100%\)/
-    )?.[1];
-    assert.ok(measuredSelector?.includes('p'));
-    assert.ok(measuredSelector?.includes('blockquote'));
-    assert.equal(measuredSelector?.includes('table'), false);
-    assert.equal(measuredSelector?.includes('pre'), false);
+  it('keeps public recipe classes override-friendly', () => {
+    const classes = assertClassesInWhere(css, 'ds-prose');
+    assert.ok(classes.has('ds-prose'));
+    assert.ok(classes.has('ds-prose__table-scroll'));
+    css.walkDecls(declaration => {
+      assert.ok(!declaration.important);
+    });
+    // prose.spec.ts owns streaming stability, subtree opt-out, text measure and overflow.
   });
 });

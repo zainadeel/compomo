@@ -12,8 +12,8 @@
     "themeSetup": "Set data-theme=\"dark\" on <html> for dark mode. Light is default.",
     "peerDependencies": {
       "required": [
-        "@ds-mo/tokens ^8.0.0",
-        "@ds-mo/icons ^8.1.1"
+        "@ds-mo/tokens ^8.0.1",
+        "@ds-mo/icons ^8.1.2"
       ],
       "optional": [],
       "frameworks": "None required for Custom Elements; generated React, Vue, and Angular adapters are included."

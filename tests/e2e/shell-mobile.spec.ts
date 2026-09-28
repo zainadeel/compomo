@@ -48,6 +48,40 @@ test.describe('Responsive mobile shell foundation', () => {
     await expect(page.locator('ds-shell-app')).toHaveAttribute('responsive-mode', 'mobile');
   });
 
+  test(
+    'omits empty groups when destinations change',
+    chromiumOnly(
+      'controlled-behavior',
+      'Empty-group filtering is an engine-neutral navigation composition contract.'
+    ),
+    async ({ page }) => {
+      await page.getByRole('button', { name: 'Menu', exact: true }).click();
+      const sheet = page.locator('ds-mobile-sheet-nav');
+      await sheet.evaluate((element: HTMLDsMobileSheetNavElement) => {
+        const group = element.dashboardGroups[0];
+        element.dashboardGroups = [
+          { ...group, items: [] },
+          {
+            ...group,
+            items: [
+              {
+                ...group.items[0],
+                id: 'added-destination',
+                label: 'Added destination',
+                children: [],
+              },
+            ],
+          },
+          { ...group, items: [] },
+        ];
+      });
+      await expect(
+        sheet.getByRole('button', { name: 'Added destination', exact: true })
+      ).toBeVisible();
+      await expect(sheet.locator('.mobile-sheet-nav__items')).toHaveCount(1);
+    }
+  );
+
   test('scales the medium navigation baseline once across bars, sheets, and headers @cross-browser', async ({
     page,
   }) => {

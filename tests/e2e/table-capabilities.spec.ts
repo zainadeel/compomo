@@ -606,6 +606,55 @@ test('virtual grid focus survives recycling and never mounts the full worksheet 
   await expect.poll(() => table.locator('[data-row-id]').count()).toBeLessThan(50);
 });
 
+test('grid reconnect cancels pending focus and discards drafts without changing records @cross-browser', async ({
+  page,
+}) => {
+  await page.goto('/table-capabilities.html?mode=edit');
+  const table = page.locator('#review');
+  const first = table.locator('[data-row-id="edit-0"] [data-column-id="name"]');
+  await expect(first).toBeVisible();
+  await first.focus();
+  await first.evaluate(cell => {
+    const table = cell.closest('ds-table')!;
+    const parent = table.parentElement!;
+    const outside = document.createElement('button');
+    outside.id = 'outside-table';
+    outside.textContent = 'Outside table';
+    parent.append(outside);
+    cell.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true })
+    );
+    table.remove();
+    parent.prepend(table);
+    outside.focus();
+  });
+  await table.evaluate(
+    () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+  );
+  await expect(page.locator('#outside-table')).toBeFocused();
+  const editor = table.locator('.ds-table__cell-editor input');
+  for (let cycle = 0; cycle < 2; cycle++) {
+    await first.click();
+    await expect(editor).toBeFocused();
+    await editor.fill('Unsaved draft');
+    await table.evaluate(element => {
+      const parent = element.parentElement!;
+      element.remove();
+      parent.prepend(element);
+      document.getElementById('outside-table')!.focus();
+    });
+    await expect(editor).toHaveCount(0);
+    await expect(first).toContainText('Driver 1');
+    await expect(page.locator('#outside-table')).toBeFocused();
+  }
+  await first.click();
+  await expect(editor).toHaveValue('Driver 1');
+  await editor.fill('Accepted after reconnect');
+  await editor.press('Enter');
+  await expect(first).toContainText('Accepted after reconnect');
+  await expect(first).toBeFocused();
+});
+
 test('native merged reports preserve a complete grid and reject hidden-member spans @cross-browser', async ({
   page,
 }) => {

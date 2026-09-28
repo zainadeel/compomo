@@ -11,6 +11,7 @@ import { resolveCssTimeMs } from './resolve-css-time-ms';
 import { TOKEN_DEFAULTS } from './token-defaults';
 import { eventIntersectsComposedBoundary } from './anchored-overlay-interaction-controller';
 import { resolveAnchoredOverlayBoundaryRect } from './anchored-overlay-boundary';
+import { ConnectionTasks } from './connection-tasks';
 
 type PopupPosition = { x: number; y: number };
 
@@ -50,6 +51,7 @@ export class SelectController<T extends ChoiceOption> {
   private typeaheadTimer: ReturnType<typeof setTimeout> | null = null;
   private outsideHandler: ((event: MouseEvent) => void) | null = null;
   private readonly position: AnchoredPositionController;
+  private readonly tasks = new ConnectionTasks(() => this.state.host.isConnected);
 
   constructor(private readonly state: SelectControllerState<T>) {
     this.position = new AnchoredPositionController({
@@ -112,9 +114,12 @@ export class SelectController<T extends ChoiceOption> {
   }
 
   disconnect() {
+    this.tasks.cancel();
     this.cancelPositionRetry();
     this.unbindPopupListeners();
-    if (this.typeaheadTimer) clearTimeout(this.typeaheadTimer);
+    if (this.typeaheadTimer !== null) clearTimeout(this.typeaheadTimer);
+    this.typeaheadTimer = null;
+    this.typeahead = '';
   }
 
   setFocus() {
@@ -125,15 +130,15 @@ export class SelectController<T extends ChoiceOption> {
     if (!this.state.open) return;
     const enabled = enabledChoiceIndexes(this.state.options);
     if (!enabled.includes(this.state.activeIndex)) this.state.activeIndex = enabled[0] ?? -1;
-    requestAnimationFrame(() => this.updatePosition());
+    this.tasks.frame(() => this.updatePosition());
   }
 
   loadingChanged() {
-    if (this.state.open) requestAnimationFrame(() => this.updatePosition());
+    if (this.state.open) this.tasks.frame(() => this.updatePosition());
   }
 
   positionChanged() {
-    if (this.state.open) requestAnimationFrame(() => this.updatePosition());
+    if (this.state.open) this.tasks.frame(() => this.updatePosition());
   }
 
   openChanged(open: boolean) {
@@ -153,14 +158,14 @@ export class SelectController<T extends ChoiceOption> {
 
   searchChanged() {
     this.state.activeIndex = enabledChoiceIndexes(this.state.options)[0] ?? -1;
-    requestAnimationFrame(() => {
+    this.tasks.frame(() => {
       this.updatePosition();
       this.scrollActiveOptionIntoView();
     });
   }
 
   activeIndexChanged() {
-    requestAnimationFrame(() => this.scrollActiveOptionIntoView());
+    this.tasks.frame(() => this.scrollActiveOptionIntoView());
   }
 
   openPopup(focusVisible: boolean, edge?: 'first' | 'last') {
@@ -179,11 +184,11 @@ export class SelectController<T extends ChoiceOption> {
   closePopup(restoreFocus = false) {
     if (!this.state.open) return;
     this.state.open = false;
-    if (restoreFocus) requestAnimationFrame(() => this.triggerEl?.focus());
+    if (restoreFocus) this.tasks.frame(() => this.triggerEl?.focus());
   }
 
   focusSearchOrTrigger() {
-    requestAnimationFrame(() => {
+    this.tasks.frame(() => {
       if (this.state.searchable) void this.searchEl?.setFocus();
       else this.triggerEl?.focus();
     });

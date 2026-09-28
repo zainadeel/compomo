@@ -35,39 +35,14 @@ import {
   tableActionMenuSections,
   tableActionTriggerId,
 } from './table-action-menu';
-import {
-  nextTableColumnCustomizerElementId,
-  reorderTableColumnPartition,
-  resolveTableFieldsConfiguration,
-  resolveTableVisibleColumns,
-  tableColumnCustomizerSections,
-  toggleTableColumnHidden,
-  toggleTableColumnPinned,
-} from './table-column-customizer';
-import {
-  nextTableDataModeSwitcherElementId,
-  tableDataModeFromMenuItem,
-  tableDataModeMenuItems,
-} from './table-data-mode-switcher';
+import { resolveTableVisibleColumns } from './table-column-customizer';
+import { createTableCaptionController, createTableCaptionState } from './table-caption-controller';
+import { createTableEditingController, type TableEditingState } from './table-editing-controller';
 import { resolveTableTruncateTrack, tableTruncateLabel } from './table-truncate';
 import { renderTableRow as renderTableRowView } from './table-row-view';
 import { TableBodyRenderer } from './table-body-renderer';
 import { tableHeaderBands, tablePinnedColumns, tableSpanModel } from './table-structure';
-import {
-  tableGridModel,
-  tableRangeBounds,
-  tableEditable,
-  tableEditValue,
-  tablePasteChanges,
-  tableNextEditable,
-} from './table-grid-model';
-import { renderTableCellEditor } from './table-cell-editor';
-import type {
-  TableCellSpan,
-  TableCellRange,
-  TableCellAddress,
-  TableCellsChangeDetail,
-} from './table-types';
+import type { TableCellSpan, TableCellRange, TableCellsChangeDetail } from './table-types';
 import { renderTableSkeletonBody } from './table-skeleton-view';
 import { renderTableLoadContent } from './table-load-view';
 import {
@@ -89,7 +64,7 @@ import {
 } from './table-virtual-model';
 import { TableVirtualController } from './table-virtual-controller';
 import type { PaginationChangeDetail } from '../Pagination/pagination-types';
-import type { MenuItemData, MenuItemToggleDetail, MenuReorderDetail } from '../Menu/menu-types';
+import type { MenuItemData } from '../Menu/menu-types';
 import { resolvePaginationState } from '../Pagination/pagination-model';
 import { resolveCssLengthPx } from '../../utils/resolve-css-length-px';
 import { isElementTruncated } from '../../utils/is-element-truncated';
@@ -313,325 +288,9 @@ export class Table {
   @State() private truncateTooltipLabel = '';
   @State() private captionCompact = false;
   @State() private narrowViewport = false;
-  @State() private columnCustomizerOpen = false;
-  @State() private columnCustomizerSurfaceOpen = false;
-  @State() private columnCustomizerInitialFocusVisible = false;
-  @State() private dataModeSwitcherOpen = false;
-  @State() private dataModeSwitcherSurfaceOpen = false;
-  @State() private dataModeSwitcherInitialFocusVisible = false;
+  @State() private captionMenus = createTableCaptionState();
   @State() private virtualWindow: TableVirtualPlan | null = null;
-  @State() private activeCell: TableCellAddress | null = null;
-  @State() private editingCell: TableCellAddress | null = null;
-  private editDraft = '';
-  private gridModelCache?: ReturnType<typeof tableGridModel>;
-  private get gridEnabled(): boolean {
-    return this.interactionMode === 'grid' && !this.grouped;
-  }
-  private get editingEnabled(): boolean {
-    return this.interactionMode !== 'table' && !this.grouped;
-  }
-  private get gridModel() {
-    if (
-      !this.gridModelCache ||
-      this.gridModelCache.rows !== this.rows ||
-      this.gridModelCache.columns !== this.visibleColumns
-    ) {
-      this.gridModelCache = tableGridModel(this.rows, this.visibleColumns);
-    }
-    return this.gridModelCache;
-  }
-  private gridAddress(event: Event): TableCellAddress | null {
-    if (
-      !this.gridEnabled ||
-      !(event.target instanceof HTMLElement) ||
-      !event.target.matches('td[role="gridcell"][data-cell-editable="true"]')
-    )
-      return null;
-    const rowId = event.target.closest<HTMLElement>('[data-row-id]')?.dataset.rowId;
-    const columnId = event.target.dataset.columnId;
-    return rowId && columnId ? { rowId, columnId } : null;
-  }
-  private selectCell(address: TableCellAddress, extend = false): void {
-    if (!this.isEditableAddress(address)) return;
-    this.activeCell = address;
-    this.dsCellRangeChange.emit({
-      anchor: extend ? (this.cellRange?.anchor ?? address) : address,
-      focus: address,
-    });
-  }
-  private async focusCell(address: TableCellAddress): Promise<void> {
-    if (!this.isEditableAddress(address)) return;
-    this.activeCell = address;
-    this.focusedRowId = address.rowId;
-    await this.scrollRowIntoView(address.rowId);
-    await this.nextAnimationFrame();
-    const cell = this.findRenderedRow(address.rowId)?.querySelector<HTMLElement>(
-      `[data-column-id="${CSS.escape(address.columnId)}"]`
-    );
-    if (this.gridEnabled) cell?.focus();
-    else
-      await cell
-        ?.querySelector<HTMLDsButtonUnfilledElement>('.ds-table__edit-trigger ds-button-unfilled')
-        ?.setFocus();
-  }
-  private isEditableAddress(address: TableCellAddress): boolean {
-    const model = this.gridModel;
-    const row = model.rows[model.rowIndices.get(address.rowId) ?? -1];
-    const column = model.columns[model.columnIndices.get(address.columnId) ?? -1];
-    return this.editingEnabled && !this.loading && !!row && !!column && tableEditable(row, column);
-  }
-  private beginCellEdit(address: TableCellAddress, initial?: string): void {
-    const model = this.gridModel;
-    const row = model.rows[model.rowIndices.get(address.rowId) ?? -1];
-    const column = model.columns[model.columnIndices.get(address.columnId) ?? -1];
-    if (!this.editingEnabled || this.loading || !row || !column || !tableEditable(row, column))
-      return;
-    this.activeCell = address;
-    this.focusedRowId = address.rowId;
-    this.editDraft = initial ?? String(row.cells[column.id] ?? '');
-    this.editingCell = address;
-    requestAnimationFrame(async () => {
-      const control = this.el.querySelector<HTMLDsInputElement>('.ds-table__cell-editor > *');
-      await control?.componentOnReady?.();
-      if (this.editingCell !== address || !control?.isConnected) return;
-      await control.setFocus();
-      const input = control.querySelector<HTMLInputElement | HTMLTextAreaElement>('input,textarea');
-      if (initial == null && input?.type !== 'number') input?.select();
-    });
-  }
-  private handleGridKeyDown(event: KeyboardEvent): void {
-    const address = this.gridAddress(event);
-    if (!address || event.altKey || event.metaKey || event.ctrlKey || event.isComposing) return;
-    if (event.key === 'Enter' || event.key === 'F2' || event.key.length === 1) {
-      event.preventDefault();
-      this.beginCellEdit(address, event.key.length === 1 ? event.key : undefined);
-      return;
-    }
-    if (!['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(event.key))
-      return;
-    event.preventDefault();
-    const next = tableNextEditable(this.gridModel, address, event.key);
-    if (!next) return;
-    this.selectCell(next, event.shiftKey);
-    void this.focusCell(next);
-  }
-  private handleGridClipboard(event: ClipboardEvent): void {
-    const address = this.gridAddress(event);
-    if (!address || !event.clipboardData) return;
-    if (event.type === 'paste') {
-      event.preventDefault();
-      if (this.loading) return;
-      const changes = tablePasteChanges(
-        this.gridModel,
-        address,
-        event.clipboardData.getData('text/plain')
-      );
-      if (!changes) {
-        this.announcement =
-          'Paste rejected. Use a rectangular set of valid values in editable cells.';
-        return;
-      }
-      this.dsCellsChange.emit({ changes, reason: 'paste' });
-      this.announcement = `${changes.length} cell changes proposed.`;
-    } else {
-      const model = this.gridModel;
-      const bounds = tableRangeBounds(model, this.cellRange ?? { anchor: address, focus: address });
-      if (
-        !bounds ||
-        (bounds.lastRow - bounds.firstRow + 1) * (bounds.lastColumn - bounds.firstColumn + 1) >
-          10000
-      )
-        return;
-      const text = model.rows
-        .slice(bounds.firstRow, bounds.lastRow + 1)
-        .map(row =>
-          model.columns
-            .slice(bounds.firstColumn, bounds.lastColumn + 1)
-            .map(column => {
-              if (!tableEditable(row, column)) return '';
-              const value = row.cells[column.id];
-              return typeof value === 'object' ? '' : String(value ?? '').replace(/[\t\r\n]/g, ' ');
-            })
-            .join('\t')
-        )
-        .join('\n');
-      event.preventDefault();
-      event.clipboardData.setData('text/plain', text);
-    }
-  }
-  private renderCellEditor(row: TableRow, column: TableColumn) {
-    if (
-      this.editingCell?.rowId !== row.id ||
-      this.editingCell.columnId !== column.id ||
-      !tableEditable(row, column) ||
-      this.loading
-    )
-      return null;
-    const address = this.editingCell;
-    const editor = column.editor!;
-    const cell = this.findRenderedRow(row.id)?.querySelector<HTMLElement>(
-      `[data-column-id="${CSS.escape(column.id)}"]`
-    );
-    const commit = (text: string, next = address) => {
-      if (this.editingCell !== address || !this.isEditableAddress(address)) return false;
-      const value = tableEditValue(text, column);
-      if (value === undefined) {
-        this.announcement = `Enter a valid value for ${column.label}.`;
-        return false;
-      }
-      this.editingCell = null;
-      this.dsCellsChange.emit({ changes: [{ ...address, value }], reason: 'edit' });
-      void this.focusCell(next);
-      return true;
-    };
-    return (
-      <div
-        class="ds-table__cell-editor"
-        key={`${row.id}:${column.id}`}
-        onClick={event => event.stopPropagation()}
-        onFocusout={event => {
-          const wrapper = event.currentTarget as HTMLElement;
-          requestAnimationFrame(() => {
-            const root = wrapper.getRootNode() as Document | ShadowRoot;
-            if (this.editingCell === address && !wrapper.contains(root.activeElement))
-              this.editingCell = null;
-          });
-        }}
-        onKeyDown={event => {
-          event.stopPropagation();
-          if (event.isComposing || event.defaultPrevented) return;
-          const wrapper = event.currentTarget as HTMLElement;
-          if (event.key === 'Escape') {
-            event.preventDefault();
-            this.editingCell = null;
-            void this.focusCell(address);
-            return;
-          }
-          if (event.key !== 'Enter' && event.key !== 'Tab') return;
-          // Picker keyboard interactions belong to the picker, including its internal Tab stops.
-          if ((event.target as HTMLElement).closest('[popover]')) return;
-          if (
-            event.key === 'Enter' &&
-            editor.type === 'textarea' &&
-            !event.ctrlKey &&
-            !event.metaKey
-          )
-            return;
-          event.preventDefault();
-          const input =
-            editor.type === 'select'
-              ? null
-              : wrapper.querySelector<HTMLInputElement | HTMLTextAreaElement>('input,textarea');
-          // Unconstrained numeric columns retain decimal support; explicit steps use the
-          // shared control's native step validity as well as the paste validator.
-          if (
-            input &&
-            !input.checkValidity() &&
-            !(editor.type === 'number' && editor.step == null && input.validity.stepMismatch)
-          ) {
-            input.reportValidity();
-            return;
-          }
-          const next =
-            event.key === 'Tab'
-              ? (tableNextEditable(this.gridModel, address, 'Tab', event.shiftKey) ?? address)
-              : address;
-          commit(input?.value ?? this.editDraft, next);
-        }}
-      >
-        {renderTableCellEditor(
-          editor,
-          this.editDraft,
-          `Edit ${column.label} for ${row.selectionLabel ?? row.id}`,
-          cell ?? undefined,
-          value => {
-            this.editDraft = value;
-            // A single-select choice is a complete edit; let its selection handler finish first.
-            if (editor.type === 'select') queueMicrotask(() => commit(value));
-          }
-        )}
-      </div>
-    );
-  }
-
-  private renderCellEditTrigger(row: TableRow, column: TableColumn) {
-    if (
-      this.interactionMode !== 'edit' ||
-      !tableEditable(row, column) ||
-      this.loading ||
-      (this.editingCell?.rowId === row.id && this.editingCell.columnId === column.id)
-    )
-      return null;
-    return (
-      <span class="ds-table__edit-trigger">
-        <ds-button-unfilled
-          variant="icon"
-          icon="Pencil"
-          size="sm"
-          aria-label={`Edit ${column.label} for ${row.selectionLabel ?? row.id}`}
-          pressScale={false}
-          onDsClick={event => {
-            event.stopPropagation();
-            this.beginCellEdit({ rowId: row.id, columnId: column.id });
-          }}
-        />
-      </span>
-    );
-  }
-
-  private gridCellAttributes(row: TableRow, column: TableColumn): Record<string, unknown> {
-    const model = this.gridModel;
-    const bounds = tableRangeBounds(model, this.cellRange);
-    const ri = model.rowIndices.get(row.id)!,
-      ci = model.columnIndices.get(column.id)!;
-    const editable = tableEditable(row, column) && !this.loading;
-    const editing =
-      editable && this.editingCell?.rowId === row.id && this.editingCell.columnId === column.id;
-    const active =
-      this.activeCell && this.isEditableAddress(this.activeCell)
-        ? this.activeCell
-        : model.firstEditable;
-    if (!this.gridEnabled)
-      return {
-        'data-cell-editable': String(editable),
-        'data-cell-editing': String(editing),
-        'aria-disabled': editable ? undefined : 'true',
-      };
-    return {
-      role: 'gridcell',
-      tabIndex: editable
-        ? active?.rowId === row.id && active.columnId === column.id
-          ? 0
-          : -1
-        : undefined,
-      'data-cell-editable': String(editable),
-      'data-cell-editing': String(editing),
-      'aria-readonly': String(!editable),
-      'aria-disabled': editable ? undefined : 'true',
-      'aria-selected': String(
-        editable &&
-          !!bounds &&
-          ri >= bounds.firstRow &&
-          ri <= bounds.lastRow &&
-          ci >= bounds.firstColumn &&
-          ci <= bounds.lastColumn
-      ),
-      onClick: (event: MouseEvent) => {
-        if (
-          event.target !== event.currentTarget &&
-          (event.target as HTMLElement).closest(
-            'button,a,input,textarea,ds-button-unfilled,.ds-table__cell-editor'
-          )
-        )
-          return;
-        event.stopPropagation();
-        if (!editable) return;
-        this.selectCell({ rowId: row.id, columnId: column.id }, event.shiftKey);
-        (event.currentTarget as HTMLElement).focus();
-        if (!event.shiftKey) this.beginCellEdit({ rowId: row.id, columnId: column.id });
-      },
-    };
-  }
+  @State() private cellInteraction: TableEditingState = { activeCell: null, editingCell: null };
 
   private readonly actionMenuElementId = nextTableActionMenuElementId();
   private structureCache?: {
@@ -701,8 +360,6 @@ export class Table {
     );
     return band ? `${this.actionMenuElementId}-${band.key}` : undefined;
   }
-  private readonly columnCustomizerElementId = nextTableColumnCustomizerElementId();
-  private readonly dataModeSwitcherElementId = nextTableDataModeSwitcherElementId();
   private truncateTooltipEl?: HTMLDsTooltipElement;
   private truncateAnchor: HTMLElement | null = null;
   private truncateTooltipBound = false;
@@ -764,6 +421,75 @@ export class Table {
   private fitObservedTable: HTMLTableElement | null = null;
   private fitMeasurementPending = false;
   private cardViewportQuery: MediaQueryList | null = null;
+  private readonly editingController = createTableEditingController({
+    host: () => this.el,
+    state: () => ({
+      rows: this.rows,
+      columns: this.visibleColumns,
+      mode: this.grouped ? 'table' : this.interactionMode,
+      loading: this.loading,
+      cellRange: this.cellRange,
+    }),
+    interaction: () => this.cellInteraction,
+    change: patch => {
+      this.cellInteraction = { ...this.cellInteraction, ...patch };
+    },
+    rangeChange: range => {
+      this.dsCellRangeChange.emit(range);
+    },
+    cellsChange: detail => {
+      this.dsCellsChange.emit(detail);
+    },
+    announce: message => {
+      this.announcement = message;
+    },
+    focusRow: rowId => {
+      this.focusedRowId = rowId;
+    },
+    revealRow: rowId => this.scrollRowIntoView(rowId),
+    findRow: rowId => this.findRenderedRow(rowId),
+  });
+  private readonly captionController = createTableCaptionController({
+    host: () => this.el,
+    state: () => ({
+      caption: this.caption,
+      captionVisibility: this.captionVisibility,
+      headerPresent: this.headerPresent,
+      headerUsesToolbar: this.headerUsesToolbar,
+      captionTrailingPresent: this.captionTrailingPresent,
+      captionCompact: this.captionCompact,
+      columnCustomizer: this.columnCustomizer,
+      hideColumnCustomizerTrigger: this.hideColumnCustomizerTrigger,
+      captionControlsBorderless: this.captionControlsBorderless,
+      chromeLoading: this.chromeLoading,
+      columns: this.columns,
+      hiddenFieldIds: this.hiddenFieldIds,
+      fieldOrder: this.fieldOrder,
+      pinnedFieldIds: this.pinnedFieldIds,
+      customizeOptions: this.customizeOptions,
+      dataModeSwitcher: this.dataModeSwitcher,
+      dataModeSwitcherLabel: this.dataModeSwitcherLabel,
+      dataModeMenuLabel: this.dataModeMenuLabel,
+      dataMode: this.dataMode,
+      infiniteModeLabel: this.infiniteModeLabel,
+      paginationModeLabel: this.paginationModeLabel,
+      virtualModeLabel: this.virtualModeLabel,
+    }),
+    menus: () => this.captionMenus,
+    change: patch => {
+      this.captionMenus = { ...this.captionMenus, ...patch };
+    },
+    headerSlotChange: () => this.syncHeaderSlotPresence(),
+    fieldsChange: detail => {
+      this.dsFieldsConfigChange.emit(detail);
+    },
+    dataModeChange: detail => {
+      this.dsDataModeChange.emit(detail);
+    },
+    customizeOptionChange: value => {
+      this.dsCustomizeOptionChange.emit(value);
+    },
+  });
   private readonly bodyRenderer = new TableBodyRenderer();
   private readonly layoutController = new TableLayoutController({
     elements: () => ({
@@ -986,7 +712,8 @@ export class Table {
   }
 
   disconnectedCallback(): void {
-    this.editingCell = null;
+    this.editingController.disconnect();
+    this.captionController.disconnect();
     this.layoutController.disconnect();
     this.loadController.disconnect();
     this.groupLoadController.disconnect();
@@ -1001,7 +728,6 @@ export class Table {
     this.disconnectCaptionCompactObserver();
     this.disconnectTruncateTooltip();
     this.disconnectCardViewportQuery();
-    this.closeColumnCustomizer();
     if (this.initialModelWarningFrame !== undefined) {
       cancelAnimationFrame(this.initialModelWarningFrame);
       this.initialModelWarningFrame = undefined;
@@ -1230,29 +956,10 @@ export class Table {
 
   @Watch('columnCustomizer')
   @Watch('captionVisibility')
-  handleColumnCustomizerAvailability(): void {
-    if (!this.showsColumnCustomizer) {
-      this.closeColumnCustomizer();
-      this.columnCustomizerSurfaceOpen = false;
-    }
-  }
-
   @Watch('dataModeSwitcher')
-  @Watch('captionVisibility')
-  handleDataModeSwitcherAvailability(): void {
-    if (!this.showsDataModeSwitcher) {
-      this.closeDataModeSwitcher();
-      this.dataModeSwitcherSurfaceOpen = false;
-    }
-  }
-
   @Watch('chromeLoading')
-  handleChromeLoadingChange(loading: boolean): void {
-    if (!loading) return;
-    this.closeColumnCustomizer();
-    this.closeDataModeSwitcher();
-    this.columnCustomizerSurfaceOpen = false;
-    this.dataModeSwitcherSurfaceOpen = false;
+  handleCaptionAvailability(): void {
+    this.captionController.reconcile();
   }
 
   private get grouped(): boolean {
@@ -1297,22 +1004,6 @@ export class Table {
       value,
     };
     return value;
-  }
-
-  private get showsColumnCustomizer(): boolean {
-    return this.columnCustomizer && this.captionVisibility === 'visible';
-  }
-
-  private get showsDataModeSwitcher(): boolean {
-    return this.dataModeSwitcher && this.captionVisibility === 'visible';
-  }
-
-  private get showsCaptionTrailing(): boolean {
-    return (
-      this.showsDataModeSwitcher ||
-      (this.showsColumnCustomizer && !this.hideColumnCustomizerTrigger) ||
-      this.captionTrailingPresent
-    );
   }
 
   private get documentStickyHeader(): boolean {
@@ -1815,7 +1506,8 @@ export class Table {
   }
 
   private emitRowActivation(row: TableRow, event: Event): void {
-    if (this.gridEnabled || row.disabled || !this.rowEventOwnsActivation(event)) return;
+    if (this.editingController.gridEnabled || row.disabled || !this.rowEventOwnsActivation(event))
+      return;
     if (this.selectionMode === 'multiple' && this.selectedRowIds.length > 0) {
       if (row.selectable !== false) this.emitRowSelection(row);
       return;
@@ -2466,15 +2158,15 @@ export class Table {
     rowKey = row.id
   ) {
     return renderTableRowView({
-      grid: this.gridEnabled,
-      cellAttributes: this.editingEnabled
-        ? (targetRow, column) => this.gridCellAttributes(targetRow, column)
+      grid: this.editingController.gridEnabled,
+      cellAttributes: this.editingController.enabled
+        ? (targetRow, column) => this.editingController.cellAttributes(targetRow, column)
         : undefined,
-      renderEditor: this.editingEnabled
-        ? (targetRow, column) => this.renderCellEditor(targetRow, column)
+      renderEditor: this.editingController.enabled
+        ? (targetRow, column) => this.editingController.renderEditor(targetRow, column)
         : undefined,
-      renderEditTrigger: this.editingEnabled
-        ? (targetRow, column) => this.renderCellEditTrigger(targetRow, column)
+      renderEditTrigger: this.editingController.enabled
+        ? (targetRow, column) => this.editingController.renderEditTrigger(targetRow, column)
         : undefined,
       pins: this.structure.pins,
       spans: this.structure.merges.cells.get(row.id),
@@ -2934,294 +2626,6 @@ export class Table {
     );
   }
 
-  private renderCaptionBar() {
-    if (this.captionVisibility !== 'visible') return null;
-    return (
-      <div class="ds-table__caption-bar ds-table__bar ds-control--md">
-        <div
-          class={{
-            'ds-table__caption-content': true,
-            'ds-table__caption-content--trailing': this.showsCaptionTrailing,
-          }}
-        >
-          <div
-            class={{
-              'ds-table__caption-leading': true,
-              'ds-table__caption-leading--toolbar': this.headerUsesToolbar,
-            }}
-          >
-            <slot name="header" onSlotchange={this.syncHeaderSlotPresence} />
-            {!this.headerPresent ? (
-              <ds-text
-                class="ds-table__caption-title ds-table__bar-text"
-                as="div"
-                variant="text-title-small"
-                emphasis={true}
-                color="primary"
-                aria-hidden="true"
-              >
-                {this.caption}
-              </ds-text>
-            ) : null}
-          </div>
-          {this.renderCaptionTrailing()}
-        </div>
-        <slot name="header-after" />
-      </div>
-    );
-  }
-
-  private renderCaptionTrailing() {
-    if (!this.showsCaptionTrailing) return null;
-    return (
-      <div class="ds-table__caption-trailing">
-        {this.renderColumnCustomizerTrigger()}
-        {this.showsColumnCustomizer &&
-        !this.hideColumnCustomizerTrigger &&
-        this.showsDataModeSwitcher ? (
-          <ds-divider orientation="vertical" length="var(--dimension-size-400)" />
-        ) : null}
-        {this.renderDataModeSwitcherTrigger()}
-        <slot name="caption-trailing" />
-      </div>
-    );
-  }
-
-  private renderDataModeSwitcherTrigger() {
-    if (!this.showsDataModeSwitcher) return null;
-    if (this.chromeLoading) {
-      return <ds-skeleton variant="control" controlSize="md" width="var(--dimension-size-400)" />;
-    }
-    return (
-      <span class="ds-table__caption-mode-switcher">
-        <ds-tooltip label={this.dataModeSwitcherLabel} side="top" size="sm">
-          <ds-button-unfilled
-            hasBorder={!this.captionControlsBorderless}
-            id={`${this.dataModeSwitcherElementId}-trigger`}
-            variant="icon"
-            size="md"
-            icon="Ellipses"
-            aria-label={this.dataModeSwitcherLabel}
-            hasMenu={true}
-            expanded={this.dataModeSwitcherOpen}
-            surfaceOpen={this.dataModeSwitcherSurfaceOpen}
-            controls={this.dataModeSwitcherElementId}
-            activeFill={false}
-            pressScale={false}
-            onDsClick={(event: CustomEvent<MouseEvent>) => {
-              this.toggleDataModeSwitcher(event.detail.detail === 0);
-            }}
-          />
-        </ds-tooltip>
-      </span>
-    );
-  }
-
-  private renderDataModeSwitcherMenu() {
-    if (!this.showsDataModeSwitcher || this.chromeLoading) return null;
-    return (
-      <ds-menu
-        id={this.dataModeSwitcherElementId}
-        open={this.dataModeSwitcherOpen}
-        anchorId={`${this.dataModeSwitcherElementId}-trigger`}
-        align="end"
-        side="bottom"
-        menuLabel={this.dataModeMenuLabel}
-        initialFocusVisible={this.dataModeSwitcherInitialFocusVisible}
-        items={tableDataModeMenuItems(this.dataMode, {
-          infinite: this.infiniteModeLabel,
-          pagination: this.paginationModeLabel,
-          virtual: this.virtualModeLabel,
-        })}
-        onDsClose={() => this.closeDataModeSwitcher()}
-        onDsAfterClose={() => {
-          if (!this.dataModeSwitcherOpen) this.dataModeSwitcherSurfaceOpen = false;
-        }}
-        onDsSelect={event => this.handleDataModeSwitcherSelect(event.detail)}
-      />
-    );
-  }
-
-  private toggleDataModeSwitcher(fromKeyboard = false): void {
-    if (this.dataModeSwitcherOpen) this.closeDataModeSwitcher();
-    else this.openDataModeSwitcher(fromKeyboard);
-  }
-
-  private openDataModeSwitcher(fromKeyboard = false): void {
-    if (!this.showsDataModeSwitcher || this.dataModeSwitcherOpen) return;
-    this.closeColumnCustomizer();
-    this.dataModeSwitcherInitialFocusVisible = fromKeyboard;
-    this.dataModeSwitcherOpen = true;
-    this.dataModeSwitcherSurfaceOpen = true;
-  }
-
-  private closeDataModeSwitcher(): void {
-    this.dataModeSwitcherOpen = false;
-  }
-
-  private handleDataModeSwitcherSelect(item: MenuItemData): void {
-    const dataMode = tableDataModeFromMenuItem(item);
-    if (!dataMode) return;
-    this.closeDataModeSwitcher();
-    if (dataMode !== this.dataMode) this.dsDataModeChange.emit({ dataMode });
-    requestAnimationFrame(() => {
-      this.el
-        .querySelector<
-          HTMLElement & { setFocus?: () => void }
-        >(`#${CSS.escape(`${this.dataModeSwitcherElementId}-trigger`)}`)
-        ?.setFocus?.();
-    });
-  }
-
-  private renderColumnCustomizerTrigger() {
-    if (this.hideColumnCustomizerTrigger) return null;
-    if (!this.showsColumnCustomizer) return null;
-    return (
-      <div
-        class={{
-          'ds-table__caption-customizer': true,
-          'ds-table__caption-customizer--loading': this.chromeLoading,
-        }}
-        aria-hidden={this.chromeLoading ? 'true' : undefined}
-      >
-        <ds-tooltip label={this.captionCompact ? 'Customize' : ''} side="top" size="sm">
-          <ds-button-unfilled
-            hasBorder={!this.captionControlsBorderless}
-            id={`${this.columnCustomizerElementId}-trigger`}
-            variant={this.captionCompact ? 'icon' : 'icon-label'}
-            size="md"
-            icon="Preferences"
-            label="Customize"
-            labelEmphasis={false}
-            pressScale={false}
-            aria-label="Customize table"
-            haspopup="menu"
-            expanded={this.columnCustomizerOpen}
-            surfaceOpen={this.columnCustomizerSurfaceOpen}
-            controls={this.columnCustomizerElementId}
-            onDsClick={(event: CustomEvent<MouseEvent>) => {
-              if (this.chromeLoading) return;
-              this.toggleColumnCustomizer(event.detail.detail === 0);
-            }}
-          />
-        </ds-tooltip>
-        {this.chromeLoading ? (
-          <ds-skeleton variant="control" controlSize="md" width="100%" />
-        ) : null}
-      </div>
-    );
-  }
-
-  private renderColumnCustomizerMenu() {
-    if (!this.showsColumnCustomizer || this.chromeLoading) return null;
-    return (
-      <ds-menu
-        id={this.columnCustomizerElementId}
-        open={this.columnCustomizerOpen}
-        anchorId={`${this.columnCustomizerElementId}-trigger`}
-        align="end"
-        side="bottom"
-        menuLabel="Customize table"
-        initialFocusVisible={this.columnCustomizerInitialFocusVisible}
-        sections={[
-          ...tableColumnCustomizerSections(
-            this.columns,
-            this.hiddenFieldIds,
-            this.fieldOrder,
-            this.pinnedFieldIds
-          ),
-          ...(this.customizeOptions.length
-            ? [{ header: 'Options', items: this.customizeOptions }]
-            : []),
-        ]}
-        onDsClose={() => this.closeColumnCustomizer()}
-        onDsAfterClose={() => {
-          if (!this.columnCustomizerOpen) this.columnCustomizerSurfaceOpen = false;
-        }}
-        onDsSelect={event => {
-          if (this.customizeOptions.some(option => option.value === event.detail.value)) {
-            this.dsCustomizeOptionChange.emit(event.detail.value!);
-          } else this.handleColumnCustomizerSelect(event.detail);
-        }}
-        onDsItemToggle={(event: CustomEvent<MenuItemToggleDetail>) =>
-          this.handleColumnCustomizerAction(event.detail)
-        }
-        onDsReorder={event => this.handleColumnCustomizerReorder(event.detail)}
-      />
-    );
-  }
-
-  private toggleColumnCustomizer(fromKeyboard = false): void {
-    if (this.columnCustomizerOpen) this.closeColumnCustomizer();
-    else this.openColumnCustomizer(fromKeyboard);
-  }
-
-  private openColumnCustomizer(fromKeyboard = false): void {
-    if (!this.showsColumnCustomizer || this.columnCustomizerOpen) return;
-    this.closeDataModeSwitcher();
-    this.columnCustomizerInitialFocusVisible = fromKeyboard;
-    this.columnCustomizerOpen = true;
-    this.columnCustomizerSurfaceOpen = true;
-  }
-
-  private closeColumnCustomizer(): void {
-    this.columnCustomizerOpen = false;
-  }
-
-  private emitColumnsConfigChange(
-    hiddenFieldIds: string[],
-    fieldOrder: string[],
-    pinnedFieldIds: string[] = this.pinnedFieldIds
-  ): void {
-    this.dsFieldsConfigChange.emit(
-      resolveTableFieldsConfiguration(this.columns, hiddenFieldIds, fieldOrder, pinnedFieldIds)
-    );
-  }
-
-  private handleColumnCustomizerReorder(detail: MenuReorderDetail): void {
-    const order = detail.items
-      .filter(item => item.reorderable)
-      .map(item => item.value)
-      .filter((id): id is string => !!id);
-    this.dsFieldsConfigChange.emit(
-      reorderTableColumnPartition(
-        this.columns,
-        this.hiddenFieldIds,
-        this.fieldOrder,
-        this.pinnedFieldIds,
-        order
-      )
-    );
-  }
-
-  private handleColumnCustomizerAction(detail: MenuItemToggleDetail): void {
-    if (detail.action?.id === 'visibility') {
-      this.handleColumnCustomizerSelect(detail.item);
-      return;
-    }
-    if (detail.action?.id !== 'pin') return;
-    const fieldId = detail.item.value;
-    if (!fieldId) return;
-    this.dsFieldsConfigChange.emit(
-      toggleTableColumnPinned(
-        this.columns,
-        this.hiddenFieldIds,
-        this.fieldOrder,
-        this.pinnedFieldIds,
-        fieldId
-      )
-    );
-  }
-
-  private handleColumnCustomizerSelect(item: MenuItemData): void {
-    const fieldId = item.value;
-    if (!fieldId || item.isInactive) return;
-    this.emitColumnsConfigChange(
-      toggleTableColumnHidden(this.columns, this.hiddenFieldIds, fieldId),
-      this.fieldOrder
-    );
-  }
-
   render() {
     this.groupSentinelEls.clear();
     const model = this.createRenderModel();
@@ -3263,11 +2667,11 @@ export class Table {
         }}
         style={hostStyle}
         onKeyDown={(event: KeyboardEvent) => {
-          this.handleGridKeyDown(event);
+          this.editingController.handleKeyDown(event);
           this.handlePaginationKeyDown(event);
         }}
-        onCopy={(event: ClipboardEvent) => this.handleGridClipboard(event)}
-        onPaste={(event: ClipboardEvent) => this.handleGridClipboard(event)}
+        onCopy={(event: ClipboardEvent) => this.editingController.handleClipboard(event)}
+        onPaste={(event: ClipboardEvent) => this.editingController.handleClipboard(event)}
         onFocusin={this.onVirtualFocusIn}
       >
         <div
@@ -3303,7 +2707,7 @@ export class Table {
             this.rootEl = element ?? null;
           }}
         >
-          {this.renderCaptionBar()}
+          {this.captionController.renderBar()}
           <div
             class={{
               'ds-table__frame': true,
@@ -3349,8 +2753,8 @@ export class Table {
                       windowRows,
                   }}
                   style={model.tableStyle}
-                  role={this.gridEnabled ? 'grid' : 'table'}
-                  aria-multiselectable={this.gridEnabled ? 'true' : undefined}
+                  role={this.editingController.gridEnabled ? 'grid' : 'table'}
+                  aria-multiselectable={this.editingController.gridEnabled ? 'true' : undefined}
                   aria-rowcount={
                     windowRows
                       ? 1 + Number(this.structure.bands.length > 0) + this.virtualItems.length
@@ -3397,8 +2801,7 @@ export class Table {
           </div>
           {this.renderResultFooter()}
           {this.renderOverflowActionMenu()}
-          {this.renderDataModeSwitcherMenu()}
-          {this.renderColumnCustomizerMenu()}
+          {this.captionController.renderMenus()}
           {this.renderTruncateTooltip()}
           <div class="ds-visually-hidden" role="status" aria-live="polite" aria-atomic="true">
             {this.announcement}

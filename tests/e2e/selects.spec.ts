@@ -804,6 +804,71 @@ test('supports buffered local typeahead and clear while preserving the open popu
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
 });
 
+for (const id of ['single', 'multi']) {
+  test(`${id} starts fresh typeahead after reconnecting @cross-browser`, async ({ page }) => {
+    const select = page.locator(`#${id}`);
+    const trigger = select.getByRole('combobox');
+    await select.evaluate((element: HTMLDsSelectElement) => {
+      element.sections = [];
+      element.options = [
+        { label: 'Alpha', value: 'alpha' },
+        { label: 'Charlie', value: 'charlie' },
+      ];
+      element.value = element.multiple ? [] : '';
+    });
+
+    for (let cycle = 0; cycle < 2; cycle++) {
+      await select.evaluate((element: HTMLDsSelectElement) => {
+        const parent = element.parentElement!;
+        const trigger = element.querySelector<HTMLButtonElement>('[role="combobox"]')!;
+        element.value = element.multiple ? [] : '';
+        trigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', bubbles: true }));
+        element.open = false;
+        element.remove();
+        parent.append(element);
+        trigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'c', bubbles: true }));
+      });
+      await expect(trigger).toHaveAttribute('aria-activedescendant', /-option-1$/);
+      await trigger.press('Enter');
+      await expect
+        .poll(() => select.evaluate((element: HTMLDsSelectElement) => element.value))
+        .toEqual(id === 'multi' ? ['charlie'] : 'charlie');
+      await select.evaluate((element: HTMLDsSelectElement) => {
+        const parent = element.parentElement!;
+        element.open = false;
+        element.remove();
+        parent.append(element);
+      });
+    }
+  });
+}
+
+test('Select does not restore focus from an earlier connection @cross-browser', async ({
+  page,
+}) => {
+  const select = page.locator('#single');
+  const trigger = select.getByRole('combobox');
+  for (let cycle = 0; cycle < 2; cycle++) {
+    await trigger.click();
+    await expect(select.getByRole('listbox')).toBeVisible();
+    await select.evaluate(async element => {
+      const parent = element.parentElement!;
+      element
+        .querySelector('[role="combobox"]')!
+        .dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+      element.remove();
+      parent.append(element);
+      document.querySelector<HTMLButtonElement>('#reset')!.focus();
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    });
+    await expect(page.locator('#reset')).toBeFocused();
+    await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  }
+  await trigger.click();
+  await trigger.press('Escape');
+  await expect(trigger).toBeFocused();
+});
+
 test('filters locally by subtext and preserves group semantics', async ({ page }) => {
   const select = page.locator('#searchable');
   await select.getByRole('combobox').click();

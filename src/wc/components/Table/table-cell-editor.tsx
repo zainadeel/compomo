@@ -1,7 +1,7 @@
 import { h } from '@stencil/core';
 import type { TableCellEditor } from './table-types';
 
-/** Shared controls own field behavior; Table owns the draft, cell chrome and commit boundary. */
+/** Shared controls own field behavior; the editing controller owns drafts and commits. */
 export function renderTableCellEditor(
   editor: TableCellEditor,
   value: string,

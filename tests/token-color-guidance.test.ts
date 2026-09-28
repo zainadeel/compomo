@@ -96,19 +96,3 @@ test('missing and malformed guidance is detected rather than silently omitted', 
   assert.throws(() => render({ ...manifest, recipes: [] }), /missing linked recipe/);
   assert.throws(() => render({ ...manifest, families: [] }), /no color families/);
 });
-
-test('Color Usage embeds the contract renderer and preserves local integration links', () => {
-  const mdx = readFileSync(new URL('../src/docs/ColorUsage.mdx', import.meta.url), 'utf8');
-  assert.match(mdx, /import \{ TokenColorGuidance \} from '\.\/TokenColorGuidance'/);
-  assert.match(mdx, /<TokenColorGuidance \/>/);
-  for (const content of [
-    'isInactive',
-    'disabled',
-    'Checkbox',
-    'interaction-fill',
-    'focus-ring',
-    'forced-color-adjust',
-    '?path=/docs/guides-charts--docs',
-  ])
-    assert.ok(mdx.includes(content), content);
-});

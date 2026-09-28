@@ -86,6 +86,17 @@ Rendered tests should assert public behavior or stable geometry contracts, not
 incidental implementation classes unless the class itself is the tested shared
 recipe.
 
+Give each contract an authoritative test layer. Test pure logic and lifecycle
+controllers directly with inputs, outputs, events, and cleanup. Use rendered
+tests for focus, keyboard interaction, layout, accessibility, and CSS cascade.
+Keep source checks for public exports, shared token recipes, and explicit
+authoring policies. For CSS recipes, inspect parsed selectors and declarations
+with `tests/helpers/css-contracts.ts`; declaration order and whitespace are not
+contracts. Do not assert private helper names, JSX spelling, or documentation
+sentences. When deleting a duplicate check, confirm its behavioral coverage;
+when no such coverage exists, test the observable outcome at the appropriate
+layer. A smaller test count is fine when it preserves the regression coverage.
+
 Opening or preparing a pull request always requires a fresh, successful local
 `npm run verify:local:full` run after the final code change. Treat a request to
 open a PR as an instruction to run this preflight first; the focused GitHub PR

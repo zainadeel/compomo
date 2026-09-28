@@ -1,46 +1,17 @@
 #!/usr/bin/env node
-import { execFileSync, spawn } from 'node:child_process';
+import { spawn } from 'node:child_process';
+import { finalizePackage } from './finalize-package.mjs';
 
 const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
-const node = process.execPath;
-const postBuildScripts = [
-  'build-component-notices.mjs',
-  'verify-framework-proxies.mjs',
-  'patch-index-types.mjs',
-  'verify-icons-externalized.mjs',
-  'build-lib-exports.mjs',
-  'build-style-exports.mjs',
-  'build-framework-exports.mjs',
-  'build-registry.mjs',
-  'build-agent-manifest.mjs',
-  'build-lint.mjs',
-  'build-mcp.mjs',
-  'verify-framework-proxies.mjs',
-  'write-build-stamp.mjs',
-];
-
-let pipelineRunning = false;
-let pipelinePending = false;
 let stopped = false;
 let stdoutBuffer = '';
 
 function runCoherentPackagePipeline() {
-  if (pipelineRunning) {
-    pipelinePending = true;
-    return;
-  }
-  pipelineRunning = true;
-  do {
-    pipelinePending = false;
-    process.stdout.write('[package-dev] Finalizing publish-shaped package output…\n');
-    for (const script of postBuildScripts) {
-      execFileSync(node, [`scripts/${script}`], { stdio: 'inherit' });
-    }
-    process.stdout.write(
-      '[package-dev] Package output is coherent; dist/.package-ready.json updated.\n'
-    );
-  } while (pipelinePending && !stopped);
-  pipelineRunning = false;
+  process.stdout.write('[package-dev] Finalizing publish-shaped package output…\n');
+  finalizePackage();
+  process.stdout.write(
+    '[package-dev] Package output is coherent; dist/.package-ready.json updated.\n'
+  );
 }
 
 const watcher = spawn(npx, ['stencil', 'build', '--watch'], {
