@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.11.0](https://github.com/zainadeel/compomo/compare/v15.10.2...v15.11.0) (2026-09-28)
+
+
+### Added
+
+* add coordinated mobile token scaling ([#664](https://github.com/zainadeel/compomo/issues/664)) ([cf55e20](https://github.com/zainadeel/compomo/commit/cf55e204b7e648e4436c3046240ddeeb3e27ff7a))
+
 ## [15.10.2](https://github.com/zainadeel/compomo/compare/v15.10.1...v15.10.2) (2026-09-28)
 
 
