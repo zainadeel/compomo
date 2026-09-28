@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.10.2](https://github.com/zainadeel/compomo/compare/v15.10.1...v15.10.2) (2026-09-28)
+
+
+### Fixed
+
+* make overflowing code keyboard accessible ([#662](https://github.com/zainadeel/compomo/issues/662)) ([3483c74](https://github.com/zainadeel/compomo/commit/3483c741ab803bc62a23e1f2ffe0aadb8882e4b3))
+
 ## [15.10.1](https://github.com/zainadeel/compomo/compare/v15.10.0...v15.10.1) (2026-09-24)
 
 
