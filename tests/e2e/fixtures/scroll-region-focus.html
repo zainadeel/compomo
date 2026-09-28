@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Keyboard scroll regions</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+    <style>
+      body { margin: 16px; }
+      .frame { width: 399px; max-width: 100%; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <button id="before-code">Before code</button>
+      <div id="code-frame" class="frame">
+        <ds-code-block id="code" filename="records.ts"></ds-code-block>
+      </div>
+      <button id="after-code">After code</button>
+      <button id="before-table">Before table</button>
+      <div id="table-frame" class="frame">
+        <ds-table id="table" caption="Records"></ds-table>
+      </div>
+      <button id="after-table">After table</button>
+    </main>
+    <script type="module">
+      import '/dist/components/ds-code-block.js';
+      import '/dist/components/ds-table.js';
+      await Promise.all(['ds-code-block', 'ds-table'].map(tag => customElements.whenDefined(tag)));
+      const code = document.getElementById('code');
+      code.code = "const affected = records.filter(record => record.issue === 'battery')";
+      const table = document.getElementById('table');
+      table.columns = [
+        { id: 'name', label: 'Name', size: 280 },
+        { id: 'status', label: 'Status', size: 280 },
+      ];
+      table.rows = [{ id: 'one', cells: { name: 'Record one', status: 'Ready' } }];
+      await document.fonts.ready;
+      document.documentElement.dataset.ready = 'true';
+    </script>
+  </body>
+</html>
