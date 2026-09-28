@@ -20,6 +20,9 @@ test('uses full control-height tabs with four-pixel padding and gaps', async ({ 
       (element as HTMLElement & { size: string }).size = size;
     }, density.size);
 
+    // Stencil applies prop changes asynchronously; wait for this density's
+    // render before taking the one-shot geometry measurements below.
+    await expect(track).toHaveCSS('height', `${density.shell}px`);
     await expectDefiniteBounds(track, {
       label: `${density.size} navigation shell`,
       height: density.shell,

@@ -7,6 +7,7 @@
     "types": ["node", "vitest/globals"]
   },
   "include": [
+    "src/docs/TokenColorGuidance.ts",
     ".storybook/vitest.setup.ts",
     "vitest.config.ts",
     "tests/ci-browser-scope.test.ts"

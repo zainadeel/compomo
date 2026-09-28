@@ -1,19 +1,15 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { TokenColorGuidance } from './TokenColorGuidance';
 
 <Meta title="Docs/Color Usage" />
 
 # Color usage
 
-TokoMo provides three color layers:
+This page renders TokoMo's color guidance from the installed token package.
+Expand a family, intent, or recipe variant below to see its selection rules
+and token assignments.
 
-1. **Semantic colors** communicate UI role, hierarchy, intent, and state.
-2. **Data colors** encode values and categories in visualizations.
-3. **Reference colors** are palette ingredients owned by the token system.
-
-Product and component code should use semantic or data tokens, never reference
-palette values directly.
-
-## Setup and syntax
+## CompoMo integration
 
 Import TokoMo once at the application root:
 
@@ -21,227 +17,40 @@ Import TokoMo once at the application root:
 import '@ds-mo/tokens';
 ```
 
-Consume the shipped custom properties:
-
-```css
-.surface {
-  background: var(--color-background-primary);
-  color: var(--color-foreground-primary);
-  border-color: var(--color-border-tertiary);
-}
-```
-
-Tokens adapt when `data-theme="light"` or `data-theme="dark"` changes. Do not
-resolve token values in JavaScript or copy their current rendered colors.
-
-## Semantic colors
-
-Choose semantic tokens by purpose rather than hue.
-
-### Base surfaces and hierarchy
-
-| Role                                                   | Token                           |
-| ------------------------------------------------------ | ------------------------------- |
-| Primary page or card body                              | `--color-background-primary`    |
-| Secondary surface or card chrome                       | `--color-background-secondary`  |
-| Primary content                                        | `--color-foreground-primary`    |
-| Supporting content                                     | `--color-foreground-secondary`  |
-| Inactive/disabled UI content                           | `--color-foreground-tertiary`   |
-| Fainter inactive/disabled or purely decorative content | `--color-foreground-quaternary` |
-| Decorative edge or fill-identified control             | `--color-border-tertiary`       |
-| Default control boundary                               | `--color-border-secondary`      |
-| Stronger structural edge                               | `--color-border-primary`        |
-| Internal content rule                                  | `--color-divider-divider`       |
-
-Use border tokens for container and control edges. Use divider tokens only for
-rules that separate content inside a surface; prefer `ds-divider` when the rule
-is part of component composition.
-
-Tertiary and quaternary foregrounds are not general low-emphasis roles. Restrict
-both to content inside a genuinely inactive or disabled UI component, or to
-purely decorative content whose removal would not change information, status,
-hierarchy, or task understanding. Quaternary is the fainter tier within that
-restricted hierarchy. Prefer the owning component's `isInactive` API or native
-`disabled` state so semantics and visuals stay synchronized. `aria-hidden`
-alone does not make meaningful visible content decorative.
-
-Component-owned non-text recipes are a narrow exception. A control may resolve
-`--color-foreground-tertiary` internally for a boundary or state mark only when
-that exact rendered treatment is verified to meet its 3:1 requirement on every
-supported surface. Checkbox does this for its unchecked outline. Product code
-should use the component API rather than copying that internal token choice.
-
-### Intent and contrast
-
-The semantic intent set is `neutral`, `brand`, `ai`, `negative`, `warning`,
-`caution`, `positive`, `guide`, and `walkthrough`.
-
-Intent backgrounds, borders, and foregrounds use the `faint`, `medium`, `bold`,
-and `strong` contrast scale. On a faint surface, default to the Banner pattern:
-primary foreground for primary content, secondary foreground for supporting
-content, and a tertiary decorative edge.
-
-```css
-.positive-banner {
-  background: var(--color-background-faint-positive);
-  color: var(--color-foreground-primary);
-  border-color: var(--color-border-tertiary);
-}
-
-.positive-banner__supporting {
-  color: var(--color-foreground-secondary);
-}
-```
-
-Use a same-intent bold foreground when the treatment should be deliberately
-tinted. A matching medium intent border is optional:
-
-```css
-.positive-status--tinted {
-  background: var(--color-background-faint-positive);
-  color: var(--color-foreground-bold-positive);
-  /* Add only when the edge should share the intent tint. */
-  border-color: var(--color-border-medium-positive);
-}
-```
-
-When content sits on a colored surface, use the matching context family:
-
-```css
-.brand-surface {
-  background: var(--color-background-bold-brand);
-  color: var(--color-foreground-on-bold-background-primary);
-  border-color: var(--color-border-on-bold-background-secondary);
-}
-```
-
-Do not infer accessibility from the words `faint`, `medium`, `bold`, or
-`strong`. Verify the exact foreground/background pair in both themes.
-
-### Surface contexts
-
-Several surfaces have complete context-specific foreground, border,
-interaction, and divider families:
-
-| Context                | Use                                                   |
-| ---------------------- | ----------------------------------------------------- |
-| Default                | Primary and secondary application surfaces            |
-| Faint                  | Explicit faint intent surfaces                        |
-| Medium / bold / strong | Colored intent surfaces                               |
-| Translucent            | Overlay glass using `--color-translucent-translucent` |
-| Inverted               | Deliberately inverted application surfaces            |
-| Media                  | Content displayed over photos or video                |
-| Always dark            | Theme-invariant dark surfaces                         |
-| Navigation             | App navigation chrome only                            |
-
-Components with a `background` or `surface` prop map these contexts to the
-correct token families. Prefer that component API instead of manually
+Components with a `background` or `surface` prop map their supported contexts
+to the correct token families. Prefer that component API instead of manually
 rebuilding its foreground, border, focus, and interaction mapping.
 
-Examples of context-specific rules:
+Prefer the owning component's `isInactive` API or native `disabled` state so
+semantics and visuals stay synchronized. `aria-hidden` alone does not make
+meaningful visible content decorative.
 
-```css
-.rule-on-strong {
-  background: var(--color-divider-divider-on-strong-background);
-}
+Checkbox uses `--color-foreground-tertiary` internally for its unchecked
+outline, with the rendered 3:1 requirement verified on every supported surface.
+Product code should use the component API rather than copying that internal
+token choice.
 
-.content-on-media {
-  color: var(--color-media-foreground-primary);
-}
-```
+Use `ds-divider` when a rule is part of component composition. Component
+authors should use the shared interaction-fill and focus-ring utilities so
+state layers compose in the correct paint order.
 
-### Interaction
+See the [Charts guide](?path=/docs/guides-charts--docs) for chart composition,
+including CompoMo's chart-specific foreground hierarchy for labels and rules.
+The live catalogs are available under
+[Foundation → Colors Semantic](?path=/story/foundation-colors-semantic--backgrounds)
+and [Foundation → Colors Data](?path=/story/foundation-colors-data--category).
 
-Interaction tokens are overlays, not replacement base backgrounds.
+## Forced colors
 
-- `--color-interaction-hover` and `--color-interaction-pressed` cover standard
-  surfaces.
-- `--color-interaction-focus` supplies the standard focus-ring color.
-- `--color-interaction-active-brand` is the selected fill on default primary
-  and secondary surfaces.
-- `--color-{translucent|inverted|always-dark}-interaction-active-brand` supplies
-  the equivalent brand selected fill on those explicit surfaces.
-- `--color-interaction-active` is the neutral selected fill used on faint
-  surfaces.
-- `--color-interaction-on-{medium|bold|strong}-background-*` supplies
-  surface-aware state overlays.
-
-Components should use the shared interaction-fill and focus-ring utilities so
-these layers compose in the correct paint order.
-
-## Data colors
-
-Use data colors for chart marks, legend keys, heatmaps, map overlays, and
-value-encoding ramps. Do not use them for general UI surfaces, text hierarchy,
-buttons, toasts, or form validation.
-
-| Family                                                            | Purpose                                |
-| ----------------------------------------------------------------- | -------------------------------------- |
-| `--color-data-category-1` … `12`                                  | Unordered categories                   |
-| `--color-data-sequence-blue-{steps}-*` (2, 3, or 4 steps)         | Ordered blue ramps                     |
-| `--color-data-diverging-blue-orange-{steps}-*` (5, 7, or 9 steps) | Values around a midpoint               |
-| `--color-data-win-loss-*`                                         | Outcome polarity                       |
-| `--color-data-misc-*` (`strong`, `bold`, `medium`, or `faint`)    | Neutral supporting marks drawn as data |
-| `--color-data-intent-*`                                           | Intent-aware visualization marks       |
-| `--color-data-status-device-*`                                    | Device-status visualization            |
-| `--color-data-score-safety-*`                                     | Safety-score visualization             |
-
-Use category colors in numeric order, especially when marks touch in a donut
-or stacked chart. Chart chrome follows the foreground hierarchy: primary for
-axis titles and annotations, secondary for labels and zero lines, tertiary for
-axis and rule lines, and quaternary for grids, matching the
-[Charts guide](?path=/docs/guides-charts--docs).
-
-## Product-domain semantics
-
-Families such as driver status, entity markers, location markers, safety
-scores, and settings profiles are semantic product language. Use them only for
-their named domain meaning; they are not substitute chart palettes.
-
-Driver-status colors are status-specific recipes. Keep the status name aligned
-across `--color-driver-status-background-*`,
-`--color-driver-status-foreground-*`, and
-`--color-driver-status-interaction-on-*-*`; do not mix parts from different
-statuses.
-
-## Accessibility
-
-- Do not communicate status through color alone.
-- In Windows Contrast Themes and browser forced-colors mode, the OS owns the
-  actual palette. Keep `forced-color-adjust` at its default so CompoMo can map
-  boundaries, focus, selection, invalid, disabled, and loading states to the
-  user's system colors. Product code must not opt component chrome out of
-  forced colors.
-- Verify text and essential icon contrast against the rendered surface in both
-  themes.
-- Use driver-status surfaces only for their documented large/bold text or
-  non-text roles. The same restriction applies to literal color-intent
-  foregrounds while selected. Choose a core semantic surface when a selected
-  container must carry normal body text.
-- Restrict tertiary and quaternary foregrounds to genuinely inactive/disabled
-  UI content or purely decorative content; never use them to quiet active
-  information. Component-owned non-text contrast recipes are the documented,
-  measured exception.
-- Meaningful chart labels, data markers, icons, and status graphics still need
-  sufficient rendered contrast even when hidden from assistive technology.
-- Use matching on-background families for colored surfaces.
-- Let semantic tokens adapt to theme; do not freeze their resolved values.
+In Windows Contrast Themes and browser forced-colors mode, the OS owns the
+actual palette. Keep `forced-color-adjust` at its default so CompoMo can map
+boundaries, focus, selection, invalid, disabled, and loading states to the
+user's system colors. Product code must not opt component chrome out of
+forced colors.
 
 Authored colors remain only for literal component-owned data marks whose color
 encodes a category or value, such as chart marks and corresponding legend
 swatches. Labels, focus, controls, and surrounding chrome still follow the OS
 palette.
 
-## Avoid
-
-- Choosing a token because its current hue looks convenient.
-- Using reference palette tokens in product code.
-- Using semantic intent colors as an arbitrary chart palette.
-- Using data colors for interface chrome.
-- Painting hover or pressed state by replacing a component's base background.
-- Treating navigation tokens as a general dark-surface theme.
-- Using tertiary or quaternary foreground to reduce the prominence of active
-  content.
-
-See **Foundation → Colors Semantic** and **Foundation → Colors Data** for the
-complete live catalogs.
+<TokenColorGuidance />

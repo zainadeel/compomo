@@ -37,6 +37,26 @@ them. Cleanup does not follow directory symlinks.
 watch build. Storybook uses `npm run dev:components`, a component-only output
 profile with its own `dist/.storybook-ready` reload boundary.
 
+## Token guidance in Storybook
+
+Color Usage directly renders the installed `@ds-mo/tokens/agent` export through
+`src/docs/TokenColorGuidance.ts`. Direct rendering keeps development and static
+Storybook builds on the same package contract without a generated Markdown file
+or an extra generation step. Color families select their recipes through the
+contract's recipe links, including recipes shared with other token categories.
+
+Keep token-selection prose in TokoMo. `src/docs/ColorUsage.mdx` owns only CompoMo
+setup, component integration, documented component exceptions, forced-colors
+behavior, and links to component guidance. The renderer uses native disclosure
+elements to keep the full contract browsable without hiding its constraints or
+accessibility rules behind a separately maintained summary.
+
+`tests/token-color-guidance.test.ts` validates the installed contract against
+its shipped schema and renders it to check content, recipe links, malformed
+data, and dependency updates. Run it with the normal unit suite, plus
+`npm run typecheck:storybook` and `npm run storybook:build` when changing this
+integration. A schema-version change requires reviewing renderer compatibility.
+
 ## Bundled dependency licenses
 
 Component, Vue runtime, lint, and MCP bundles emit `THIRD-PARTY-NOTICES` and a
