@@ -5096,6 +5096,7 @@
             "component:ds-button-unfilled"
           ],
           "accessibility": [
+            "Overflowing code is a named keyboard scroll region with visible focus. Code that fits does not add a tab stop; focusability follows content, font loading, and container resizing.",
             "The copy action has matching accessible-name and visible-tooltip status wording, and the code remains selectable text.",
             "Language and filename labels supplement rather than replace the code content.",
             "The semantic code-family token retains a system-monospace fallback when an application does not load Fira Code; applications may disable programming ligatures through the shared code-surface custom property."

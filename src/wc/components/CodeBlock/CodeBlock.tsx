@@ -3,7 +3,7 @@ import { ClipboardFeedbackController } from '../../utils/clipboard';
 
 @Component({
   tag: 'ds-code-block',
-  styleUrl: 'CodeBlock.css',
+  styleUrls: ['../../utils/focus-ring.css', 'CodeBlock.css'],
   scoped: true,
 })
 export class CodeBlock {
@@ -12,13 +12,41 @@ export class CodeBlock {
   @Prop() filename: string = '';
 
   @State() private copied: boolean = false;
+  @State() private scrollable = false;
+  private viewport?: HTMLPreElement;
+  private content?: HTMLElement;
+  private resizeObserver?: ResizeObserver;
   private readonly copyFeedback = new ClipboardFeedbackController(copied => {
     this.copied = copied;
   });
 
   connectedCallback() {
     this.copyFeedback.connect();
+    this.observeOverflow();
   }
+
+  componentDidLoad() {
+    this.observeOverflow();
+  }
+
+  componentDidRender() {
+    this.syncOverflow();
+  }
+
+  private observeOverflow() {
+    if (!this.viewport?.isConnected || !this.content) return;
+    this.resizeObserver ??= new ResizeObserver(this.syncOverflow);
+    this.resizeObserver.observe(this.viewport);
+    this.resizeObserver.observe(this.content);
+    this.syncOverflow();
+  }
+
+  private syncOverflow = () => {
+    const viewport = this.viewport;
+    if (!viewport?.isConnected) return;
+    this.scrollable =
+      viewport.scrollWidth > viewport.clientWidth || viewport.scrollHeight > viewport.clientHeight;
+  };
 
   @Watch('code')
   handleCodeChange() {
@@ -27,6 +55,8 @@ export class CodeBlock {
 
   disconnectedCallback() {
     this.copyFeedback.disconnect();
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = undefined;
   }
 
   private copy = async () => {
@@ -53,8 +83,22 @@ export class CodeBlock {
               />
             </ds-tooltip>
           </figcaption>
-          <pre>
-            <code>{this.code}</code>
+          <pre
+            class="ds-focus-ring"
+            ref={element => {
+              this.viewport = element;
+            }}
+            tabIndex={this.scrollable ? 0 : undefined}
+            role={this.scrollable ? 'region' : undefined}
+            aria-label={this.scrollable ? label : undefined}
+          >
+            <code
+              ref={element => {
+                this.content = element;
+              }}
+            >
+              {this.code}
+            </code>
           </pre>
         </figure>
       </Host>

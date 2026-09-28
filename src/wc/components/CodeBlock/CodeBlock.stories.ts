@@ -28,6 +28,18 @@ export const Playground: Story = {
   `,
 };
 
+export const HorizontalOverflow: Story = {
+  render: () => html`
+    <div style="max-inline-size:var(--dimension-panel-width-xs)">
+      <ds-code-block
+        language="ts"
+        filename="records.ts"
+        .code=${"const affected = records.filter(record => record.issue === 'battery')"}
+      ></ds-code-block>
+    </div>
+  `,
+};
+
 export const LigaturesDisabled: Story = {
   render: () => html`
     <div style="--ds-code-font-variant-ligatures: none">
