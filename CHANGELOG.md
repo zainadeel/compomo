@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.11.1](https://github.com/zainadeel/compomo/compare/v15.11.0...v15.11.1) (2026-09-28)
+
+
+### Documentation
+
+* render color guidance from the installed token contract ([#666](https://github.com/zainadeel/compomo/issues/666)) ([5ce4a30](https://github.com/zainadeel/compomo/commit/5ce4a30cca31c4d93bbf43737a9acdb0d6a49880))
+
 ## [15.11.0](https://github.com/zainadeel/compomo/compare/v15.10.2...v15.11.0) (2026-09-28)
 
 
