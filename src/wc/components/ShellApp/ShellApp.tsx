@@ -16,6 +16,7 @@ import { ConnectionTasks } from '../../utils/connection-tasks';
 import { isEditableShortcutTarget, resolveShellShortcut } from '../../shell/shell-shortcuts';
 import type {
   PanelToolsHeaderAction,
+  PanelToolsHeaderActionDetail,
   PanelToolsRailAccessoryActionDetail,
   PanelToolsToolId,
 } from '../PanelTools/panel-tools-types';
@@ -171,7 +172,7 @@ export class ShellApp {
   @Event() dsHeaderBack!: EventEmitter<{ tool: PanelToolsToolId }>;
 
   /** Managed tool-header action intent. */
-  @Event() dsHeaderAction!: EventEmitter<{ tool: PanelToolsToolId; id: string }>;
+  @Event() dsHeaderAction!: EventEmitter<PanelToolsHeaderActionDetail>;
 
   /** Managed desktop/tablet rail accessory intent. */
   @Event() dsRailAccessoryAction!: EventEmitter<PanelToolsRailAccessoryActionDetail>;
@@ -773,9 +774,7 @@ export class ShellApp {
     this.dsHeaderBack.emit(event.detail);
   };
 
-  private handleManagedHeaderAction = (
-    event: CustomEvent<{ tool: PanelToolsToolId; id: string }>
-  ) => {
+  private handleManagedHeaderAction = (event: CustomEvent<PanelToolsHeaderActionDetail>) => {
     event.stopPropagation();
     this.dsHeaderAction.emit(event.detail);
   };

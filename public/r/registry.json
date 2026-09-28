@@ -14329,7 +14329,7 @@
           },
           {
             "name": "dsHeaderAction",
-            "detail": "{ tool: PanelToolsToolId; id: string }"
+            "detail": "PanelToolsHeaderActionDetail"
           },
           {
             "name": "dsHeaderBack",
@@ -14755,7 +14755,7 @@
         "events": [
           {
             "name": "dsHeaderAction",
-            "detail": "{\n    tool: PanelToolsToolId;\n    id: string;\n  }"
+            "detail": "PanelToolsHeaderActionDetail"
           },
           {
             "name": "dsHeaderBack",

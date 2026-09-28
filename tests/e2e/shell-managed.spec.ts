@@ -7,6 +7,58 @@ test.describe('Managed application shell', () => {
     await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
   });
 
+  test('anchors application menus to shared mobile header actions across shadow roots @cross-browser', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 760 });
+    const shell = page.locator('#managed-shell');
+    await shell.evaluate(element => {
+      const host = element as HTMLDsShellAppElement;
+      const menu = document.createElement('ds-menu');
+      menu.menuLabel = 'Tool options';
+      menu.items = [{ label: 'Settings', value: 'settings' }];
+      document.body.append(menu);
+      host.tools = {
+        ...host.tools,
+        headers: Object.fromEntries(
+          ['agents', 'messages', 'search'].map(tool => [
+            tool,
+            {
+              actions: [
+                { id: 'menu', icon: 'DotsThree', ariaLabel: 'Tool options', haspopup: 'menu' },
+              ],
+            },
+          ])
+        ),
+      };
+      host.addEventListener('dsHeaderAction', event => {
+        const detail = (event as CustomEvent<{ anchor?: HTMLElement }>).detail;
+        menu.anchor = detail.anchor;
+        menu.open = true;
+      });
+      menu.addEventListener('dsClose', () => {
+        menu.open = false;
+      });
+    });
+
+    for (const name of ['Agents', 'Messages', 'Search']) {
+      await shell.locator('ds-mobile-bar-nav').getByRole('button', { name, exact: true }).click();
+      const trigger = shell
+        .locator('ds-shell-tools')
+        .getByRole('button', { name: 'Tool options', exact: true });
+      await trigger.click();
+      const menu = page.getByRole('menu', { name: 'Tool options', exact: true });
+      await expect(menu).toBeVisible();
+      await expect(menu.getByRole('menuitem', { name: 'Settings' })).toBeFocused();
+      const bounds = await menu.boundingBox();
+      expect(bounds!.x).toBeGreaterThanOrEqual(0);
+      expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(390);
+      await page.keyboard.press('Escape');
+      await expect(menu).toBeHidden();
+      await expect(trigger).toBeFocused();
+    }
+  });
+
   test('wires managed chrome and header capacity at each breakpoint', async ({ page }) => {
     const shell = page.locator('#managed-shell');
     await expect(shell).toHaveJSProperty('composition', 'managed');
