@@ -34,7 +34,7 @@ export function clearCssLengthPxCache(): void {
 
 /**
  * Resolve a CSS length to pixels for layout math. Dynamic expressions are read
- * from the current document and optional component scope on every call. Relative
+ * from the body (application token scope) or explicit component scope on every call. Relative
  * font units use that scope; percentage lengths use the viewport's inline size.
  */
 export function resolveCssLengthPx(
@@ -59,7 +59,9 @@ export function resolveCssLengthPx(
 
   const cssLength = /^--[\w-]+$/.test(trimmed) ? `var(${trimmed})` : trimmed;
   if (!view.CSS.supports('left', cssLength)) return safeFallback;
-  const scopeStyle = view.getComputedStyle(context ?? ownerDocument.documentElement);
+  const scopeStyle = view.getComputedStyle(
+    context ?? ownerDocument.body ?? ownerDocument.documentElement
+  );
   const directProperty = cssLength.match(/^var\(\s*(--[\w-]+)\s*\)$/)?.[1];
   if (directProperty) {
     const scopedValue = scopeStyle.getPropertyValue(directProperty).trim();

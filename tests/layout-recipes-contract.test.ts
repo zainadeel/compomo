@@ -56,7 +56,10 @@ test('chart chrome lines use subordinate foreground roles', () => {
     source,
     /applyMeasuredSize\(entry\.contentRect\.width, entry\.contentRect\.height\)/
   );
-  assert.match(source, /var\(--ds-chart-container-height, 320px\)/);
+  assert.match(
+    source,
+    /var\(--ds-chart-container-height, calc\(var\(--dimension-size-base\) \* 40\)\)/
+  );
 });
 
 test('primary controls consume shared frame, icon, and label anatomy', () => {

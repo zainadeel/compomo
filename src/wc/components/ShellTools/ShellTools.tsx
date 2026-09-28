@@ -11,6 +11,7 @@ import {
 } from '@stencil/core';
 import {
   PANEL_TOOLS_LABELS,
+  type PanelToolsHeaderActionDetail,
   type PanelToolsHeaderConfig,
   type PanelToolsHeaders,
   type PanelToolsItem,
@@ -82,10 +83,8 @@ export class ShellTools {
   @Event({ bubbles: true, composed: true }) dsHeaderBack!: EventEmitter<{
     tool: PanelToolsToolId;
   }>;
-  @Event({ bubbles: true, composed: true }) dsHeaderAction!: EventEmitter<{
-    tool: PanelToolsToolId;
-    id: string;
-  }>;
+  @Event({ bubbles: true, composed: true })
+  dsHeaderAction!: EventEmitter<PanelToolsHeaderActionDetail>;
   @Event({ bubbles: true, composed: true })
   dsRailAccessoryAction!: EventEmitter<PanelToolsRailAccessoryActionDetail>;
 
@@ -188,7 +187,7 @@ export class ShellTools {
     event: CustomEvent<MouseEvent>
   ) => {
     event.stopPropagation();
-    this.dsHeaderAction.emit({ tool, id });
+    this.dsHeaderAction.emit({ tool, id, anchor: event.currentTarget as HTMLElement });
   };
 
   /** Match PanelTools' imperative activation contract in every responsive mode. */
@@ -293,7 +292,7 @@ export class ShellTools {
         value={tool}
         sectionsAriaLabel={this.inboxNavigationLabel}
         sectionsPresentation={inboxRoot ? 'segmented' : 'switcher'}
-        sectionsSize="lg"
+        sectionsSize="md"
         onDsSectionChange={this.selectInboxTool}
       >
         {header.showBack ? (

@@ -1,0 +1,80 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Docs/Responsive Sizing" />
+
+# Responsive sizing
+
+Import `@ds-mo/ui/responsive.css` after TokoMo to opt an application into a
+coordinated mobile density. Below a viewport width of 768px, spatial token
+lengths become 1.25 times their desktop values. At 768px and above, the profile
+does not override tokens. A narrow component inside a desktop viewport does not
+activate the profile.
+
+## Ownership
+
+TokoMo owns the base values and scales. CompoMo owns this responsive profile and
+the component recipes that consume it. Applications import the profile once,
+own their layout changes, and supply theme customizations on the document root.
+The stylesheet captures independent root lengths before deriving their mobile
+values on `body`; do not duplicate the profile on individual components or
+override those values farther down the tree unintentionally.
+
+Sizes, icons, font sizes, line heights, letter spacing, paragraph spacing,
+padding, gaps, radii, strokes, and fixed surface dimensions use the same factor.
+All size variants scale, including large. Keep component size props unchanged;
+selecting a larger mobile variant as well would compound the enlargement.
+Percentages, aspect ratios, layout breakpoints, stacking order, opacity, and
+motion timing retain their meaning. Device safe-area insets remain device-owned.
+
+Mobile shell components use the medium desktop control baseline before the
+profile is applied. Their mobile composition still owns navigation sheets,
+bottom navigation, and stacked page content.
+
+## Editable fields and browser zoom
+
+Native inputs, textareas, and message composers inherit the same typography
+profile as other controls. There is no field-specific font-size floor or
+focus-triggered size change. With the default tokens, medium field text becomes
+17.5px; small becomes 15px and extra-small becomes 11.25px. Prefer medium or
+large for primary mobile text entry. Smaller variants remain deliberate dense
+choices and do not promise suppression of browser focus zoom.
+
+Keep the viewport declaration zoom-friendly:
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+```
+
+Do not disable user scaling to conceal focus zoom. Browser focus zoom and the
+on-screen keyboard are browser-owned behavior, separate from responsive sizing.
+Automated Chromium/WebKit coverage checks native font metrics, focus, editing,
+form values, composer growth, and breakpoint transitions. Physical-device Safari
+review remains necessary to assess keyboard and focus-zoom behavior; desktop
+WebKit emulation is not evidence of those device behaviors.
+
+## Adoption and compatibility
+
+1. Import the profile after tokens in the application entry stylesheet. The
+   package does not inject it automatically, so existing consumers retain their
+   token sizing until they opt in.
+2. Remove mobile-only size promotions and duplicated spacing overrides. The
+   dedicated mobile shell now starts at medium; consumers that relied on its
+   previous larger intrinsic sizing should adopt the profile with that update.
+3. Review forms, navigation, open overlays, tables, charts, and long content at
+   both mobile and desktop widths. Let content grow or scroll where appropriate.
+4. Use the same stylesheet with native custom elements and the generated Angular,
+   React, or Vue adapters. There is no framework-specific runtime mode or API.
+
+New components built from existing tokens and recipes inherit the profile.
+New independent length tokens must be added to its mapping; the token-coverage
+test flags uncovered lengths when TokoMo changes. Use `resolveCssLengthPx` with
+the owning element for JavaScript geometry so calculations follow the same
+inherited values as CSS.
+
+Consumer-supplied pixel dimensions stay explicit. Chart `height`, custom inline
+styles, and third-party canvases therefore need their own responsive sizing.
+Layout thresholds and visually hidden accessibility helpers are intentionally
+fixed. Scaling does not itself decide when to stack columns, replace navigation,
+or change a table into cards.
+
+See **Utility / Responsive Sizing** for the desktop and compact-mobile examples.

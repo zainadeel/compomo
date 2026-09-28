@@ -6786,7 +6786,7 @@ declare global {
         "dsPageAction": string;
         "dsToolChange": { id: PanelToolsToolId; selected: boolean };
         "dsHeaderBack": { tool: PanelToolsToolId };
-        "dsHeaderAction": { tool: PanelToolsToolId; id: string };
+        "dsHeaderAction": PanelToolsHeaderActionDetail;
         "dsRailAccessoryAction": PanelToolsRailAccessoryActionDetail;
         "dsPresentationChange": { presentation: 'drawer' | 'fullscreen' };
         "dsBrowseContextChange": NavChromeStyle;
@@ -6824,10 +6824,7 @@ declare global {
         "dsHeaderBack": {
     tool: PanelToolsToolId;
   };
-        "dsHeaderAction": {
-    tool: PanelToolsToolId;
-    id: string;
-  };
+        "dsHeaderAction": PanelToolsHeaderActionDetail;
         "dsRailAccessoryAction": PanelToolsRailAccessoryActionDetail;
     }
     interface HTMLDsShellToolsElement extends Components.DsShellTools, HTMLStencilElement {
@@ -11361,7 +11358,7 @@ declare namespace LocalJSX {
         /**
           * Managed tool-header action intent.
          */
-        "onDsHeaderAction"?: (event: DsShellAppCustomEvent<{ tool: PanelToolsToolId; id: string }>) => void;
+        "onDsHeaderAction"?: (event: DsShellAppCustomEvent<PanelToolsHeaderActionDetail>) => void;
         /**
           * Managed tool-header Back intent.
          */
@@ -11518,10 +11515,7 @@ declare namespace LocalJSX {
           * @default []
          */
         "items"?: PanelToolsItem[];
-        "onDsHeaderAction"?: (event: DsShellToolsCustomEvent<{
-    tool: PanelToolsToolId;
-    id: string;
-  }>) => void;
+        "onDsHeaderAction"?: (event: DsShellToolsCustomEvent<PanelToolsHeaderActionDetail>) => void;
         "onDsHeaderBack"?: (event: DsShellToolsCustomEvent<{
     tool: PanelToolsToolId;
   }>) => void;

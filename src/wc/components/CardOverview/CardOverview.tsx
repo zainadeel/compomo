@@ -336,8 +336,15 @@ export class CardOverview {
           <div class="card-overview__score-content">
             <ds-score size="lg" variant="dense" isLoading></ds-score>
             <div class="card-overview__score-copy">
-              {this.bar('text-body-small', '64px', 'card-overview__score-label-spacer')}
-              {this.bar('text-body-medium', '28px')}
+              {this.bar(
+                'text-body-small',
+                'var(--dimension-size-800)',
+                'card-overview__score-label-spacer'
+              )}
+              {this.bar(
+                'text-body-medium',
+                'calc(var(--dimension-size-300) + var(--dimension-space-050))'
+              )}
             </div>
           </div>
         </div>
@@ -464,9 +471,12 @@ export class CardOverview {
               <div class="card-overview__metric-content">
                 {this.bar('text-body-small', '35%', 'card-overview__metric-label')}
                 <div class="card-overview__metric-figure">
-                  {this.bar('text-body-medium', '40px')}
+                  {this.bar('text-body-medium', 'var(--dimension-size-500)')}
                   {/* Match renderTrend's type canvas and the score trend's 28px width. */}
-                  {this.bar('text-body-medium', '28px')}
+                  {this.bar(
+                    'text-body-medium',
+                    'calc(var(--dimension-size-300) + var(--dimension-space-050))'
+                  )}
                 </div>
               </div>
             </div>

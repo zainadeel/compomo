@@ -72,6 +72,7 @@
     "./control-elevation.css": "./dist/styles/control-elevation.css",
     "./prose.css": "./dist/styles/prose.css",
     "./table.css": "./dist/styles/table.css",
+    "./responsive.css": "./dist/styles/responsive.css",
     "./agent": "./dist/agent.json",
     "./agent/patterns": "./dist/agent-patterns.json",
     "./dist/components/*": "./dist/components/*",

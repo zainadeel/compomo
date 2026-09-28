@@ -31,7 +31,20 @@ Import TokoMo once at the application root:
 import '@ds-mo/tokens';
 import '@ds-mo/tokens/reset';
 import '@ds-mo/tokens/globals';
+import '@ds-mo/ui/responsive.css';
 ```
+
+The responsive stylesheet automatically enlarges token-backed spatial lengths
+below 768px with one proportional multiplier: sizes, icons, typography, spacing,
+radii, border widths, and fixed surface dimensions. This includes large controls
+and display text. Percentages, layering, and the activation breakpoint retain
+their structural meaning. Components keep their existing size props. Import it
+once after TokoMo, with token customizations on the document root so the mobile
+profile can derive its values from them. Layouts with fixed content heights still
+need to accommodate the enlarged content.
+
+See [Responsive sizing](?path=/docs/docs-responsive-sizing--docs) for ownership,
+editable-field policy, and adoption guidance.
 
 Theme the application by setting `data-theme="light"` or `data-theme="dark"`
 on a parent element, normally `<html>`.

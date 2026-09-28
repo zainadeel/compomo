@@ -33,7 +33,7 @@
   ],
   "responsiveBehavior": [
     "The chart observes its container unless width is fixed and recompiles geometry at CSS pixel dimensions.",
-    "Height uses an authored height or aspectRatio, fills the chart region supplied by CardChart, and otherwise defaults to 320px.",
+    "Height uses an authored height or aspectRatio, fills the chart region supplied by CardChart, and otherwise derives its default height from the shared size scale.",
     "Measured guide labels reserve margins and thin colliding ticks while retaining boundary ticks."
   ],
   "frameworkCaveats": {

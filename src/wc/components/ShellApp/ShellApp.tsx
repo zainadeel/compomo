@@ -16,6 +16,7 @@ import { ConnectionTasks } from '../../utils/connection-tasks';
 import { isEditableShortcutTarget, resolveShellShortcut } from '../../shell/shell-shortcuts';
 import type {
   PanelToolsHeaderAction,
+  PanelToolsHeaderActionDetail,
   PanelToolsRailAccessoryActionDetail,
   PanelToolsToolId,
 } from '../PanelTools/panel-tools-types';
@@ -171,7 +172,7 @@ export class ShellApp {
   @Event() dsHeaderBack!: EventEmitter<{ tool: PanelToolsToolId }>;
 
   /** Managed tool-header action intent. */
-  @Event() dsHeaderAction!: EventEmitter<{ tool: PanelToolsToolId; id: string }>;
+  @Event() dsHeaderAction!: EventEmitter<PanelToolsHeaderActionDetail>;
 
   /** Managed desktop/tablet rail accessory intent. */
   @Event() dsRailAccessoryAction!: EventEmitter<PanelToolsRailAccessoryActionDetail>;
@@ -773,9 +774,7 @@ export class ShellApp {
     this.dsHeaderBack.emit(event.detail);
   };
 
-  private handleManagedHeaderAction = (
-    event: CustomEvent<{ tool: PanelToolsToolId; id: string }>
-  ) => {
+  private handleManagedHeaderAction = (event: CustomEvent<PanelToolsHeaderActionDetail>) => {
     event.stopPropagation();
     this.dsHeaderAction.emit(event.detail);
   };
@@ -1148,7 +1147,7 @@ export class ShellApp {
         <ds-button-unfilled
           variant="icon"
           icon={this.pageChrome.backIcon ?? 'ChevronLeft'}
-          size="lg"
+          size="md"
           aria-label={this.pageChrome.backAriaLabel ?? 'Back'}
           activeFill={false}
           hasBorder={false}
@@ -1175,7 +1174,7 @@ export class ShellApp {
             id={action.triggerId || undefined}
             variant="icon"
             icon={action.icon}
-            size="lg"
+            size="md"
             aria-label={action.ariaLabel}
             haspopup={action.haspopup}
             controls={action.controls}
@@ -1197,7 +1196,7 @@ export class ShellApp {
               variant="icon"
               icon={action.icon}
               aria-label={action.ariaLabel}
-              size="lg"
+              size="md"
               intent={action.intent ?? 'brand'}
               contrast={action.contrast ?? 'bold'}
               isInactive={action.isInactive}
@@ -1209,7 +1208,7 @@ export class ShellApp {
               variant="icon"
               icon={action.icon}
               aria-label={action.ariaLabel}
-              size="lg"
+              size="md"
               isInactive={action.isInactive}
               isLoading={action.isLoading}
               activeFill={false}
@@ -1234,7 +1233,7 @@ export class ShellApp {
                 variant="icon"
                 icon="Ellipses"
                 aria-label={this.pageChrome.actionsAriaLabel ?? 'More page actions'}
-                size="lg"
+                size="md"
                 activeFill={false}
                 hasBorder={false}
                 haspopup="menu"

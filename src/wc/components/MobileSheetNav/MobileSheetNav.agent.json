@@ -7,7 +7,7 @@
   "tag": "ds-mobile-sheet-nav",
   "audience": "specialized",
   "status": "experimental",
-  "summary": "Full-height mobile navigation sheet with a single brand, context, and utility header above large primary destinations.",
+  "summary": "Full-height mobile navigation sheet with a single brand, context, and utility header above primary destinations.",
   "useWhen": [
     "The mobile ShellApp Menu control needs to expose the complete primary navigation collection."
   ],
@@ -30,9 +30,9 @@
   ],
   "responsiveBehavior": [
     "The pane fills the mobile content stage while the bottom bar remains available.",
-    "The sheet header and scrollable navigation body each use the shared 8px chrome inset; the context TabGroup and primary controls share a 40px height and 24px icon scale.",
+    "The sheet header and scrollable navigation body use shared chrome spacing; the context TabGroup, primary controls, icons, and text share the medium baseline and receive mobile enlargement from the global responsive profile.",
     "When the optional Account shortcut is hidden, the Dashboard and Settings TabGroup fills the centered two-thirds top-bar lane and gives both context options equal width.",
-    "Dashboard and Settings preserve their supplied visual groups with an 8px gap between destinations inside a section and a 32px gap between sections."
+    "Dashboard and Settings preserve their supplied visual groups with token-backed destination and section gaps."
   ],
   "references": [
     {

@@ -7,6 +7,58 @@ test.describe('Managed application shell', () => {
     await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
   });
 
+  test('anchors application menus to shared mobile header actions across shadow roots @cross-browser', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 760 });
+    const shell = page.locator('#managed-shell');
+    await shell.evaluate(element => {
+      const host = element as HTMLDsShellAppElement;
+      const menu = document.createElement('ds-menu');
+      menu.menuLabel = 'Tool options';
+      menu.items = [{ label: 'Settings', value: 'settings' }];
+      document.body.append(menu);
+      host.tools = {
+        ...host.tools,
+        headers: Object.fromEntries(
+          ['agents', 'messages', 'search'].map(tool => [
+            tool,
+            {
+              actions: [
+                { id: 'menu', icon: 'DotsThree', ariaLabel: 'Tool options', haspopup: 'menu' },
+              ],
+            },
+          ])
+        ),
+      };
+      host.addEventListener('dsHeaderAction', event => {
+        const detail = (event as CustomEvent<{ anchor?: HTMLElement }>).detail;
+        menu.anchor = detail.anchor;
+        menu.open = true;
+      });
+      menu.addEventListener('dsClose', () => {
+        menu.open = false;
+      });
+    });
+
+    for (const name of ['Agents', 'Messages', 'Search']) {
+      await shell.locator('ds-mobile-bar-nav').getByRole('button', { name, exact: true }).click();
+      const trigger = shell
+        .locator('ds-shell-tools')
+        .getByRole('button', { name: 'Tool options', exact: true });
+      await trigger.click();
+      const menu = page.getByRole('menu', { name: 'Tool options', exact: true });
+      await expect(menu).toBeVisible();
+      await expect(menu.getByRole('menuitem', { name: 'Settings' })).toBeFocused();
+      const bounds = await menu.boundingBox();
+      expect(bounds!.x).toBeGreaterThanOrEqual(0);
+      expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(390);
+      await page.keyboard.press('Escape');
+      await expect(menu).toBeHidden();
+      await expect(trigger).toBeFocused();
+    }
+  });
+
   test('wires managed chrome and header capacity at each breakpoint', async ({ page }) => {
     const shell = page.locator('#managed-shell');
     await expect(shell).toHaveJSProperty('composition', 'managed');
@@ -753,7 +805,7 @@ test.describe('Managed application shell', () => {
     expect(await page.locator('html').getAttribute('data-last-event')).toBe(before);
     const group = sheet.getByRole('group', { name: 'Maintenance', exact: true });
     const child = group.getByRole('button', { name: 'Schedules', exact: true });
-    await expect(child).toHaveCSS('height', '40px');
+    await expect(child).toHaveCSS('height', '32px');
     const animation = await child.evaluate(element => ({
       duration: getComputedStyle(element).transitionDuration,
       delay: getComputedStyle(element).transitionDelay,
@@ -835,19 +887,19 @@ test.describe('Managed application shell', () => {
         await expect(title).toHaveCount(1);
         await expect(picker).toHaveAttribute('aria-haspopup', 'dialog');
         await expect(picker).toHaveText('John Smith·Summary');
-        await expect(picker).toHaveCSS('height', '40px');
+        await expect(picker).toHaveCSS('height', '32px');
         const pickerBox = await picker.boundingBox();
         const backBox = await header.getByRole('button', { name: 'Back to People' }).boundingBox();
         const actionsBox = await header
           .getByRole('button', { name: 'More page actions' })
           .boundingBox();
-        expect([backBox!.width, backBox!.height]).toEqual([40, 40]);
-        expect([actionsBox!.width, actionsBox!.height]).toEqual([40, 40]);
-        await expect(header.locator('.mobile-header__primary')).toHaveCSS('height', '56px');
+        expect([backBox!.width, backBox!.height]).toEqual([32, 32]);
+        expect([actionsBox!.width, actionsBox!.height]).toEqual([32, 32]);
+        await expect(header.locator('.mobile-header__primary')).toHaveCSS('height', '48px');
         for (const label of ['Back to People', 'More page actions']) {
           const icon = header.getByRole('button', { name: label }).locator('ds-icon');
-          await expect(icon).toHaveCSS('width', '24px');
-          await expect(icon).toHaveCSS('height', '24px');
+          await expect(icon).toHaveCSS('width', '20px');
+          await expect(icon).toHaveCSS('height', '20px');
         }
         expect(pickerBox!.x).toBeGreaterThanOrEqual(backBox!.x + backBox!.width);
         expect(pickerBox!.x + pickerBox!.width).toBeLessThanOrEqual(actionsBox!.x);
@@ -934,7 +986,7 @@ test.describe('Managed application shell', () => {
       await expect(header.getByRole('button', { name: 'Back', exact: true })).toHaveCount(0);
       await expect(header.getByRole('button', { name: 'More page actions' })).toHaveCSS(
         'width',
-        '40px'
+        '32px'
       );
     }
     await shell.evaluate(element => {
@@ -943,9 +995,9 @@ test.describe('Managed application shell', () => {
     });
     await expect(header.locator('ds-text.mobile-header__heading')).toHaveJSProperty(
       'variant',
-      'text-body-large'
+      'text-body-medium'
     );
-    await expect(header.locator('.mobile-header__primary')).toHaveCSS('height', '56px');
+    await expect(header.locator('.mobile-header__primary')).toHaveCSS('height', '48px');
   });
 
   test('preserves Help as the primary mobile destination across tools @pr-critical', async ({

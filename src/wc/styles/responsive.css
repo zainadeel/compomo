@@ -1,0 +1,293 @@
+/*
+ * Import after @ds-mo/tokens at the application root.
+ * Every dimensional category uses the same mobile multiplier.
+ * Capture independent length tokens on html before replacing their inherited
+ * values on body. A self-reference on the same element would create a cycle.
+ * Percentages, transform scales, z-index, and the activation breakpoint retain
+ * their structural meaning; only spatial lengths are scaled.
+ */
+@media (width < 768px) {
+  :root {
+    --ds-responsive-scale: 1.25;
+    --dimension-size-base: calc(var(--dimension-base) * var(--ds-responsive-scale));
+    --dimension-space-base: calc(var(--dimension-base) * var(--ds-responsive-scale));
+    --dimension-radius-base: calc(var(--dimension-base) * var(--ds-responsive-scale));
+    --dimension-stroke-width-base: calc(var(--dimension-base) * var(--ds-responsive-scale));
+
+    --ds-responsive-source-typography-fontsize-xs: var(--typography-fontsize-xs);
+    --ds-responsive-source-typography-fontsize-sm: var(--typography-fontsize-sm);
+    --ds-responsive-source-typography-fontsize-md: var(--typography-fontsize-md);
+    --ds-responsive-source-typography-fontsize-lg: var(--typography-fontsize-lg);
+    --ds-responsive-source-typography-fontsize-xl: var(--typography-fontsize-xl);
+    --ds-responsive-source-typography-fontsize-2xl: var(--typography-fontsize-2xl);
+    --ds-responsive-source-typography-fontsize-3xl: var(--typography-fontsize-3xl);
+    --ds-responsive-source-typography-lineheight-xs: var(--typography-lineheight-xs);
+    --ds-responsive-source-typography-lineheight-sm: var(--typography-lineheight-sm);
+    --ds-responsive-source-typography-lineheight-md: var(--typography-lineheight-md);
+    --ds-responsive-source-typography-lineheight-lg: var(--typography-lineheight-lg);
+    --ds-responsive-source-typography-lineheight-xl: var(--typography-lineheight-xl);
+    --ds-responsive-source-typography-lineheight-2xl: var(--typography-lineheight-2xl);
+    --ds-responsive-source-typography-lineheight-3xl: var(--typography-lineheight-3xl);
+    --ds-responsive-source-typography-letterspacing-none: var(--typography-letterspacing-none);
+    --ds-responsive-source-typography-letterspacing-positive: var(
+      --typography-letterspacing-positive
+    );
+    --ds-responsive-source-typography-letterspacing-negative-half: var(
+      --typography-letterspacing-negative-half
+    );
+    --ds-responsive-source-typography-letterspacing-negative: var(
+      --typography-letterspacing-negative
+    );
+    --ds-responsive-source-typography-letterspacing-negative-double: var(
+      --typography-letterspacing-negative-double
+    );
+    --ds-responsive-source-typography-paragraphspacing-none: var(
+      --typography-paragraphspacing-none
+    );
+    --ds-responsive-source-typography-paragraphspacing-sm: var(--typography-paragraphspacing-sm);
+    --ds-responsive-source-typography-paragraphspacing-md: var(--typography-paragraphspacing-md);
+    --ds-responsive-source-typography-paragraphspacing-lg: var(--typography-paragraphspacing-lg);
+    --ds-responsive-source-dimension-card-width-xs: var(--dimension-card-width-xs);
+    --ds-responsive-source-dimension-card-width-sm: var(--dimension-card-width-sm);
+    --ds-responsive-source-dimension-card-width-md: var(--dimension-card-width-md);
+    --ds-responsive-source-dimension-card-width-lg: var(--dimension-card-width-lg);
+    --ds-responsive-source-dimension-modal-width-xs: var(--dimension-modal-width-xs);
+    --ds-responsive-source-dimension-modal-width-sm: var(--dimension-modal-width-sm);
+    --ds-responsive-source-dimension-modal-width-md: var(--dimension-modal-width-md);
+    --ds-responsive-source-dimension-modal-width-lg: var(--dimension-modal-width-lg);
+    --ds-responsive-source-dimension-modal-width-xl: var(--dimension-modal-width-xl);
+    --ds-responsive-source-dimension-modal-width-2xl: var(--dimension-modal-width-2xl);
+    --ds-responsive-source-dimension-form-width-xs: var(--dimension-form-width-xs);
+    --ds-responsive-source-dimension-form-width-sm: var(--dimension-form-width-sm);
+    --ds-responsive-source-dimension-form-width-md: var(--dimension-form-width-md);
+    --ds-responsive-source-dimension-form-width-lg: var(--dimension-form-width-lg);
+    --ds-responsive-source-dimension-form-width-xl: var(--dimension-form-width-xl);
+    --ds-responsive-source-dimension-table-column-width-xs: var(--dimension-table-column-width-xs);
+    --ds-responsive-source-dimension-table-column-width-sm: var(--dimension-table-column-width-sm);
+    --ds-responsive-source-dimension-table-column-width-md: var(--dimension-table-column-width-md);
+    --ds-responsive-source-dimension-table-column-width-lg: var(--dimension-table-column-width-lg);
+    --ds-responsive-source-dimension-table-column-width-xl: var(--dimension-table-column-width-xl);
+    --ds-responsive-source-dimension-menu-width-xs: var(--dimension-menu-width-xs);
+    --ds-responsive-source-dimension-menu-width-sm: var(--dimension-menu-width-sm);
+    --ds-responsive-source-dimension-menu-width-md: var(--dimension-menu-width-md);
+    --ds-responsive-source-dimension-menu-width-lg: var(--dimension-menu-width-lg);
+    --ds-responsive-source-dimension-tooltip-width-sm: var(--dimension-tooltip-width-sm);
+    --ds-responsive-source-dimension-tooltip-width-md: var(--dimension-tooltip-width-md);
+    --ds-responsive-source-dimension-tooltip-width-lg: var(--dimension-tooltip-width-lg);
+    --ds-responsive-source-dimension-panel-width-2xs: var(--dimension-panel-width-2xs);
+    --ds-responsive-source-dimension-panel-width-xs: var(--dimension-panel-width-xs);
+    --ds-responsive-source-dimension-panel-width-sm: var(--dimension-panel-width-sm);
+    --ds-responsive-source-dimension-panel-width-md: var(--dimension-panel-width-md);
+    --ds-responsive-source-dimension-panel-width-lg: var(--dimension-panel-width-lg);
+    --ds-responsive-source-dimension-panel-width-xl: var(--dimension-panel-width-xl);
+    --ds-responsive-source-dimension-panel-width-2xl: var(--dimension-panel-width-2xl);
+    --ds-responsive-source-dimension-card-height-xs: var(--dimension-card-height-xs);
+    --ds-responsive-source-dimension-card-height-sm: var(--dimension-card-height-sm);
+    --ds-responsive-source-dimension-card-height-md: var(--dimension-card-height-md);
+    --ds-responsive-source-dimension-card-height-lg: var(--dimension-card-height-lg);
+    --ds-responsive-source-dimension-modal-height-xs: var(--dimension-modal-height-xs);
+    --ds-responsive-source-dimension-modal-height-sm: var(--dimension-modal-height-sm);
+    --ds-responsive-source-dimension-modal-height-md: var(--dimension-modal-height-md);
+    --ds-responsive-source-dimension-modal-height-lg: var(--dimension-modal-height-lg);
+  }
+
+  body {
+    --typography-fontsize-xs: calc(
+      var(--ds-responsive-source-typography-fontsize-xs) * var(--ds-responsive-scale)
+    );
+    --typography-fontsize-sm: calc(
+      var(--ds-responsive-source-typography-fontsize-sm) * var(--ds-responsive-scale)
+    );
+    --typography-fontsize-md: calc(
+      var(--ds-responsive-source-typography-fontsize-md) * var(--ds-responsive-scale)
+    );
+    --typography-fontsize-lg: calc(
+      var(--ds-responsive-source-typography-fontsize-lg) * var(--ds-responsive-scale)
+    );
+    --typography-fontsize-xl: calc(
+      var(--ds-responsive-source-typography-fontsize-xl) * var(--ds-responsive-scale)
+    );
+    --typography-fontsize-2xl: calc(
+      var(--ds-responsive-source-typography-fontsize-2xl) * var(--ds-responsive-scale)
+    );
+    --typography-fontsize-3xl: calc(
+      var(--ds-responsive-source-typography-fontsize-3xl) * var(--ds-responsive-scale)
+    );
+    --typography-lineheight-xs: calc(
+      var(--ds-responsive-source-typography-lineheight-xs) * var(--ds-responsive-scale)
+    );
+    --typography-lineheight-sm: calc(
+      var(--ds-responsive-source-typography-lineheight-sm) * var(--ds-responsive-scale)
+    );
+    --typography-lineheight-md: calc(
+      var(--ds-responsive-source-typography-lineheight-md) * var(--ds-responsive-scale)
+    );
+    --typography-lineheight-lg: calc(
+      var(--ds-responsive-source-typography-lineheight-lg) * var(--ds-responsive-scale)
+    );
+    --typography-lineheight-xl: calc(
+      var(--ds-responsive-source-typography-lineheight-xl) * var(--ds-responsive-scale)
+    );
+    --typography-lineheight-2xl: calc(
+      var(--ds-responsive-source-typography-lineheight-2xl) * var(--ds-responsive-scale)
+    );
+    --typography-lineheight-3xl: calc(
+      var(--ds-responsive-source-typography-lineheight-3xl) * var(--ds-responsive-scale)
+    );
+    --typography-letterspacing-none: calc(
+      var(--ds-responsive-source-typography-letterspacing-none) * var(--ds-responsive-scale)
+    );
+    --typography-letterspacing-positive: calc(
+      var(--ds-responsive-source-typography-letterspacing-positive) * var(--ds-responsive-scale)
+    );
+    --typography-letterspacing-negative-half: calc(
+      var(--ds-responsive-source-typography-letterspacing-negative-half) *
+        var(--ds-responsive-scale)
+    );
+    --typography-letterspacing-negative: calc(
+      var(--ds-responsive-source-typography-letterspacing-negative) * var(--ds-responsive-scale)
+    );
+    --typography-letterspacing-negative-double: calc(
+      var(--ds-responsive-source-typography-letterspacing-negative-double) *
+        var(--ds-responsive-scale)
+    );
+    --typography-paragraphspacing-none: calc(
+      var(--ds-responsive-source-typography-paragraphspacing-none) * var(--ds-responsive-scale)
+    );
+    --typography-paragraphspacing-sm: calc(
+      var(--ds-responsive-source-typography-paragraphspacing-sm) * var(--ds-responsive-scale)
+    );
+    --typography-paragraphspacing-md: calc(
+      var(--ds-responsive-source-typography-paragraphspacing-md) * var(--ds-responsive-scale)
+    );
+    --typography-paragraphspacing-lg: calc(
+      var(--ds-responsive-source-typography-paragraphspacing-lg) * var(--ds-responsive-scale)
+    );
+    --dimension-card-width-xs: calc(
+      var(--ds-responsive-source-dimension-card-width-xs) * var(--ds-responsive-scale)
+    );
+    --dimension-card-width-sm: calc(
+      var(--ds-responsive-source-dimension-card-width-sm) * var(--ds-responsive-scale)
+    );
+    --dimension-card-width-md: calc(
+      var(--ds-responsive-source-dimension-card-width-md) * var(--ds-responsive-scale)
+    );
+    --dimension-card-width-lg: calc(
+      var(--ds-responsive-source-dimension-card-width-lg) * var(--ds-responsive-scale)
+    );
+    --dimension-modal-width-xs: calc(
+      var(--ds-responsive-source-dimension-modal-width-xs) * var(--ds-responsive-scale)
+    );
+    --dimension-modal-width-sm: calc(
+      var(--ds-responsive-source-dimension-modal-width-sm) * var(--ds-responsive-scale)
+    );
+    --dimension-modal-width-md: calc(
+      var(--ds-responsive-source-dimension-modal-width-md) * var(--ds-responsive-scale)
+    );
+    --dimension-modal-width-lg: calc(
+      var(--ds-responsive-source-dimension-modal-width-lg) * var(--ds-responsive-scale)
+    );
+    --dimension-modal-width-xl: calc(
+      var(--ds-responsive-source-dimension-modal-width-xl) * var(--ds-responsive-scale)
+    );
+    --dimension-modal-width-2xl: calc(
+      var(--ds-responsive-source-dimension-modal-width-2xl) * var(--ds-responsive-scale)
+    );
+    --dimension-form-width-xs: calc(
+      var(--ds-responsive-source-dimension-form-width-xs) * var(--ds-responsive-scale)
+    );
+    --dimension-form-width-sm: calc(
+      var(--ds-responsive-source-dimension-form-width-sm) * var(--ds-responsive-scale)
+    );
+    --dimension-form-width-md: calc(
+      var(--ds-responsive-source-dimension-form-width-md) * var(--ds-responsive-scale)
+    );
+    --dimension-form-width-lg: calc(
+      var(--ds-responsive-source-dimension-form-width-lg) * var(--ds-responsive-scale)
+    );
+    --dimension-form-width-xl: calc(
+      var(--ds-responsive-source-dimension-form-width-xl) * var(--ds-responsive-scale)
+    );
+    --dimension-table-column-width-xs: calc(
+      var(--ds-responsive-source-dimension-table-column-width-xs) * var(--ds-responsive-scale)
+    );
+    --dimension-table-column-width-sm: calc(
+      var(--ds-responsive-source-dimension-table-column-width-sm) * var(--ds-responsive-scale)
+    );
+    --dimension-table-column-width-md: calc(
+      var(--ds-responsive-source-dimension-table-column-width-md) * var(--ds-responsive-scale)
+    );
+    --dimension-table-column-width-lg: calc(
+      var(--ds-responsive-source-dimension-table-column-width-lg) * var(--ds-responsive-scale)
+    );
+    --dimension-table-column-width-xl: calc(
+      var(--ds-responsive-source-dimension-table-column-width-xl) * var(--ds-responsive-scale)
+    );
+    --dimension-menu-width-xs: calc(
+      var(--ds-responsive-source-dimension-menu-width-xs) * var(--ds-responsive-scale)
+    );
+    --dimension-menu-width-sm: calc(
+      var(--ds-responsive-source-dimension-menu-width-sm) * var(--ds-responsive-scale)
+    );
+    --dimension-menu-width-md: calc(
+      var(--ds-responsive-source-dimension-menu-width-md) * var(--ds-responsive-scale)
+    );
+    --dimension-menu-width-lg: calc(
+      var(--ds-responsive-source-dimension-menu-width-lg) * var(--ds-responsive-scale)
+    );
+    --dimension-tooltip-width-sm: calc(
+      var(--ds-responsive-source-dimension-tooltip-width-sm) * var(--ds-responsive-scale)
+    );
+    --dimension-tooltip-width-md: calc(
+      var(--ds-responsive-source-dimension-tooltip-width-md) * var(--ds-responsive-scale)
+    );
+    --dimension-tooltip-width-lg: calc(
+      var(--ds-responsive-source-dimension-tooltip-width-lg) * var(--ds-responsive-scale)
+    );
+    --dimension-panel-width-2xs: calc(
+      var(--ds-responsive-source-dimension-panel-width-2xs) * var(--ds-responsive-scale)
+    );
+    --dimension-panel-width-xs: calc(
+      var(--ds-responsive-source-dimension-panel-width-xs) * var(--ds-responsive-scale)
+    );
+    --dimension-panel-width-sm: calc(
+      var(--ds-responsive-source-dimension-panel-width-sm) * var(--ds-responsive-scale)
+    );
+    --dimension-panel-width-md: calc(
+      var(--ds-responsive-source-dimension-panel-width-md) * var(--ds-responsive-scale)
+    );
+    --dimension-panel-width-lg: calc(
+      var(--ds-responsive-source-dimension-panel-width-lg) * var(--ds-responsive-scale)
+    );
+    --dimension-panel-width-xl: calc(
+      var(--ds-responsive-source-dimension-panel-width-xl) * var(--ds-responsive-scale)
+    );
+    --dimension-panel-width-2xl: calc(
+      var(--ds-responsive-source-dimension-panel-width-2xl) * var(--ds-responsive-scale)
+    );
+    --dimension-card-height-xs: calc(
+      var(--ds-responsive-source-dimension-card-height-xs) * var(--ds-responsive-scale)
+    );
+    --dimension-card-height-sm: calc(
+      var(--ds-responsive-source-dimension-card-height-sm) * var(--ds-responsive-scale)
+    );
+    --dimension-card-height-md: calc(
+      var(--ds-responsive-source-dimension-card-height-md) * var(--ds-responsive-scale)
+    );
+    --dimension-card-height-lg: calc(
+      var(--ds-responsive-source-dimension-card-height-lg) * var(--ds-responsive-scale)
+    );
+    --dimension-modal-height-xs: calc(
+      var(--ds-responsive-source-dimension-modal-height-xs) * var(--ds-responsive-scale)
+    );
+    --dimension-modal-height-sm: calc(
+      var(--ds-responsive-source-dimension-modal-height-sm) * var(--ds-responsive-scale)
+    );
+    --dimension-modal-height-md: calc(
+      var(--ds-responsive-source-dimension-modal-height-md) * var(--ds-responsive-scale)
+    );
+    --dimension-modal-height-lg: calc(
+      var(--ds-responsive-source-dimension-modal-height-lg) * var(--ds-responsive-scale)
+    );
+  }
+}

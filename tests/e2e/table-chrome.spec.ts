@@ -1225,7 +1225,7 @@ test('owns a controlled caption-bar data mode switcher for supported modes', asy
   ).toBeVisible();
   await expect(trailingControls.nth(1)).toHaveJSProperty('tagName', 'DS-DIVIDER');
   await expect(trailingControls.nth(1)).toHaveJSProperty('orientation', 'vertical');
-  await expect(trailingControls.nth(1)).toHaveJSProperty('length', '32px');
+  await expect(trailingControls.nth(1)).toHaveCSS('height', '32px');
   await expect(
     trailingControls.nth(2).getByRole('button', { name: 'Change table variation' })
   ).toBeVisible();

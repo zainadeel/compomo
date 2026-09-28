@@ -48,8 +48,8 @@
 
 .mobile-section-switcher--sheet {
   grid-template-columns: minmax(0, auto);
-  min-height: var(--dimension-size-500);
-  padding-inline: var(--dimension-space-150);
+  min-height: var(--dimension-size-400);
+  padding-inline: var(--dimension-space-100);
   border-radius: var(--dimension-radius-half);
   background: transparent;
   --ds-interaction-border-width: var(--dimension-stroke-width-012);
@@ -79,7 +79,7 @@
   inset: 0 0 auto;
   width: 100%;
   max-width: none;
-  max-height: calc(100dvh - var(--dimension-size-500) - var(--dimension-space-200));
+  max-height: calc(100dvh - var(--dimension-size-400) - var(--dimension-space-200));
   margin: 0;
   padding: 0;
   border: 0;

@@ -32,9 +32,9 @@
 
 .mobile-sheet-nav__header--expanded-context {
   grid-template-columns:
-    minmax(var(--dimension-size-500), 1fr)
+    minmax(var(--dimension-size-400), 1fr)
     minmax(0, 4fr)
-    minmax(var(--dimension-size-500), 1fr);
+    minmax(var(--dimension-size-400), 1fr);
 }
 
 .mobile-sheet-nav__header--expanded-context .mobile-sheet-nav__context {
@@ -62,16 +62,16 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: var(--dimension-size-500);
-  height: var(--dimension-size-500);
-  padding: var(--dimension-space-100);
+  width: var(--dimension-size-400);
+  height: var(--dimension-size-400);
+  padding: var(--dimension-space-075);
   box-sizing: border-box;
   color: var(--color-foreground-primary);
 }
 
 .mobile-sheet-nav__logo-mark {
-  width: var(--dimension-iconography-lg);
-  height: var(--dimension-iconography-lg);
+  width: var(--dimension-iconography-md);
+  height: var(--dimension-iconography-md);
   flex: 0 0 auto;
 }
 
@@ -95,12 +95,12 @@
 
 .mobile-sheet-nav__sections {
   display: grid;
-  gap: var(--dimension-space-400);
+  gap: var(--dimension-space-200);
 }
 
 .mobile-sheet-nav__items {
   display: grid;
-  gap: var(--dimension-space-100);
+  gap: var(--dimension-space-050);
 }
 
 .mobile-sheet-nav__item {
@@ -138,7 +138,7 @@
 .mobile-sheet-nav__children {
   display: flex;
   flex-direction: column;
-  gap: var(--dimension-space-100);
+  gap: var(--dimension-space-050);
   min-height: 0;
   overflow: hidden;
 }
@@ -146,12 +146,12 @@
 .mobile-sheet-nav__child {
   flex: 0 0 var(--ds-control-height);
   padding-inline-start: calc(
-    var(--ds-control-padding-inline) + var(--dimension-iconography-lg) + var(--ds-control-gap)
+    var(--ds-control-padding-inline) + var(--dimension-iconography-md) + var(--ds-control-gap)
   );
 }
 
 .mobile-sheet-nav__child:first-child {
-  margin-block-start: var(--dimension-space-100);
+  margin-block-start: var(--dimension-space-050);
 }
 
 .mobile-sheet-nav__child:disabled {
@@ -165,14 +165,14 @@
 .mobile-sheet-nav__divider-line {
   display: block;
   height: var(--dimension-stroke-width-012);
-  margin-inline: var(--dimension-space-100);
+  margin-inline: var(--dimension-space-075);
   background: var(--color-border-tertiary);
 }
 
 .mobile-sheet-nav__divider--before .mobile-sheet-nav__divider-line {
-  margin-block: var(--dimension-space-050) var(--dimension-space-150);
+  margin-block: var(--dimension-space-050) var(--dimension-space-100);
 }
 
 .mobile-sheet-nav__divider--after .mobile-sheet-nav__divider-line {
-  margin-block: var(--dimension-space-150) var(--dimension-space-050);
+  margin-block: var(--dimension-space-100) var(--dimension-space-050);
 }

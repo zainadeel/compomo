@@ -48,6 +48,56 @@ test.describe('Responsive mobile shell foundation', () => {
     await expect(page.locator('ds-shell-app')).toHaveAttribute('responsive-mode', 'mobile');
   });
 
+  test('scales the medium navigation baseline once across bars, sheets, and headers @cross-browser', async ({
+    page,
+  }) => {
+    const primary = page.getByRole('navigation', { name: 'Primary' });
+    await expect(primary).toHaveCSS('height', '48px');
+    await expect(primary.getByRole('button', { name: 'Menu' })).toHaveCSS('height', '32px');
+    await page.addStyleTag({ url: '/dist/styles/responsive.css' });
+    await expect(primary).toHaveCSS('height', '60px');
+    await expect(primary.getByRole('button', { name: 'Menu' })).toHaveCSS('height', '40px');
+    await expect(primary.locator('.mobile-bar-nav__icon').first()).toHaveCSS('width', '25px');
+    await expect(page.locator('.shell-app__content .mobile-header__primary')).toHaveCSS(
+      'height',
+      '60px'
+    );
+
+    await primary.getByRole('button', { name: 'Menu' }).click();
+    const sheet = page.locator('ds-mobile-sheet-nav');
+    await expect(sheet.locator('.mobile-sheet-nav__header')).toHaveCSS('height', '60px');
+    await expect(sheet.locator('.mobile-sheet-nav__sections')).toHaveCSS('gap', '20px');
+    await expect(sheet.locator('.mobile-sheet-nav__items').first()).toHaveCSS('gap', '5px');
+    await expect(sheet.locator('.mobile-sheet-nav__item').first()).toHaveCSS('height', '40px');
+    await expect(sheet.locator('.mobile-sheet-nav__item-label').first()).toHaveCSS(
+      'font-size',
+      '17.5px'
+    );
+    await expect(sheet.locator('.mobile-sheet-nav__context')).toHaveJSProperty('size', 'md');
+    await primary.getByRole('button', { name: 'Menu' }).click();
+
+    const trigger = page.getByRole('button', { name: /Current section: Live Map/ });
+    await expect(trigger).toHaveCSS('height', '40px');
+    await trigger.click();
+    const section = page
+      .getByRole('dialog')
+      .getByRole('menuitem', { name: 'Live Map', exact: true });
+    await expect(section).toHaveCSS('height', '40px');
+    await expect(section.locator('ds-text')).toHaveCSS('font-size', '17.5px');
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('dialog')).not.toBeVisible();
+
+    await primary.getByRole('button', { name: 'Search' }).click();
+    await expect(page.locator('ds-shell-tools .mobile-header__primary')).toHaveCSS(
+      'height',
+      '60px'
+    );
+    await expect(page.locator('ds-shell-tools .mobile-header__heading')).toHaveCSS(
+      'font-size',
+      '17.5px'
+    );
+  });
+
   test('fills the dynamic host stage without body scroll and keeps routed scrolling local', async ({
     page,
   }) => {
@@ -219,10 +269,10 @@ test.describe('Responsive mobile shell foundation', () => {
       expect(metrics.hostBackground).toBe(metrics.primaryBackground);
       expect(metrics.groupEdgeInsets).toEqual([8, 8]);
       expect(metrics.groupGaps).toEqual(['8px', '8px']);
-      expect(metrics.itemSizes).toEqual(Array.from({ length: 6 }, () => [40, 40]));
+      expect(metrics.itemSizes).toEqual(Array.from({ length: 6 }, () => [32, 32]));
       expect(metrics.itemRadii).toEqual(Array.from({ length: 6 }, () => '2px'));
-      expect(metrics.iconSizes).toEqual(Array.from({ length: 6 }, () => [24, 24]));
-      expect(metrics.dividerHeight).toBe(24);
+      expect(metrics.iconSizes).toEqual(Array.from({ length: 6 }, () => [20, 20]));
+      expect(metrics.dividerHeight).toBe(20);
       expect(metrics.selectedFill).toBe('rgba(0, 0, 0, 0)');
       expect(metrics.selectedForeground).toBe(metrics.primaryForeground);
       expect(metrics.unselectedForeground).toBe(metrics.tertiaryForeground);
@@ -472,30 +522,30 @@ test.describe('Responsive mobile shell foundation', () => {
         };
       });
 
-      expect(headerMetrics.height).toBe(56);
+      expect(headerMetrics.height).toBe(48);
       expect(headerMetrics.padding).toBe('8px');
       expect(headerMetrics.gap).toBe('8px');
       expect(headerMetrics.centers[0]).toBeCloseTo(headerMetrics.centers[1], 0);
       expect(headerMetrics.centers[1]).toBeCloseTo(headerMetrics.centers[2], 0);
       expect(headerMetrics.contextCenter).toBeCloseTo(headerMetrics.headerCenter, 0);
-      expect(headerMetrics.contextSize).toBe('lg');
-      expect(headerMetrics.contextTrackHeight).toBe(40);
-      expect(headerMetrics.contextTabSizes.map(size => size[1])).toEqual([36, 36]);
+      expect(headerMetrics.contextSize).toBe('md');
+      expect(headerMetrics.contextTrackHeight).toBe(32);
+      expect(headerMetrics.contextTabSizes.map(size => size[1])).toEqual([28, 28]);
       expect(headerMetrics.contextIconSizes).toEqual([
-        [24, 24],
-        [24, 24],
+        [20, 20],
+        [20, 20],
       ]);
       expect(headerMetrics.logoLeft).toBe(8);
-      expect(headerMetrics.logoMarkLeft).toBe(16);
-      expect(headerMetrics.logoMarkSize).toEqual([24, 24]);
+      expect(headerMetrics.logoMarkLeft).toBe(14);
+      expect(headerMetrics.logoMarkSize).toEqual([20, 20]);
       expect(headerMetrics.actionsRight).toBeCloseTo(headerMetrics.headerRight! - 8, 0);
       expect(headerMetrics.actionSizes).toEqual([
-        [40, 40],
-        [40, 40],
+        [32, 32],
+        [32, 32],
       ]);
       expect(headerMetrics.actionIconSizes).toEqual([
-        [24, 24],
-        [24, 24],
+        [20, 20],
+        [20, 20],
       ]);
 
       const sheetMetrics = await sheet.evaluate(element => {
@@ -527,30 +577,30 @@ test.describe('Responsive mobile shell foundation', () => {
       });
 
       expect(sheetMetrics.bodyPadding).toBe('8px');
-      expect(sheetMetrics.sectionGap).toBe('32px');
+      expect(sheetMetrics.sectionGap).toBe('16px');
       expect(sheetMetrics.sectionCount).toBe(2);
-      expect(sheetMetrics.itemGap).toBe('8px');
+      expect(sheetMetrics.itemGap).toBe('4px');
       expect(sheetMetrics.items).toEqual([
         {
-          height: 40,
-          paddingInline: '8px',
+          height: 32,
+          paddingInline: '6px',
           gap: '4px',
-          iconSize: [24, 24],
-          labelPaddingInline: '4px',
+          iconSize: [20, 20],
+          labelPaddingInline: '2px',
         },
         {
-          height: 40,
-          paddingInline: '8px',
+          height: 32,
+          paddingInline: '6px',
           gap: '4px',
-          iconSize: [24, 24],
-          labelPaddingInline: '4px',
+          iconSize: [20, 20],
+          labelPaddingInline: '2px',
         },
         {
-          height: 40,
-          paddingInline: '8px',
+          height: 32,
+          paddingInline: '6px',
           gap: '4px',
-          iconSize: [24, 24],
-          labelPaddingInline: '4px',
+          iconSize: [20, 20],
+          labelPaddingInline: '2px',
         },
       ]);
     }
@@ -658,8 +708,8 @@ test.describe('Responsive mobile shell foundation', () => {
     await expect(trigger).toHaveAttribute('aria-haspopup', 'dialog');
     await expect(trigger.locator('.mobile-section-switcher__position')).toHaveCount(0);
     await expect(trigger).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    await expect(trigger).toHaveCSS('height', '40px');
-    await expect(trigger.locator('ds-text')).toHaveJSProperty('variant', 'text-body-large');
+    await expect(trigger).toHaveCSS('height', '32px');
+    await expect(trigger.locator('ds-text')).toHaveJSProperty('variant', 'text-body-medium');
     await trigger.click();
     const sheet = header.getByRole('dialog');
     const current = sheet.getByRole('menuitem', { name: 'Events', exact: true });
@@ -674,7 +724,7 @@ test.describe('Responsive mobile shell foundation', () => {
     expect(bounds!.y).toBe(0);
     expect(bounds!.width).toBe(390);
     expect(bounds!.height).toBeLessThan(760);
-    await expect(current).toHaveCSS('height', '40px');
+    await expect(current).toHaveCSS('height', '32px');
     await expect(sheet.locator('[role="menu"]')).toHaveCSS('gap', '8px');
     const backdrop = await sheet.evaluate(
       element => getComputedStyle(element, '::backdrop').backgroundColor
@@ -854,25 +904,18 @@ test.describe('Responsive mobile shell foundation', () => {
       await expect(page.getByRole('button', { name: /Current section: Live Map/ })).toBeVisible();
       await expect(page.locator('.shell-app__content .mobile-header__primary')).toHaveCSS(
         'height',
-        '56px'
+        '48px'
       );
-      const bottomBarMetrics = await page.locator('.mobile-bar-nav').evaluate(element => {
-        const styles = getComputedStyle(element);
-        return {
-          height: element.getBoundingClientRect().height,
-          borderBlockStart: parseFloat(styles.borderBlockStartWidth),
-        };
-      });
-      expect(bottomBarMetrics.height - bottomBarMetrics.borderBlockStart).toBe(56);
+      await expect(page.locator('.mobile-bar-nav')).toHaveCSS('height', '48px');
 
       await page.getByRole('button', { name: 'Search' }).click();
       await expect(page.locator('ds-shell-tools .mobile-header__primary')).toHaveCSS(
         'height',
-        '56px'
+        '48px'
       );
 
       await page.getByRole('button', { name: 'Menu' }).click();
-      await expect(page.locator('.mobile-sheet-nav__header')).toHaveCSS('height', '56px');
+      await expect(page.locator('.mobile-sheet-nav__header')).toHaveCSS('height', '48px');
     }
   );
 });

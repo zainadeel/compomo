@@ -154,7 +154,7 @@ export class MobileHeader {
                 <ds-text
                   class="mobile-header__heading"
                   as={Heading}
-                  variant="text-body-large"
+                  variant="text-body-medium"
                   emphasis
                   color={foreground}
                   lineTruncation={1}

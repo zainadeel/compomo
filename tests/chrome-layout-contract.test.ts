@@ -160,11 +160,11 @@ test('migrated chrome consumes shared recipes while retaining nested rhythms', (
   );
   assert.match(
     mobileSheetNavCss,
-    /\.mobile-sheet-nav__sections\s*{[\s\S]*?gap: var\(--dimension-space-400\);/
+    /\.mobile-sheet-nav__sections\s*{[\s\S]*?gap: var\(--dimension-space-200\);/
   );
   assert.match(
     mobileSheetNavCss,
-    /\.mobile-sheet-nav__items\s*{[\s\S]*?gap: var\(--dimension-space-100\);/
+    /\.mobile-sheet-nav__items\s*{[\s\S]*?gap: var\(--dimension-space-050\);/
   );
 
   const modal = read('src/wc/components/Modal/Modal.tsx');
