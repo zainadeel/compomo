@@ -136,3 +136,16 @@ export const ReadOnlyAndInactive: Story = {
     </div>
   `,
 };
+
+export const Loading: Story = {
+  render: () => html`
+    <div style="width:320px;display:flex;flex-direction:column;gap:var(--dimension-space-200);">
+      <ds-field is-loading label="Vehicle name" description="Use the name shown in your fleet.">
+        <ds-input value="VH-1042"></ds-input>
+      </ds-field>
+      <ds-field is-loading label="Status">
+        <ds-select .options=${STATUS_OPTIONS} value="active" width="fill"></ds-select>
+      </ds-field>
+    </div>
+  `,
+};

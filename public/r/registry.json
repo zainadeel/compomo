@@ -7234,6 +7234,7 @@
             "Do not use placeholder text as the only label. Keep label text concise and put format or consequence guidance in description."
           ],
           "states": [
+            "Loading masks field copy and the slotted control in place. The control remains mounted with its value, native form association, and accessible label intact; the field is inert until loading ends.",
             "The visible label is optional. Omit it when a nearby heading already names the field; Field still associates description and error text with the slotted control.",
             "Label, control, description, and error content follow the shared 4px vertical field flow without changing the slotted control's width or semantics. When the slotted control is borderless, description and error copy inset to that control's text origin instead of the resting bordered edge.",
             "Field exposes data-focused, data-filled, data-dirty, data-touched, data-invalid, data-disabled, and data-required hooks while the slotted control remains the source of value and interaction behavior.",
@@ -7299,6 +7300,10 @@
             "type": "string | undefined",
             "required": false
           },
+          "isLoading": {
+            "type": "boolean",
+            "required": false
+          },
           "label": {
             "type": "string",
             "required": false
@@ -7318,6 +7323,7 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
+        "skeleton",
         "text"
       ]
     },

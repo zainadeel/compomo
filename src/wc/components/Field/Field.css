@@ -7,10 +7,41 @@
 }
 
 .field__control {
+  position: relative;
   display: flex;
   min-width: 0;
 }
 
 .field__control > * {
   width: 100%;
+}
+
+.field__label,
+.field__description,
+.field__error,
+.text-field-count {
+  position: relative;
+}
+
+.field__copy-source--loading,
+:host(.field--loading) .field__control > :not(slot):not(.field__control-skeleton) {
+  visibility: hidden;
+}
+
+.field__copy-skeleton {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 0;
+  max-inline-size: 100%;
+}
+
+.field__label .field__copy-skeleton {
+  inline-size: min(100%, calc(var(--dimension-size-800) * 2));
+}
+
+.field__control-skeleton {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
 }

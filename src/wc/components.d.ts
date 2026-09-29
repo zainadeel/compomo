@@ -2009,6 +2009,11 @@ export namespace Components {
          */
         "fieldId": string | undefined;
         /**
+          * Masks field copy and its mounted control while preserving layout and form state.
+          * @default false
+         */
+        "isLoading": boolean;
+        /**
           * Visible label for the slotted control. Omit when a nearby heading already names the field.
          */
         "label"?: string;
@@ -9249,6 +9254,11 @@ declare namespace LocalJSX {
          */
         "fieldId"?: string | undefined;
         /**
+          * Masks field copy and its mounted control while preserving layout and form state.
+          * @default false
+         */
+        "isLoading"?: boolean;
+        /**
           * Visible label for the slotted control. Omit when a nearby heading already names the field.
          */
         "label"?: string;
@@ -13134,6 +13144,7 @@ declare namespace LocalJSX {
         "description": string | undefined;
         "error": boolean;
         "errorMessage": string | undefined;
+        "isLoading": boolean;
     }
     interface DsFilterMenuAttributes {
         "embedded": boolean;

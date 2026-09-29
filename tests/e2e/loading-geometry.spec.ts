@@ -346,3 +346,43 @@ test('settings information and radio loading preserve wrapping and selection @cr
     await expect(edit.getByRole('radio')).toHaveCount(3);
   }
 });
+
+test('field loading retains its associated control, value and wrapped geometry @cross-browser', async ({
+  page,
+}) => {
+  await page.goto('/forms.html');
+  await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
+  await page.evaluate(() => {
+    const form = document.createElement('form');
+    form.id = 'loading-field-form';
+    form.style.width = '220px';
+    form.innerHTML =
+      '<ds-field id="loading-field" label="Vehicle name with a wrapped label" description="Keep this guidance associated with the same form control."><ds-input name="vehicle" value="VH-1042"></ds-input></ds-field>';
+    document.body.append(form);
+  });
+  const field = page.locator('#loading-field');
+  const input = field.locator('input');
+  await expect(input).toHaveAccessibleName('Vehicle name with a wrapped label');
+  const original = await input.elementHandle();
+  const before = await geometry(field);
+  await field.evaluate(element => ((element as HTMLDsFieldElement).isLoading = true));
+  await expect(field).toHaveAttribute('inert', '');
+  await expect(field.locator('.field__control-skeleton')).toBeVisible();
+  await expect(field.locator('.field__copy-source').first()).toBeHidden();
+  expect(await geometry(field)).toEqual(before);
+  expect(
+    await page.evaluate(() =>
+      new FormData(document.querySelector<HTMLFormElement>('#loading-field-form')!).get('vehicle')
+    )
+  ).toBe('VH-1042');
+  await field.evaluate(element => ((element as HTMLDsFieldElement).isLoading = false));
+  await expect(input).toBeVisible();
+  await expect(input).toHaveAccessibleName('Vehicle name with a wrapped label');
+  await expect(input).toHaveAccessibleDescription(
+    'Keep this guidance associated with the same form control.'
+  );
+  expect(await input.evaluate((element, previous) => element === previous, original)).toBe(true);
+  await field.locator('label').click();
+  await expect(input).toBeFocused();
+  await original?.dispose();
+});

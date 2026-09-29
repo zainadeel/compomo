@@ -52,6 +52,8 @@ export class Field {
   @Prop() error: boolean = false;
   /** Visible error associated with the slotted control while error is true. */
   @Prop() errorMessage: string | undefined;
+  /** Masks field copy and its mounted control while preserving layout and form state. */
+  @Prop() isLoading: boolean = false;
 
   @State() private constraintMessage = '';
   @State() private characterCount: string | undefined;
@@ -157,7 +159,11 @@ export class Field {
   }
 
   private findControl(): FieldControl | undefined {
-    return this.controlContainer?.querySelector<FieldControl>(':scope > :not(slot)') ?? undefined;
+    return (
+      this.controlContainer?.querySelector<FieldControl>(
+        ':scope > :not(slot):not(.field__control-skeleton)'
+      ) ?? undefined
+    );
   }
 
   private observeLateControls() {
@@ -239,6 +245,7 @@ export class Field {
   }
 
   private handleLabelClick = (event: MouseEvent) => {
+    if (this.isLoading) return;
     if (!this.control?.tagName.startsWith('DS-')) return;
     event.preventDefault();
     this.control.setFocus?.();
@@ -258,9 +265,21 @@ export class Field {
     this.syncControl();
   };
 
+  private renderCopy(value: string | undefined) {
+    return [
+      <span class={{ 'field__copy-source': true, 'field__copy-source--loading': this.isLoading }}>
+        {value}
+      </span>,
+      this.isLoading && <ds-skeleton class="field__copy-skeleton" textVariant="text-body-small" />,
+    ];
+  }
+
   render() {
     return (
       <Host
+        class={{ 'field--loading': this.isLoading }}
+        aria-busy={this.isLoading ? 'true' : undefined}
+        inert={this.isLoading}
         data-focused={this.focused ? '' : undefined}
         data-filled={this.filled ? '' : undefined}
         data-dirty={this.dirty ? '' : undefined}
@@ -294,11 +313,20 @@ export class Field {
               textId={this.labelId}
               onClick={this.handleLabelClick}
             >
-              {this.label}
+              {this.renderCopy(this.label)}
             </ds-text>
           ) : null}
           <div class="field__control" ref={el => (this.controlContainer = el)}>
             <slot onSlotchange={this.syncControl} />
+            {this.isLoading && (
+              <ds-skeleton
+                class="field__control-skeleton"
+                variant="control"
+                controlAppearance={this.controlBorderless ? 'borderless' : 'outlined'}
+                controlContent={this.control?.localName === 'ds-select' ? 'label-icon' : 'label'}
+                controlSize={this.controlSize}
+              />
+            )}
           </div>
           {(this.renderedDescription ||
             this.renderedError ||
@@ -312,7 +340,7 @@ export class Field {
                   color="secondary"
                   textId={this.descriptionId}
                 >
-                  {this.description}
+                  {this.renderCopy(this.description)}
                 </ds-text>
               )}
               {this.renderedError && (
@@ -324,7 +352,7 @@ export class Field {
                   textId={this.errorId}
                   role="alert"
                 >
-                  {this.visibleError}
+                  {this.renderCopy(this.visibleError)}
                 </ds-text>
               )}
               {this.characterCount !== undefined && (
@@ -335,7 +363,7 @@ export class Field {
                   color={this.error || this.constraintMessage ? 'negative' : 'secondary'}
                   textId={`${this.controlId}-count`}
                 >
-                  {this.characterCount}/{this.characterLimit}
+                  {this.renderCopy(`${this.characterCount}/${this.characterLimit}`)}
                 </ds-text>
               )}
             </div>
