@@ -43,7 +43,8 @@
     "In content mode, the native link owns those interaction states only across the header while the body remains application-owned.",
     "An empty or unsafe href renders non-interactive card chrome without a false keyboard target.",
     "Copy is always stacked, so a missing description keeps the heading at the start of the column instead of centering it in the header.",
-    "The application owns destination loading, authorization, not-found, and recovery states after navigation."
+    "The application owns destination loading, authorization, not-found, and recovery states after navigation.",
+    "isLoading preserves card geometry and copy wrapping while showing skeletons and preventing navigation."
   ],
   "responsiveBehavior": [
     "Choose sm, md, or lg from the parent layout; the surface never exceeds its parent width.",

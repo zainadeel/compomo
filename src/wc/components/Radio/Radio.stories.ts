@@ -231,3 +231,13 @@ export const ChangingOptions: Story = {
     `;
   },
 };
+
+export const Loading: Story = {
+  render: () =>
+    html`<ds-radio
+      .options=${defaultOptions}
+      value="a"
+      aria-label="Loading choices"
+      is-loading
+    ></ds-radio>`,
+};

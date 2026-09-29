@@ -102,3 +102,8 @@ export const Empty: Story = {
     </div>
   `,
 };
+
+export const Loading: Story = {
+  render: () =>
+    html`<ds-card-action-center .sections=${SECTIONS} is-loading></ds-card-action-center>`,
+};

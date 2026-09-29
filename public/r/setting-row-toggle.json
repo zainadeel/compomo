@@ -34,7 +34,8 @@
         "The application accepts or rejects change requests by updating the controlled checked value and owns persistence and errors.",
         "Name the enabled setting consistently; the label must not change when the switch is toggled.",
         "Non-emphasis rows without supporting copy use ds-text color secondary (foreground-secondary) on the title. Non-emphasis rows with description keep a primary title.",
-        "Supporting copy is text-body-small in every variant."
+        "Supporting copy is text-body-small in every variant.",
+        "isLoading preserves the copy wrapping and switch footprint, replaces them with skeletons, and prevents value changes."
       ],
       "responsiveBehavior": [
         "The copy wraps while the switch keeps its natural size in the trailing column, including at narrow widths."
@@ -87,6 +88,15 @@
           "required": false,
           "mutable": false,
           "description": "Prevent changes while the setting is unavailable."
+        },
+        "isLoading": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-loading",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Preserve the real row geometry while replacing copy and switch with skeletons."
         },
         "label": {
           "type": "string",
@@ -145,6 +155,15 @@
         "required": false,
         "mutable": false,
         "description": "Prevent changes while the setting is unavailable."
+      },
+      "isLoading": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-loading",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Preserve the real row geometry while replacing copy and switch with skeletons."
       },
       "label": {
         "type": "string",
@@ -215,18 +234,19 @@
     "@ds-mo/tokens"
   ],
   "registryDependencies": [
+    "skeleton",
     "switch",
     "text"
   ],
   "files": [
     {
       "path": "src/wc/components/SettingRowToggle/SettingRowToggle.css",
-      "content": "@import '../../utils/settings-row.css';\n\n:host {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  align-items: start;\n  gap: var(--dimension-space-200);\n}\n\n.setting-row-toggle__copy {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n  gap: var(--dimension-space-050);\n  overflow-wrap: anywhere;\n  -webkit-user-select: none;\n  user-select: none;\n}\n",
+      "content": "@import '../../utils/settings-row.css';\n\n:host {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  align-items: start;\n  gap: var(--dimension-space-200);\n}\n\n.setting-row-toggle__copy {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n  gap: var(--dimension-space-050);\n  overflow-wrap: anywhere;\n  -webkit-user-select: none;\n  user-select: none;\n}\n\n.setting-row-toggle__line,\n.setting-row-toggle__control {\n  display: grid;\n  min-width: 0;\n  align-items: center;\n}\n\n.setting-row-toggle__line > *,\n.setting-row-toggle__control > * {\n  grid-area: 1 / 1;\n}\n\n:host(.setting-row-toggle--loading) ds-text,\n:host(.setting-row-toggle--loading) ds-switch {\n  visibility: hidden;\n}\n\n.setting-row-toggle__control > ds-skeleton {\n  height: 100%;\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/SettingRowToggle/SettingRowToggle.tsx",
-      "content": "import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\nimport { CONTROL_SUPPORTING_TEXT_VARIANT } from '../../utils';\n\nlet settingRowToggleSequence = 0;\n\nexport type SettingRowToggleVariant = 'emphasis' | 'non-emphasis';\n\n/** A labeled binary setting that applies immediately through its application owner. */\n@Component({\n  tag: 'ds-setting-row-toggle',\n  styleUrl: 'SettingRowToggle.css',\n  scoped: true,\n})\nexport class SettingRowToggle {\n  /** Name of the enabled setting. */\n  @Prop() label!: string;\n  /** Supporting copy explaining the setting and its alternative. */\n  @Prop() description?: string;\n  /** Controlled enabled state. */\n  @Prop() checked = false;\n  /** Prevent changes while the setting is unavailable. */\n  @Prop() disabled = false;\n  /** Typography recipe for the setting copy. */\n  @Prop() variant: SettingRowToggleVariant = 'emphasis';\n\n  /** Requests the next value; the application owns acceptance and persistence. */\n  @Event() dsChange!: EventEmitter<boolean>;\n\n  private readonly rowId = `ds-setting-row-toggle-${++settingRowToggleSequence}`;\n\n  private handleChange = (event: CustomEvent<boolean>) => {\n    event.stopPropagation();\n    // Keep the composed switch controlled until the owner accepts this request.\n    (event.target as HTMLDsSwitchElement).checked = this.checked;\n    this.dsChange.emit(event.detail);\n  };\n\n  render() {\n    const hasDescription = Boolean(this.description?.trim());\n    const titleColor = this.variant === 'non-emphasis' && !hasDescription ? 'secondary' : 'primary';\n\n    return (\n      <Host>\n        <div class=\"setting-row-toggle__copy\">\n          <ds-text\n            textId={`${this.rowId}-label`}\n            variant=\"text-body-medium\"\n            color={titleColor}\n            emphasis={this.variant === 'emphasis'}\n          >\n            {this.label}\n          </ds-text>\n          {hasDescription && (\n            <ds-text\n              textId={`${this.rowId}-description`}\n              variant={CONTROL_SUPPORTING_TEXT_VARIANT.md}\n              color=\"secondary\"\n            >\n              {this.description}\n            </ds-text>\n          )}\n        </div>\n        <ds-switch\n          checked={this.checked}\n          disabled={this.disabled}\n          aria-labelledby={`${this.rowId}-label`}\n          aria-describedby={hasDescription ? `${this.rowId}-description` : undefined}\n          onDsChange={this.handleChange}\n        />\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';\nimport { CONTROL_SUPPORTING_TEXT_VARIANT } from '../../utils';\n\nlet settingRowToggleSequence = 0;\n\nexport type SettingRowToggleVariant = 'emphasis' | 'non-emphasis';\n\n/** A labeled binary setting that applies immediately through its application owner. */\n@Component({\n  tag: 'ds-setting-row-toggle',\n  styleUrl: 'SettingRowToggle.css',\n  scoped: true,\n})\nexport class SettingRowToggle {\n  /** Name of the enabled setting. */\n  @Prop() label!: string;\n  /** Supporting copy explaining the setting and its alternative. */\n  @Prop() description?: string;\n  /** Controlled enabled state. */\n  @Prop() checked = false;\n  /** Prevent changes while the setting is unavailable. */\n  @Prop() disabled = false;\n  /** Preserve the real row geometry while replacing copy and switch with skeletons. */\n  @Prop() isLoading = false;\n  /** Typography recipe for the setting copy. */\n  @Prop() variant: SettingRowToggleVariant = 'emphasis';\n\n  /** Requests the next value; the application owns acceptance and persistence. */\n  @Event() dsChange!: EventEmitter<boolean>;\n\n  private readonly rowId = `ds-setting-row-toggle-${++settingRowToggleSequence}`;\n\n  private handleChange = (event: CustomEvent<boolean>) => {\n    event.stopPropagation();\n    // Keep the composed switch controlled until the owner accepts this request.\n    (event.target as HTMLDsSwitchElement).checked = this.checked;\n    if (!this.isLoading) this.dsChange.emit(event.detail);\n  };\n\n  render() {\n    const hasDescription = Boolean(this.description?.trim());\n    const titleColor = this.variant === 'non-emphasis' && !hasDescription ? 'secondary' : 'primary';\n\n    return (\n      <Host\n        aria-busy={this.isLoading ? 'true' : undefined}\n        class={{ 'setting-row-toggle--loading': this.isLoading }}\n      >\n        <div class=\"setting-row-toggle__copy\">\n          <div class=\"setting-row-toggle__line\">\n            <ds-text\n              textId={`${this.rowId}-label`}\n              variant=\"text-body-medium\"\n              color={titleColor}\n              emphasis={this.variant === 'emphasis'}\n            >\n              {this.label}\n            </ds-text>\n            {this.isLoading && <ds-skeleton width=\"75%\" />}\n          </div>\n          {hasDescription && (\n            <div class=\"setting-row-toggle__line\">\n              <ds-text\n                textId={`${this.rowId}-description`}\n                variant={CONTROL_SUPPORTING_TEXT_VARIANT.md}\n                color=\"secondary\"\n              >\n                {this.description}\n              </ds-text>\n              {this.isLoading && (\n                <ds-skeleton width=\"95%\" textVariant={CONTROL_SUPPORTING_TEXT_VARIANT.md} />\n              )}\n            </div>\n          )}\n        </div>\n        <div class=\"setting-row-toggle__control\" inert={this.isLoading}>\n          <ds-switch\n            checked={this.checked}\n            disabled={this.disabled}\n            aria-labelledby={`${this.rowId}-label`}\n            aria-describedby={hasDescription ? `${this.rowId}-description` : undefined}\n            onDsChange={this.handleChange}\n          />\n          {this.isLoading && <ds-skeleton variant=\"control\" width=\"100%\" rounded={true} />}\n        </div>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

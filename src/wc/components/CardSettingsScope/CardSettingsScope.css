@@ -36,6 +36,11 @@
   cursor: pointer;
 }
 
+.card-settings-scope > ds-skeleton {
+  min-width: 0;
+  max-width: 100%;
+}
+
 .card-settings-scope__action ds-text {
   overflow-wrap: anywhere;
   text-align: start;

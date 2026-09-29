@@ -8,20 +8,23 @@ import { Component, h, Host, Prop } from '@stencil/core';
 export class InlineBannerSettings {
   /** Authored informational copy rendered without transformation. */
   @Prop() description!: string;
+  /** Keep the informational row footprint while its copy is loading. */
+  @Prop() isLoading: boolean = false;
 
   render() {
     return (
-      <Host>
-        {/* eslint-disable-next-line compomo/prefer-direct-ds-text -- This structural layer owns the banner's inner padding separately from the ds-text balance padding. */}
+      <Host aria-busy={this.isLoading ? 'true' : undefined}>
         <div class="inline-banner-settings__content">
-          <ds-text
-            class="inline-banner-settings__description"
-            as="p"
-            variant="text-body-small"
-            color="secondary"
-          >
-            {this.description}
-          </ds-text>
+          <ds-skeleton preserveLayout isLoading={this.isLoading} textVariant="text-body-small">
+            <ds-text
+              class="inline-banner-settings__description"
+              as="p"
+              variant="text-body-small"
+              color="secondary"
+            >
+              {this.description}
+            </ds-text>
+          </ds-skeleton>
         </div>
       </Host>
     );

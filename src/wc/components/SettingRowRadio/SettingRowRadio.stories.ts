@@ -89,3 +89,14 @@ export const Inactive: Story = {
     </ds-setting-row-radio>
   `,
 };
+
+export const Loading: Story = {
+  render: () =>
+    html`<ds-setting-row-radio
+      presentation="view"
+      label="Validation mode"
+      value-label="Use automated validation"
+      description="Apply automated checks and human review to validate results."
+      is-loading
+    ></ds-setting-row-radio>`,
+};

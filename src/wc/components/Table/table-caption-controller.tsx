@@ -183,7 +183,15 @@ export function createTableCaptionController(options: TableCaptionControllerOpti
   function renderDataModeSwitcherTrigger() {
     if (!showsDataModeSwitcher()) return null;
     if (state().chromeLoading) {
-      return <ds-skeleton variant="control" controlSize="md" width="var(--dimension-size-400)" />;
+      return (
+        <ds-skeleton
+          variant="control"
+          controlAppearance={state().captionControlsBorderless ? 'borderless' : 'outlined'}
+          controlContent="icon"
+          controlSize="md"
+          width="var(--dimension-size-400)"
+        />
+      );
     }
     return (
       <span class="ds-table__caption-mode-switcher">
@@ -302,7 +310,13 @@ export function createTableCaptionController(options: TableCaptionControllerOpti
           />
         </ds-tooltip>
         {state().chromeLoading ? (
-          <ds-skeleton variant="control" controlSize="md" width="100%" />
+          <ds-skeleton
+            variant="control"
+            controlAppearance={state().captionControlsBorderless ? 'borderless' : 'outlined'}
+            controlContent={state().captionCompact ? 'icon' : 'icon-label'}
+            controlSize="md"
+            width="100%"
+          />
         ) : null}
       </div>
     );

@@ -52,7 +52,8 @@
     "Description-rich options grow beyond the fixed density height while retaining its minimum target size and primitive-owned selection anatomy.",
     "A visible group label uses the same density height and horizontal text origin as a menu section heading above the option list without adding a second interaction target. Copy uses text-body-small emphasis.",
     "Vertical form options use a 4px gap; a medium single-line option and its group label each use the shared 32px control height.",
-    "Form and settings usage omits a row hover or pressed wash by default; set hasInteractionFill only when each radio option is presented as a choice-list row."
+    "Form and settings usage omits a row hover or pressed wash by default; set hasInteractionFill only when each radio option is presented as a choice-list row.",
+    "isLoading preserves option geometry and the submitted form value while skeletonizing the circles and copy. Loading options cannot receive focus or change selection."
   ],
   "responsiveBehavior": [
     "Choose size from the density of the containing form or settings row.",

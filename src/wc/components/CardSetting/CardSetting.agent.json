@@ -65,7 +65,8 @@
     "The parent owns read-only versus editable body composition, dirty state, validation, persistence, loading, success, and error consequences.",
     "A save request keeps the section editing while validation or persistence is pending; the parent exits only after success.",
     "A cancel request does not persist changes; the parent restores its chosen value snapshot and exits editing.",
-    "The immediate variant keeps the resting card surface and omits header actions even if editing is supplied. The application applies and persists each control change independently."
+    "The immediate variant keeps the resting card surface and omits header actions even if editing is supplied. The application applies and persists each control change independently.",
+    "isLoading replaces header copy and actions with skeletons while retaining card geometry; projected body loading remains owned by the application."
   ],
   "responsiveBehavior": [
     "Choose sm, md, or lg from the parent layout. Empty editable cards use the matching minimum height. Cards with body content, and immediate cards, fit that content.",

@@ -38,6 +38,7 @@ export const Playground: Story = {
         .pageSize=${args['pageSize']}
         .totalItems=${args['totalItems']}
         .loading=${args['loading']}
+        .chromeLoading=${args['chromeLoading'] ?? false}
         .showFirstLastButtons=${args['showFirstLastButtons']}
         page-size-label="Rows"
         fit-to-page
@@ -91,3 +92,5 @@ export const Outcomes: Story = {
     </div>
   `,
 };
+
+export const Skeleton: Story = { ...Playground, args: { chromeLoading: true } };

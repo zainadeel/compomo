@@ -37,7 +37,8 @@
         "The row is a neutral padded composition; selected, focus, and inactive states belong to the slotted Radio without a choice-list hover or pressed wash.",
         "The owning application handles dsChange and updates the slotted Radio value.",
         "Heading, saved-value choice, and slotted Radio stay mounted. presentation reflects on the host so view/edit is CSS visibility only; do not swap Host children or ngIf the Radio.",
-        "View presentation hides the slotted Radio with ::slotted host CSS and shows the saved option label plus optional consequence copy. The Radio stays in the tree."
+        "View presentation hides the slotted Radio with ::slotted host CSS and shows the saved option label plus optional consequence copy. The Radio stays in the tree.",
+        "isLoading preserves the heading and saved-value copy as text skeletons. The owner also sets isLoading on the slotted Radio when its editing presentation is pending."
       ],
       "responsiveBehavior": [
         "The row never exceeds its parent width; the slotted Radio keeps its option copy in the flexible column and wraps descriptions when needed."
@@ -71,6 +72,15 @@
           "required": false,
           "mutable": false,
           "description": "Optional consequence or supporting copy for the saved option."
+        },
+        "isLoading": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-loading",
+          "default": "false",
+          "required": false,
+          "mutable": false,
+          "description": "Skeletonize the row copy without changing the saved choice or edit presentation."
         },
         "label": {
           "type": "string",
@@ -110,6 +120,15 @@
         "required": false,
         "mutable": false,
         "description": "Optional consequence or supporting copy for the saved option."
+      },
+      "isLoading": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-loading",
+        "default": "false",
+        "required": false,
+        "mutable": false,
+        "description": "Skeletonize the row copy without changing the saved choice or edit presentation."
       },
       "label": {
         "type": "string",
@@ -179,6 +198,7 @@
     "@ds-mo/tokens"
   ],
   "registryDependencies": [
+    "skeleton",
     "text"
   ],
   "files": [
@@ -189,7 +209,7 @@
     },
     {
       "path": "src/wc/components/SettingRowRadio/SettingRowRadio.tsx",
-      "content": "import { Component, Element, h, Host, Prop } from '@stencil/core';\nimport { CONTROL_SUPPORTING_TEXT_VARIANT, CONTROL_TEXT_VARIANT } from '../../utils';\n\nexport type SettingRowRadioPresentation = 'edit' | 'view';\n\ntype SettingsRadio = HTMLElement & {\n  groupLabel: string;\n  ariaLabel: string | null;\n  ariaLabelledby?: string;\n};\n\nlet settingRowRadioHeadingId = 0;\n\n/** Padded settings-row composition for a Radio group. */\n@Component({\n  tag: 'ds-setting-row-radio',\n  styleUrl: 'SettingRowRadio.css',\n  scoped: true,\n})\nexport class SettingRowRadio {\n  @Element() el!: HTMLElement;\n\n  /** Interactive Radio group or non-interactive saved-value readout. */\n  @Prop({ reflect: true }) presentation: SettingRowRadioPresentation = 'edit';\n  /** Settings heading shown in both presentations. Not Radio's form groupLabel. */\n  @Prop() label?: string;\n  /** Saved option label shown in view presentation. */\n  @Prop() valueLabel?: string;\n  /** Optional consequence or supporting copy for the saved option. */\n  @Prop() description?: string;\n\n  private readonly headingId = `ds-setting-row-radio-heading-${++settingRowRadioHeadingId}`;\n\n  componentWillLoad() {\n    this.syncSlottedRadio();\n  }\n\n  componentDidLoad() {\n    this.syncSlottedRadio();\n  }\n\n  private syncSlottedRadio = () => {\n    for (const radio of this.el.querySelectorAll<SettingsRadio>('ds-radio')) {\n      radio.groupLabel = '';\n      if (this.label) {\n        radio.ariaLabelledby = this.headingId;\n        radio.ariaLabel = null;\n      }\n    }\n  };\n\n  render() {\n    return (\n      <Host>\n        <ds-text\n          key=\"setting-row-radio-heading\"\n          class=\"setting-row-radio__heading\"\n          as=\"span\"\n          variant={CONTROL_TEXT_VARIANT.md}\n          emphasis\n          textId={this.label ? this.headingId : undefined}\n        >\n          {this.label}\n        </ds-text>\n        <div key=\"setting-row-radio-choice\" class=\"setting-row-radio__choice\">\n          {this.valueLabel ? (\n            <ds-text key=\"setting-row-radio-value\" as=\"span\" variant={CONTROL_TEXT_VARIANT.md}>\n              {this.valueLabel}\n            </ds-text>\n          ) : null}\n          {this.description ? (\n            <ds-text\n              key=\"setting-row-radio-description\"\n              as=\"span\"\n              variant={CONTROL_SUPPORTING_TEXT_VARIANT.md}\n              color=\"secondary\"\n            >\n              {this.description}\n            </ds-text>\n          ) : null}\n        </div>\n        <slot onSlotchange={this.syncSlottedRadio} />\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Element, h, Host, Prop } from '@stencil/core';\nimport { CONTROL_SUPPORTING_TEXT_VARIANT, CONTROL_TEXT_VARIANT } from '../../utils';\n\nexport type SettingRowRadioPresentation = 'edit' | 'view';\n\ntype SettingsRadio = HTMLElement & {\n  groupLabel: string;\n  ariaLabel: string | null;\n  ariaLabelledby?: string;\n};\n\nlet settingRowRadioHeadingId = 0;\n\n/** Padded settings-row composition for a Radio group. */\n@Component({\n  tag: 'ds-setting-row-radio',\n  styleUrl: 'SettingRowRadio.css',\n  scoped: true,\n})\nexport class SettingRowRadio {\n  @Element() el!: HTMLElement;\n\n  /** Interactive Radio group or non-interactive saved-value readout. */\n  @Prop({ reflect: true }) presentation: SettingRowRadioPresentation = 'edit';\n  /** Settings heading shown in both presentations. Not Radio's form groupLabel. */\n  @Prop() label?: string;\n  /** Saved option label shown in view presentation. */\n  @Prop() valueLabel?: string;\n  /** Optional consequence or supporting copy for the saved option. */\n  @Prop() description?: string;\n  /** Skeletonize the row copy without changing the saved choice or edit presentation. */\n  @Prop() isLoading: boolean = false;\n\n  private readonly headingId = `ds-setting-row-radio-heading-${++settingRowRadioHeadingId}`;\n\n  componentWillLoad() {\n    this.syncSlottedRadio();\n  }\n\n  componentDidLoad() {\n    this.syncSlottedRadio();\n  }\n\n  private syncSlottedRadio = () => {\n    for (const radio of this.el.querySelectorAll<SettingsRadio>('ds-radio')) {\n      radio.groupLabel = '';\n      if (this.label) {\n        radio.ariaLabelledby = this.headingId;\n        radio.ariaLabel = null;\n      }\n    }\n  };\n\n  render() {\n    return (\n      <Host aria-busy={this.isLoading ? 'true' : undefined}>\n        <ds-skeleton\n          preserveLayout\n          isLoading={this.isLoading}\n          textVariant={CONTROL_TEXT_VARIANT.md}\n        >\n          <ds-text\n            key=\"setting-row-radio-heading\"\n            class=\"setting-row-radio__heading\"\n            as=\"span\"\n            variant={CONTROL_TEXT_VARIANT.md}\n            emphasis\n            textId={this.label ? this.headingId : undefined}\n          >\n            {this.label}\n          </ds-text>\n        </ds-skeleton>\n        <div key=\"setting-row-radio-choice\" class=\"setting-row-radio__choice\">\n          {this.valueLabel ? (\n            <ds-skeleton\n              preserveLayout\n              isLoading={this.isLoading}\n              textVariant={CONTROL_TEXT_VARIANT.md}\n            >\n              <ds-text key=\"setting-row-radio-value\" as=\"span\" variant={CONTROL_TEXT_VARIANT.md}>\n                {this.valueLabel}\n              </ds-text>\n            </ds-skeleton>\n          ) : null}\n          {this.description ? (\n            <ds-skeleton\n              preserveLayout\n              isLoading={this.isLoading}\n              textVariant={CONTROL_SUPPORTING_TEXT_VARIANT.md}\n            >\n              <ds-text\n                key=\"setting-row-radio-description\"\n                as=\"span\"\n                variant={CONTROL_SUPPORTING_TEXT_VARIANT.md}\n                color=\"secondary\"\n              >\n                {this.description}\n              </ds-text>\n            </ds-skeleton>\n          ) : null}\n        </div>\n        <slot onSlotchange={this.syncSlottedRadio} />\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

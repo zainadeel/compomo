@@ -3313,7 +3313,8 @@
           "states": [
             "Rows expose distinct rest, hover, pressed, keyboard-focus, and inactive states.",
             "An empty sections array or groups with no items render the configured empty message.",
-            "The application owns loading, error, permission, routing, and post-activation consequences and reflects availability through the supplied item data."
+            "The application owns data fetching, error, permission, routing, and post-activation consequences and reflects availability through the supplied item data.",
+            "isLoading preserves the section and row layout while skeletonizing all headings, labels, and values; actions become inert and the card exposes its busy state."
           ],
           "responsiveBehavior": [
             "The card fills its parent width and never establishes a product breakpoint.",
@@ -3373,6 +3374,10 @@
             "type": "string",
             "required": false
           },
+          "isLoading": {
+            "type": "boolean",
+            "required": false
+          },
           "sections": {
             "type": "ReadonlyArray<CardActionCenterSection>",
             "required": false
@@ -3398,6 +3403,7 @@
       ],
       "registryDependencies": [
         "divider",
+        "skeleton",
         "tag",
         "text"
       ]
@@ -3448,7 +3454,8 @@
           "states": [
             "Custom mode provides flexible body chrome and does not mutate chart or legend interaction.",
             "Chart mode keeps a slotted external legend static by disabling hover emphasis.",
-            "showFilter adds the standard filter action and emits dsFilterClick without owning filter state."
+            "showFilter adds the standard filter action and emits dsFilterClick without owning filter state.",
+            "isLoading preserves card geometry, skeletonizes the heading and standard filter control, and replaces a chart canvas with one quiet placeholder. The owner supplies skeletons for custom body content and slotted actions."
           ],
           "responsiveBehavior": [
             "The sm, md, or lg width sets a matching token-based minimum height and remains constrained by its parent.",
@@ -3521,6 +3528,10 @@
             "type": "string",
             "required": true
           },
+          "isLoading": {
+            "type": "boolean",
+            "required": false
+          },
           "showFilter": {
             "type": "boolean",
             "required": false
@@ -3550,6 +3561,7 @@
       ],
       "registryDependencies": [
         "button-unfilled",
+        "skeleton",
         "text"
       ]
     },
@@ -3606,7 +3618,8 @@
             "In content mode, the native link owns those interaction states only across the header while the body remains application-owned.",
             "An empty or unsafe href renders non-interactive card chrome without a false keyboard target.",
             "Copy is always stacked, so a missing description keeps the heading at the start of the column instead of centering it in the header.",
-            "The application owns destination loading, authorization, not-found, and recovery states after navigation."
+            "The application owns destination loading, authorization, not-found, and recovery states after navigation.",
+            "isLoading preserves card geometry and copy wrapping while showing skeletons and preventing navigation."
           ],
           "responsiveBehavior": [
             "Choose sm, md, or lg from the parent layout; the surface never exceeds its parent width.",
@@ -3691,6 +3704,10 @@
             "type": "string",
             "required": true
           },
+          "isLoading": {
+            "type": "boolean",
+            "required": false
+          },
           "variant": {
             "type": "CardNavigationVariant",
             "required": false
@@ -3717,6 +3734,7 @@
       ],
       "registryDependencies": [
         "icon",
+        "skeleton",
         "text"
       ]
     },
@@ -3777,7 +3795,7 @@
             "Trend is supplied already resolved as a direction, a formatted value, and a tone. Whether a rise reads well is a product decision, so the component never infers tone from the numbers. Derive it with resolveMetricTrend.",
             "Omit a trend when there is nothing to report; resolveMetricTrend returns null in that case so no zero change is rendered.",
             "Omit score to render a centered Score unavailable cell with a tertiary border and no score fill. Set scoreErrorMessage to replace that copy while the measures remain readable.",
-            "Loading replaces the score and measures with skeletons and does not alter the slotted period control. Score loading replaces only the fill figure; the overview still skeletons the score-copy spacer and trend. When measures are already supplied, their count preserves the resolved grid shape; otherwise five measure placeholders join the score in the standard six-cell grid.",
+            "Loading replaces the score, measures, and fixed period copy with skeletons. The owner supplies loading atoms for slotted controls. Score loading replaces only the fill figure; the overview still skeletons the score-copy spacer and trend. When measures are already supplied, their count preserves the resolved grid shape; otherwise five measure placeholders join the score in the standard six-cell grid.",
             "At most seven measures are shown. Keep larger collections outside the summary bar rather than turning it into a dense dashboard.",
             "The period and filter controls are slotted rather than owned. Use the period slot when the current range is selectable; otherwise periodLabel supplies fixed current copy in the same md control-frame and label-inset anatomy. Use the filter slot for the application-owned comparison-window control. Slotted Selects use hasBorder false so the 48px bar owns their surrounding boundary and allowClear false because both controls always require one selected reporting period.",
             "A numeric safety score infers fair from 0–50, good from 51–80, and excellent from 81–100. The level can be supplied explicitly when the displayed value is not numeric. The deprecated band field is ignored.",
@@ -3992,7 +4010,8 @@
             "The parent owns read-only versus editable body composition, dirty state, validation, persistence, loading, success, and error consequences.",
             "A save request keeps the section editing while validation or persistence is pending; the parent exits only after success.",
             "A cancel request does not persist changes; the parent restores its chosen value snapshot and exits editing.",
-            "The immediate variant keeps the resting card surface and omits header actions even if editing is supplied. The application applies and persists each control change independently."
+            "The immediate variant keeps the resting card surface and omits header actions even if editing is supplied. The application applies and persists each control change independently.",
+            "isLoading replaces header copy and actions with skeletons while retaining card geometry; projected body loading remains owned by the application."
           ],
           "responsiveBehavior": [
             "Choose sm, md, or lg from the parent layout. Empty editable cards use the matching minimum height. Cards with body content, and immediate cards, fit that content.",
@@ -4089,6 +4108,10 @@
             "type": "string",
             "required": true
           },
+          "isLoading": {
+            "type": "boolean",
+            "required": false
+          },
           "saveLabel": {
             "type": "string",
             "required": false
@@ -4119,6 +4142,7 @@
       "registryDependencies": [
         "button-filled",
         "button-unfilled",
+        "skeleton",
         "text"
       ]
     },
@@ -4155,6 +4179,7 @@
             "The shared text-action recipe supplies brand foreground, hover underline, and keyboard focus indication."
           ],
           "states": [
+            "Loading retains the card surface, sentence wrapping, and control footprints while replacing each fragment with an inert skeleton.",
             "The application owns the selected area, profile, available choices, permissions, and empty-state copy. Existing complete area-trigger labels remain compatible. Applications that separate the localizable settings noun from the control supply the area-only trigger label and noun together.",
             "The card reports popup requests without changing selection or expanded state.",
             "The surface follows the active theme rather than imposing always-dark colors."
@@ -4215,6 +4240,10 @@
             "type": "string",
             "required": false
           },
+          "isLoading": {
+            "type": "boolean",
+            "required": false
+          },
           "managingLabel": {
             "type": "string",
             "required": false
@@ -4263,6 +4292,7 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
+        "skeleton",
         "text"
       ]
     },
@@ -7204,6 +7234,7 @@
             "Do not use placeholder text as the only label. Keep label text concise and put format or consequence guidance in description."
           ],
           "states": [
+            "Loading masks field copy and the slotted control in place. The control remains mounted with its value, native form association, and accessible label intact; the field is inert until loading ends.",
             "The visible label is optional. Omit it when a nearby heading already names the field; Field still associates description and error text with the slotted control.",
             "Label, control, description, and error content follow the shared 4px vertical field flow without changing the slotted control's width or semantics. When the slotted control is borderless, description and error copy inset to that control's text origin instead of the resting bordered edge.",
             "Field exposes data-focused, data-filled, data-dirty, data-touched, data-invalid, data-disabled, and data-required hooks while the slotted control remains the source of value and interaction behavior.",
@@ -7269,6 +7300,10 @@
             "type": "string | undefined",
             "required": false
           },
+          "isLoading": {
+            "type": "boolean",
+            "required": false
+          },
           "label": {
             "type": "string",
             "required": false
@@ -7288,6 +7323,7 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
+        "skeleton",
         "text"
       ]
     },
@@ -7827,7 +7863,8 @@
           "states": [
             "The description renders verbatim in every state in which the owning settings card projects the component.",
             "The component has no internal visibility, editing, or dismissal state; the owning settings card controls whether it is present.",
-            "The content height is intrinsic: the banner contributes 8px block padding and its inner content container contributes 4px block padding. A single body-small line is 24px inside that container (4px + 16px line-height + 4px), followed by the tertiary bottom boundary."
+            "The content height is intrinsic: the banner contributes 8px block padding and its inner content container contributes 4px block padding. A single body-small line is 24px inside that container (4px + 16px line-height + 4px), followed by the tertiary bottom boundary.",
+            "isLoading replaces the copy with a wrapping text skeleton inside the original banner geometry."
           ],
           "responsiveBehavior": [
             "The component fills the available inline size and lets body-small copy wrap naturally.",
@@ -7874,6 +7911,10 @@
           "description": {
             "type": "string",
             "required": true
+          },
+          "isLoading": {
+            "type": "boolean",
+            "required": false
           }
         },
         "events": [],
@@ -7890,6 +7931,7 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
+        "skeleton",
         "text"
       ]
     },
@@ -11331,7 +11373,8 @@
             "Zero results display Page 1 of 1. A partial final page still derives from totalItems. Assistive status keeps the complete item range.",
             "loading preserves the full pagination surface, applies aria-busy to the navigation region, and prevents page or page-size requests.",
             "fitToPage appends a Fit to page choice. fitPageSize supplies its effective whole-item capacity; the closed trigger says Fit while page position reflects the resulting window. fitToPageInactive keeps that choice visible but unavailable when fitting is not meaningful for the current data shape. Pagination does not measure layouts itself.",
-            "showFirstLastButtons defaults to false. Enable it when direct jumps to both result boundaries materially help the workflow."
+            "showFirstLastButtons defaults to false. Enable it when direct jumps to both result boundaries materially help the workflow.",
+            "chromeLoading shows separate skeletons for the page-size label, selector, page position and each configured navigation control, retaining their intrinsic and responsive geometry. It also prevents requests."
           ],
           "responsiveBehavior": [
             "The full-width controls remain on one line with noun, selected size, a vertical divider, page position, Previous and Next, plus optional First and Last navigation.",
@@ -11361,6 +11404,10 @@
           }
         },
         "props": {
+          "chromeLoading": {
+            "type": "boolean",
+            "required": false
+          },
           "fitPageSize": {
             "type": "number | undefined",
             "required": false
@@ -11448,6 +11495,7 @@
         "button-unfilled",
         "divider",
         "select",
+        "skeleton",
         "text"
       ]
     },
@@ -12640,7 +12688,8 @@
             "Description-rich options grow beyond the fixed density height while retaining its minimum target size and primitive-owned selection anatomy.",
             "A visible group label uses the same density height and horizontal text origin as a menu section heading above the option list without adding a second interaction target. Copy uses text-body-small emphasis.",
             "Vertical form options use a 4px gap; a medium single-line option and its group label each use the shared 32px control height.",
-            "Form and settings usage omits a row hover or pressed wash by default; set hasInteractionFill only when each radio option is presented as a choice-list row."
+            "Form and settings usage omits a row hover or pressed wash by default; set hasInteractionFill only when each radio option is presented as a choice-list row.",
+            "isLoading preserves option geometry and the submitted form value while skeletonizing the circles and copy. Loading options cannot receive focus or change selection."
           ],
           "responsiveBehavior": [
             "Choose size from the density of the containing form or settings row.",
@@ -12740,6 +12789,10 @@
             "type": "boolean",
             "required": false
           },
+          "isLoading": {
+            "type": "boolean",
+            "required": false
+          },
           "name": {
             "type": "string | undefined",
             "required": false
@@ -12784,6 +12837,7 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
+        "skeleton",
         "text"
       ]
     },
@@ -13932,7 +13986,8 @@
             "The row is a neutral padded composition; selected, focus, and inactive states belong to the slotted Radio without a choice-list hover or pressed wash.",
             "The owning application handles dsChange and updates the slotted Radio value.",
             "Heading, saved-value choice, and slotted Radio stay mounted. presentation reflects on the host so view/edit is CSS visibility only; do not swap Host children or ngIf the Radio.",
-            "View presentation hides the slotted Radio with ::slotted host CSS and shows the saved option label plus optional consequence copy. The Radio stays in the tree."
+            "View presentation hides the slotted Radio with ::slotted host CSS and shows the saved option label plus optional consequence copy. The Radio stays in the tree.",
+            "isLoading preserves the heading and saved-value copy as text skeletons. The owner also sets isLoading on the slotted Radio when its editing presentation is pending."
           ],
           "responsiveBehavior": [
             "The row never exceeds its parent width; the slotted Radio keeps its option copy in the flexible column and wraps descriptions when needed."
@@ -13962,6 +14017,10 @@
             "type": "string",
             "required": false
           },
+          "isLoading": {
+            "type": "boolean",
+            "required": false
+          },
           "label": {
             "type": "string",
             "required": false
@@ -13989,6 +14048,7 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
+        "skeleton",
         "text"
       ]
     },
@@ -14027,7 +14087,8 @@
             "The application accepts or rejects change requests by updating the controlled checked value and owns persistence and errors.",
             "Name the enabled setting consistently; the label must not change when the switch is toggled.",
             "Non-emphasis rows without supporting copy use ds-text color secondary (foreground-secondary) on the title. Non-emphasis rows with description keep a primary title.",
-            "Supporting copy is text-body-small in every variant."
+            "Supporting copy is text-body-small in every variant.",
+            "isLoading preserves the copy wrapping and switch footprint, replaces them with skeletons, and prevents value changes."
           ],
           "responsiveBehavior": [
             "The copy wraps while the switch keeps its natural size in the trailing column, including at narrow widths."
@@ -14066,6 +14127,10 @@
             "type": "boolean",
             "required": false
           },
+          "isLoading": {
+            "type": "boolean",
+            "required": false
+          },
           "label": {
             "type": "string",
             "required": true
@@ -14094,6 +14159,7 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": [
+        "skeleton",
         "switch",
         "text"
       ]
@@ -14204,7 +14270,8 @@
             "Managed page-header capacity follows only the fixed shell breakpoint: roomy on desktop and compact on tablet. Opening PanelTools does not compact or constrain BarTitle.",
             "Mobile keeps at most the first eligible ordered icon command visible and moves labeled buttons, menu choices, split actions, and explicit overflow commands into one shell-owned text-only page-actions menu.",
             "The bottom bar remains visible at all route and tool depths in the foundation release.",
-            "A mobile shell banner paints a fixed top edge with its resolved background through exit motion. Color variants and theme changes follow the banner automatically; native Safari status-area tint remains a device-verified browser behavior."
+            "A mobile shell banner paints a fixed top edge with its resolved background through exit motion. Color variants and theme changes follow the banner automatically; native Safari status-area tint remains a device-verified browser behavior.",
+            "The routed content lane owns a size-query container. Full-height page compositions consume --ds-shell-content-block-size and subtract their page-local header; banners and desktop or mobile navigation resize that lane automatically."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -14853,7 +14920,9 @@
             "Shimmer is on by default and may be disabled for a static placeholder. Reduced motion always produces the static final shape.",
             "Rounded is an optional visual treatment for icon and control atoms rather than a semantic state.",
             "Omitted background is for primary and secondary surfaces. Explicit faint documents a faint parent while using the same standard base and shimmer tokens; other contexts use matching surface tokens.",
-            "The owner decides whether to delay initial visibility and when to replace the complete composition."
+            "The owner decides whether to delay initial visibility and when to replace the complete composition.",
+            "preserveLayout uses projected text or a control as the hidden, inert size source, retaining wrapping and responsive dimensions; set isLoading false to reveal that same mounted content. Use one atom per text or control, not a whole page.",
+            "Control appearance mirrors the pending control: filled masks the entire container; outlined retains its border with icon or text atoms; borderless masks only those contents. Set controlContent to match the control anatomy and preserveLayout to retain its exact footprint."
           ],
           "responsiveBehavior": [
             "The owning layout changes placeholder count, width, visibility, and arrangement to match its real responsive content.",
@@ -14897,7 +14966,11 @@
                   "textVariant",
                   "iconSize",
                   "controlSize",
-                  "rounded"
+                  "rounded",
+                  "preserveLayout",
+                  "isLoading",
+                  "controlAppearance",
+                  "controlContent"
                 ]
               },
               {
@@ -14910,7 +14983,9 @@
                 "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
                 "props": [
                   "background",
-                  "variant"
+                  "variant",
+                  "controlAppearance",
+                  "controlContent"
                 ]
               }
             ],
@@ -14922,12 +14997,28 @@
             "type": "SkeletonBackground | undefined",
             "required": false
           },
+          "controlAppearance": {
+            "type": "SkeletonControlAppearance",
+            "required": false
+          },
+          "controlContent": {
+            "type": "SkeletonControlContent",
+            "required": false
+          },
           "controlSize": {
             "type": "ControlSize",
             "required": false
           },
           "iconSize": {
             "type": "IconSize",
+            "required": false
+          },
+          "isLoading": {
+            "type": "boolean",
+            "required": false
+          },
+          "preserveLayout": {
+            "type": "boolean",
             "required": false
           },
           "rounded": {
@@ -14952,7 +15043,9 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          ""
+        ],
         "exports": {
           "customElement": "ds-skeleton",
           "react": "DsSkeleton",
@@ -14964,7 +15057,9 @@
         "@ds-mo/ui",
         "@ds-mo/tokens"
       ],
-      "registryDependencies": []
+      "registryDependencies": [
+        "skeleton"
+      ]
     },
     {
       "name": "slider",
@@ -15886,7 +15981,8 @@
             "While any checkbox selection is active, row activation toggles selection instead of opening details. Clearing the selection restores ordinary row activation. Nested controls retain their own intent, and disabled or non-selectable rows cannot be selected by activating their row.",
             "Use surfaceOpenRowId to identify the interactive row associated with a visible detail panel or other contextual surface. The application owns opening, same-row toggling, switching records, and closing; retain the identity through exit motion, then clear it. Move it when panel navigation changes the displayed record. This pressed wash spans sticky and scrolling cells, follows stable row identity through virtualization, and never checks a checkbox or changes selectedRowIds. Group expansion remains an inline disclosure.",
             "An external ds-data-preferences may own column controls. Hide only the built-in Customize trigger, keep column customization enabled, and share hidden-column and ordering state with the external surface.",
-            "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback."
+            "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback.",
+            "chromeLoading replaces column header labels and selection chrome with skeletons, preserving column geometry and accessible names as well as table-owned caption controls."
           ],
           "responsiveBehavior": [
             "Editable cells compose the shared borderless controls with cell-owned interaction and focus chrome. Only the active cell mounts a field. Single-select choices complete the edit immediately; multiline fields reserve Enter for a newline and use Ctrl/Command+Enter to commit. Date and time fields keep their picker keyboard behavior and emit canonical scalar values. Drafts stay local until a controlled change is proposed.",

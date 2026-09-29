@@ -72,7 +72,8 @@
     "While any checkbox selection is active, row activation toggles selection instead of opening details. Clearing the selection restores ordinary row activation. Nested controls retain their own intent, and disabled or non-selectable rows cannot be selected by activating their row.",
     "Use surfaceOpenRowId to identify the interactive row associated with a visible detail panel or other contextual surface. The application owns opening, same-row toggling, switching records, and closing; retain the identity through exit motion, then clear it. Move it when panel navigation changes the displayed record. This pressed wash spans sticky and scrolling cells, follows stable row identity through virtualization, and never checks a checkbox or changes selectedRowIds. Group expansion remains an inline disclosure.",
     "An external ds-data-preferences may own column controls. Hide only the built-in Customize trigger, keep column customization enabled, and share hidden-column and ordering state with the external surface.",
-    "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback."
+    "Borderless toolbar compositions omit resting control borders while retaining focus and interaction feedback.",
+    "chromeLoading replaces column header labels and selection chrome with skeletons, preserving column geometry and accessible names as well as table-owned caption controls."
   ],
   "responsiveBehavior": [
     "Editable cells compose the shared borderless controls with cell-owned interaction and focus chrome. Only the active cell mounts a field. Single-select choices complete the edit immediately; multiline fields reserve Enter for a newline and use Ctrl/Command+Enter to commit. Date and time fields keep their picker keyboard behavior and emit canonical scalar values. Drafts stay local until a controlled change is proposed.",

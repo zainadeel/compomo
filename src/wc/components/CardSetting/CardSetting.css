@@ -47,6 +47,7 @@
 
 .card-setting__copy {
   align-items: center;
+  position: relative;
 }
 
 ds-text.card-setting__title {
@@ -59,6 +60,16 @@ ds-text.card-setting__title {
 
 .card-setting__actions {
   flex-shrink: 0;
+  position: relative;
+}
+
+:host(.card-setting--loading) .card-setting__title {
+  visibility: hidden;
+}
+
+.card-setting__heading-skeleton {
+  position: absolute;
+  inset-inline-start: var(--dimension-space-100);
 }
 
 .card-setting__panel {

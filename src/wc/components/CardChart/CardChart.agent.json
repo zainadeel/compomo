@@ -39,7 +39,8 @@
   "states": [
     "Custom mode provides flexible body chrome and does not mutate chart or legend interaction.",
     "Chart mode keeps a slotted external legend static by disabling hover emphasis.",
-    "showFilter adds the standard filter action and emits dsFilterClick without owning filter state."
+    "showFilter adds the standard filter action and emits dsFilterClick without owning filter state.",
+    "isLoading preserves card geometry, skeletonizes the heading and standard filter control, and replaces a chart canvas with one quiet placeholder. The owner supplies skeletons for custom body content and slotted actions."
   ],
   "responsiveBehavior": [
     "The sm, md, or lg width sets a matching token-based minimum height and remains constrained by its parent.",

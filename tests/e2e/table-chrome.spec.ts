@@ -1382,7 +1382,7 @@ test('preserves table-owned caption control geometry while its chrome is loading
   await table.evaluate((element: HTMLElement & { chromeLoading: boolean }) => {
     element.chromeLoading = true;
   });
-  await expect(trailing.locator('ds-skeleton')).toHaveCount(2);
+  await expect(trailing.locator('ds-skeleton.skeleton--control')).toHaveCount(2);
   await expect(table.getByRole('button', { name: 'Customize table' })).toHaveCount(0);
   await expect(table.getByRole('button', { name: 'Change table variation' })).toHaveCount(0);
   const loadingGeometry = await geometry();

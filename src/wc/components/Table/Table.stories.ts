@@ -2054,7 +2054,7 @@ export const InitialAndOutcomeStates: Story = {
     docs: {
       description: {
         story:
-          'Initial loading preserves the real table grid and uses each column’s representative image, multiline text, Tag, icon, or action geometry. chromeLoading can replace opted-in table-owned caption controls without changing their footprint. Ten rows fill a useful default viewport. Empty and initial error keep the table caption and columns present while replacing only the body with ds-empty-state. Height-bounded empty and error tables fill the remaining body below the column header.',
+          'Initial loading preserves the real table grid and uses each column’s representative image, multiline text, Tag, icon, or action geometry. chromeLoading replaces column header copy and opted-in table-owned caption controls without changing their footprint or accessible column names. Ten rows fill a useful default viewport. Empty and initial error keep the table caption and columns present while replacing only the body with ds-empty-state. Height-bounded empty and error tables fill the remaining body below the column header.',
       },
     },
   },

@@ -550,30 +550,42 @@ export class CardOverview {
                     <div class="card-overview__period-current">
                       <slot name="period">
                         {this.periodLabel && (
-                          /* eslint-disable-next-line compomo/prefer-direct-ds-text -- Fixed copy uses the same structural frame and label inset as a slotted Select. */
                           <div class="card-overview__period-fixed ds-control-frame">
-                            <ds-text
-                              as="span"
-                              class="ds-control-label-box"
-                              variant="text-body-medium"
-                              emphasis
-                              color={ALWAYS_DARK_PRIMARY}
+                            <ds-skeleton
+                              preserveLayout
+                              isLoading={this.isLoading}
+                              background="always-dark"
                             >
-                              {this.periodLabel}
-                            </ds-text>
+                              <ds-text
+                                as="span"
+                                class="ds-control-label-box"
+                                variant="text-body-medium"
+                                emphasis
+                                color={ALWAYS_DARK_PRIMARY}
+                              >
+                                {this.periodLabel}
+                              </ds-text>
+                            </ds-skeleton>
                           </div>
                         )}
                       </slot>
                     </div>
                     {this.comparisonLabel && (
-                      <ds-text
-                        as="span"
-                        class="card-overview__period-comparison ds-control-label-box"
-                        variant="text-body-medium"
-                        color={ALWAYS_DARK_SECONDARY}
+                      <ds-skeleton
+                        class="card-overview__period-comparison"
+                        preserveLayout
+                        isLoading={this.isLoading}
+                        background="always-dark"
                       >
-                        {this.comparisonLabel}
-                      </ds-text>
+                        <ds-text
+                          as="span"
+                          class="ds-control-label-box"
+                          variant="text-body-medium"
+                          color={ALWAYS_DARK_SECONDARY}
+                        >
+                          {this.comparisonLabel}
+                        </ds-text>
+                      </ds-skeleton>
                     )}
                   </div>
                   <div class="card-overview__filter">

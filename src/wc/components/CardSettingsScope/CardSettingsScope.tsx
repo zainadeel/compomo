@@ -34,11 +34,14 @@ export class CardSettingsScope {
   @Prop() profileExpanded: boolean = false;
   /** Empty informational profile popups use dialog semantics instead of a menu. */
   @Prop() profilePopup: 'menu' | 'dialog' = 'menu';
+  /** Replace sentence fragments and controls with skeletons inside the same card. */
+  @Prop() isLoading: boolean = false;
 
   /** Requests a popup; the owner supplies choices, open state, and selection. */
   @Event() dsScopeRequest!: EventEmitter<SettingsScopeRequest>;
 
   private request(scope: SettingsScopeRequest['scope'], event: MouseEvent) {
+    if (this.isLoading) return;
     this.dsScopeRequest.emit({
       scope,
       anchor: event.currentTarget as HTMLButtonElement,
@@ -48,47 +51,57 @@ export class CardSettingsScope {
 
   render() {
     return (
-      <Host>
+      <Host aria-busy={this.isLoading ? 'true' : undefined}>
         <div
           class="card-settings-scope ds-control-elevation ds-control-elevation--sm"
           role="region"
           aria-label={this.scopeLabel}
         >
-          <ds-text as="span" variant="text-body-medium" color="primary">
-            {this.managingLabel}
-          </ds-text>
-          <button
-            type="button"
-            class="card-settings-scope__action ds-text-action ds-focus-ring"
-            aria-haspopup="menu"
-            aria-controls={this.areaControls}
-            aria-expanded={String(this.areaExpanded)}
-            onClick={event => this.request('area', event)}
-          >
-            <ds-text as="span" variant="text-body-medium" color="inherit">
-              {this.areaLabel}
-            </ds-text>
-          </button>
-          {this.settingsLabel.trim() ? (
+          <ds-skeleton preserveLayout={true} isLoading={this.isLoading}>
             <ds-text as="span" variant="text-body-medium" color="primary">
-              {this.settingsLabel}
+              {this.managingLabel}
             </ds-text>
+          </ds-skeleton>
+          <ds-skeleton preserveLayout={true} isLoading={this.isLoading}>
+            <button
+              type="button"
+              class="card-settings-scope__action ds-text-action ds-focus-ring"
+              aria-haspopup="menu"
+              aria-controls={this.areaControls}
+              aria-expanded={String(this.areaExpanded)}
+              onClick={event => this.request('area', event)}
+            >
+              <ds-text as="span" variant="text-body-medium" color="inherit">
+                {this.areaLabel}
+              </ds-text>
+            </button>
+          </ds-skeleton>
+          {this.settingsLabel.trim() ? (
+            <ds-skeleton preserveLayout={true} isLoading={this.isLoading}>
+              <ds-text as="span" variant="text-body-medium" color="primary">
+                {this.settingsLabel}
+              </ds-text>
+            </ds-skeleton>
           ) : null}
-          <ds-text as="span" variant="text-body-medium" color="primary">
-            {this.forLabel}
-          </ds-text>
-          <button
-            type="button"
-            class="card-settings-scope__action ds-text-action ds-focus-ring"
-            aria-haspopup={this.profilePopup}
-            aria-controls={this.profileControls}
-            aria-expanded={String(this.profileExpanded)}
-            onClick={event => this.request('profile', event)}
-          >
-            <ds-text as="span" variant="text-body-medium" color="inherit">
-              {this.profileLabel}
+          <ds-skeleton preserveLayout={true} isLoading={this.isLoading}>
+            <ds-text as="span" variant="text-body-medium" color="primary">
+              {this.forLabel}
             </ds-text>
-          </button>
+          </ds-skeleton>
+          <ds-skeleton preserveLayout={true} isLoading={this.isLoading}>
+            <button
+              type="button"
+              class="card-settings-scope__action ds-text-action ds-focus-ring"
+              aria-haspopup={this.profilePopup}
+              aria-controls={this.profileControls}
+              aria-expanded={String(this.profileExpanded)}
+              onClick={event => this.request('profile', event)}
+            >
+              <ds-text as="span" variant="text-body-medium" color="inherit">
+                {this.profileLabel}
+              </ds-text>
+            </button>
+          </ds-skeleton>
         </div>
       </Host>
     );

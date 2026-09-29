@@ -1,1 +1,6 @@
-export type { SkeletonBackground, SkeletonVariant } from './Skeleton';
+export type {
+  SkeletonBackground,
+  SkeletonVariant,
+  SkeletonControlAppearance,
+  SkeletonControlContent,
+} from './Skeleton';

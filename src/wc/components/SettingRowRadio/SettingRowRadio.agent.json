@@ -28,7 +28,8 @@
     "The row is a neutral padded composition; selected, focus, and inactive states belong to the slotted Radio without a choice-list hover or pressed wash.",
     "The owning application handles dsChange and updates the slotted Radio value.",
     "Heading, saved-value choice, and slotted Radio stay mounted. presentation reflects on the host so view/edit is CSS visibility only; do not swap Host children or ngIf the Radio.",
-    "View presentation hides the slotted Radio with ::slotted host CSS and shows the saved option label plus optional consequence copy. The Radio stays in the tree."
+    "View presentation hides the slotted Radio with ::slotted host CSS and shows the saved option label plus optional consequence copy. The Radio stays in the tree.",
+    "isLoading preserves the heading and saved-value copy as text skeletons. The owner also sets isLoading on the slotted Radio when its editing presentation is pending."
   ],
   "responsiveBehavior": [
     "The row never exceeds its parent width; the slotted Radio keeps its option copy in the flexible column and wraps descriptions when needed."

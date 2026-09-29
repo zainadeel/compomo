@@ -33,6 +33,7 @@
 }
 
 .card-chart__copy {
+  position: relative;
   align-items: center;
 }
 
@@ -72,6 +73,7 @@ ds-text.card-chart__title {
 }
 
 .card-chart__chart {
+  position: relative;
   display: grid;
   flex: 1 1 auto;
   align-items: center;
@@ -91,9 +93,30 @@ ds-text.card-chart__title {
 }
 
 .card-chart__legend {
+  position: relative;
   flex: 0 0 auto;
   box-sizing: border-box;
   padding: 0 var(--dimension-space-100) var(--dimension-space-100) var(--dimension-space-100);
+}
+
+:host(.card-chart--loading) .card-chart__title,
+:host(.card-chart--loading) .card-chart__chart,
+:host(.card-chart--loading) .card-chart__legend {
+  visibility: hidden;
+}
+
+.card-chart__heading-skeleton {
+  position: absolute;
+  inset-inline-start: calc(var(--ds-control-padding-inline) + var(--ds-control-label-inset));
+  width: min(60%, calc(var(--dimension-size-800) * 2));
+}
+
+.card-chart__chart > .card-chart__plot-skeleton {
+  visibility: visible;
+  position: absolute;
+  inset: var(--dimension-space-200);
+  width: auto;
+  height: auto;
 }
 
 @media (forced-colors: active) {
@@ -106,4 +129,11 @@ ds-text.card-chart__title {
   :host::after {
     box-shadow: none;
   }
+}
+
+.card-chart__legend-skeleton {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: var(--dimension-space-100);
+  visibility: visible;
 }

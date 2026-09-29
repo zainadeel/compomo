@@ -53,6 +53,7 @@ const settingsBody = (copy: string) => html`
 export const View: Story = {
   render: args => html`
     <ds-card-setting
+      .isLoading=${args['isLoading'] ?? false}
       heading=${args['heading']}
       card-width=${args['cardWidth']}
       ?editing=${args['editing']}
@@ -182,3 +183,5 @@ export const Immediate: Story = {
     </ds-card-setting>
   `,
 };
+
+export const Loading: Story = { ...View, args: { isLoading: true } };
