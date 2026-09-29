@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.12.1](https://github.com/zainadeel/compomo/compare/v15.12.0...v15.12.1) (2026-09-29)
+
+
+### Fixed
+
+* preserve skeleton geometry and compact control anatomy ([#672](https://github.com/zainadeel/compomo/issues/672)) ([b341959](https://github.com/zainadeel/compomo/commit/b3419597352241dd45406db76bd0d80e3648c4e1))
+
 ## [15.12.0](https://github.com/zainadeel/compomo/compare/v15.11.2...v15.12.0) (2026-09-29)
 
 
