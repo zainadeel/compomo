@@ -1,5 +1,12 @@
 # Changelog
 
+## [15.12.0](https://github.com/zainadeel/compomo/compare/v15.11.2...v15.12.0) (2026-09-29)
+
+
+### Added
+
+* preserve component layouts through loading states ([#670](https://github.com/zainadeel/compomo/issues/670)) ([f23d388](https://github.com/zainadeel/compomo/commit/f23d3884dcedfe4379b22cb50c103367bf69ae38))
+
 ## [15.11.2](https://github.com/zainadeel/compomo/compare/v15.11.1...v15.11.2) (2026-09-28)
 
 
