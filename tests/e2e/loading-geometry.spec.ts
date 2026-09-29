@@ -154,18 +154,22 @@ test('settings scope loading retains the surface and individual wrapped controls
     const before = await geometry(scope.locator('.card-settings-scope'));
     const buttons = scope.locator('button');
     const buttonSizes = await Promise.all([buttons.nth(0), buttons.nth(1)].map(geometry));
+    const labelSizes = await Promise.all(
+      [buttons.nth(0), buttons.nth(1)].map(button => geometry(button.locator('ds-text')))
+    );
     await scope.evaluate(element => {
       (element as HTMLDsCardSettingsScopeElement).isLoading = true;
     });
     await expect(scope).toHaveAttribute('aria-busy', 'true');
     await expect(scope.getByRole('button')).toHaveCount(0);
     expect(await geometry(scope.locator('.card-settings-scope'))).toEqual(before);
-    const controls = scope.locator('ds-skeleton').filter({ has: page.locator('button') });
+    expect(await Promise.all([buttons.nth(0), buttons.nth(1)].map(geometry))).toEqual(buttonSizes);
+    const controls = buttons.locator('ds-skeleton');
     await expect(controls).toHaveCount(2);
     const placeholders = await Promise.all([controls.nth(0), controls.nth(1)].map(geometry));
     for (let index = 0; index < placeholders.length; index++) {
-      expect(placeholders[index].width).toBe(buttonSizes[index].width);
-      expect(placeholders[index].height).toBe(buttonSizes[index].height);
+      expect(placeholders[index].width).toBe(labelSizes[index].width);
+      expect(placeholders[index].height).toBe(labelSizes[index].height);
     }
     await scope.evaluate(element => {
       (element as HTMLDsCardSettingsScopeElement).isLoading = false;
@@ -246,6 +250,61 @@ test('control skeletons follow filled, outlined, and borderless anatomy @cross-b
       else await expect(frame).toHaveCSS('box-shadow', 'none');
     }
   }
+});
+
+test('control skeletons retain square icons and follow compact caption owners @cross-browser', async ({
+  page,
+}) => {
+  await page.goto('/skeleton.html');
+  await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
+  const control = page.locator('#control');
+  await control.evaluate(element => {
+    const owner = document.createElement('ds-data-toolbar');
+    owner.id = 'caption-owner';
+    owner.style.display = 'block';
+    owner.style.width = '900px';
+    element.parentElement?.append(owner);
+    owner.append(element);
+    const skeleton = element as HTMLDsSkeletonElement;
+    skeleton.controlAppearance = 'outlined';
+    skeleton.controlContent = 'icon-label';
+    skeleton.collapseLabel = true;
+  });
+  const owner = page.locator('#caption-owner');
+  const label = control.locator('.skeleton__control-label');
+  const icon = control.locator('ds-skeleton.skeleton--icon .skeleton__shape');
+  await expect(label).toBeVisible();
+  for (const appearance of ['outlined', 'borderless'] as const) {
+    await control.evaluate((element, value) => {
+      (element as HTMLDsSkeletonElement).controlAppearance = value;
+    }, appearance);
+    await owner.evaluate(element => (element.style.width = '899px'));
+    await control.evaluate(element => ((element as HTMLDsSkeletonElement).width = 32));
+    await expect(label).toHaveCount(0);
+    await expect(icon).toHaveCSS('width', '15px');
+    await expect(icon).toHaveCSS('height', '15px');
+    const frameBox = await control.boundingBox();
+    const iconBox = await icon.boundingBox();
+    expect(iconBox!.x + iconBox!.width / 2).toBeCloseTo(frameBox!.x + frameBox!.width / 2, 1);
+
+    // Moving the same skeleton restores observation of its current owner.
+    await control.evaluate(element => {
+      const owner = element.parentElement!;
+      element.remove();
+      owner.style.width = '900px';
+      (element as HTMLDsSkeletonElement).width = 160;
+      owner.append(element);
+    });
+    await expect(label).toBeVisible();
+  }
+  await owner.evaluate(element => (element.style.width = '899px'));
+  await expect(label).toHaveCount(0);
+  await control.evaluate(element => ((element as HTMLDsSkeletonElement).collapseLabel = false));
+  await expect(label).toBeVisible();
+  // A constrained icon-and-label control can shrink its label, never its icon.
+  await control.evaluate(element => ((element as HTMLDsSkeletonElement).width = 40));
+  await expect(icon).toHaveCSS('width', '15px');
+  await expect(icon).toHaveCSS('height', '15px');
 });
 
 test('chart loading hides its heading and plot without changing the card @cross-browser', async ({
@@ -357,7 +416,11 @@ test('field loading retains its associated control, value and wrapped geometry @
     form.id = 'loading-field-form';
     form.style.width = '220px';
     form.innerHTML =
-      '<ds-field id="loading-field" label="Vehicle name with a wrapped label" description="Keep this guidance associated with the same form control."><ds-input name="vehicle" value="VH-1042"></ds-input></ds-field>';
+      '<ds-field id="loading-field" label="Vehicle name with a wrapped label" description="Keep this guidance associated with the same form control."><ds-input name="vehicle" value="VH-1042"></ds-input></ds-field>' +
+      '<ds-field id="loading-placeholder" label="Image URL" is-loading><ds-input placeholder="Leave empty for a standalone paper surface"></ds-input></ds-field>' +
+      '<ds-field id="loading-selection" label="Fit"><ds-select value="cover" width="fill"></ds-select></ds-field>';
+    const select = form.querySelector('ds-select')!;
+    select.options = [{ label: 'Cover', value: 'cover' }];
     document.body.append(form);
   });
   const field = page.locator('#loading-field');
@@ -368,6 +431,19 @@ test('field loading retains its associated control, value and wrapped geometry @
   await field.evaluate(element => ((element as HTMLDsFieldElement).isLoading = true));
   await expect(field).toHaveAttribute('inert', '');
   await expect(field.locator('.field__control-skeleton')).toBeVisible();
+  // DOM locators test paint visibility. Role locators alone disappear under inert
+  // even when a broken projected-content selector leaves the control visible.
+  await expect(input).toBeHidden();
+  await expect(page.locator('#loading-placeholder input')).toBeHidden();
+  await expect(page.locator('#loading-placeholder .field__control-skeleton')).toBeVisible();
+  const selection = page.locator('#loading-selection');
+  const selectedLabel = selection.locator('ds-text').filter({ hasText: 'Cover' });
+  await expect(selectedLabel).toBeVisible();
+  await selection.evaluate(element => ((element as HTMLDsFieldElement).isLoading = true));
+  await expect(selection.locator('button')).toBeHidden();
+  await expect(selectedLabel).toBeHidden();
+  await expect(selection.locator('ds-icon')).toBeHidden();
+  await expect(selection.locator('.field__control-skeleton')).toBeVisible();
   await expect(field.locator('.field__copy-source').first()).toBeHidden();
   expect(await geometry(field)).toEqual(before);
   expect(
@@ -376,6 +452,9 @@ test('field loading retains its associated control, value and wrapped geometry @
     )
   ).toBe('VH-1042');
   await field.evaluate(element => ((element as HTMLDsFieldElement).isLoading = false));
+  await selection.evaluate(element => ((element as HTMLDsFieldElement).isLoading = false));
+  await expect(selectedLabel).toBeVisible();
+  await expect(selection.locator('button')).toHaveAccessibleName('Fit');
   await expect(input).toBeVisible();
   await expect(input).toHaveAccessibleName('Vehicle name with a wrapped label');
   await expect(input).toHaveAccessibleDescription(

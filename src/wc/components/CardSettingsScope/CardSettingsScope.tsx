@@ -51,31 +51,32 @@ export class CardSettingsScope {
 
   render() {
     return (
-      <Host aria-busy={this.isLoading ? 'true' : undefined}>
+      <Host aria-busy={this.isLoading ? 'true' : undefined} inert={this.isLoading}>
         <div
           class="card-settings-scope ds-control-elevation ds-control-elevation--sm"
           role="region"
           aria-label={this.scopeLabel}
+          aria-hidden={this.isLoading ? 'true' : undefined}
         >
           <ds-skeleton preserveLayout={true} isLoading={this.isLoading}>
             <ds-text as="span" variant="text-body-medium" color="primary">
               {this.managingLabel}
             </ds-text>
           </ds-skeleton>
-          <ds-skeleton preserveLayout={true} isLoading={this.isLoading}>
-            <button
-              type="button"
-              class="card-settings-scope__action ds-text-action ds-focus-ring"
-              aria-haspopup="menu"
-              aria-controls={this.areaControls}
-              aria-expanded={String(this.areaExpanded)}
-              onClick={event => this.request('area', event)}
-            >
+          <button
+            type="button"
+            class="card-settings-scope__action ds-text-action ds-focus-ring"
+            aria-haspopup="menu"
+            aria-controls={this.areaControls}
+            aria-expanded={String(this.areaExpanded)}
+            onClick={event => this.request('area', event)}
+          >
+            <ds-skeleton preserveLayout={true} isLoading={this.isLoading}>
               <ds-text as="span" variant="text-body-medium" color="inherit">
                 {this.areaLabel}
               </ds-text>
-            </button>
-          </ds-skeleton>
+            </ds-skeleton>
+          </button>
           {this.settingsLabel.trim() ? (
             <ds-skeleton preserveLayout={true} isLoading={this.isLoading}>
               <ds-text as="span" variant="text-body-medium" color="primary">
@@ -88,20 +89,20 @@ export class CardSettingsScope {
               {this.forLabel}
             </ds-text>
           </ds-skeleton>
-          <ds-skeleton preserveLayout={true} isLoading={this.isLoading}>
-            <button
-              type="button"
-              class="card-settings-scope__action ds-text-action ds-focus-ring"
-              aria-haspopup={this.profilePopup}
-              aria-controls={this.profileControls}
-              aria-expanded={String(this.profileExpanded)}
-              onClick={event => this.request('profile', event)}
-            >
+          <button
+            type="button"
+            class="card-settings-scope__action ds-text-action ds-focus-ring"
+            aria-haspopup={this.profilePopup}
+            aria-controls={this.profileControls}
+            aria-expanded={String(this.profileExpanded)}
+            onClick={event => this.request('profile', event)}
+          >
+            <ds-skeleton preserveLayout={true} isLoading={this.isLoading}>
               <ds-text as="span" variant="text-body-medium" color="inherit">
                 {this.profileLabel}
               </ds-text>
-            </button>
-          </ds-skeleton>
+            </ds-skeleton>
+          </button>
         </div>
       </Host>
     );

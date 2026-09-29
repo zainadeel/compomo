@@ -6,6 +6,7 @@ import '../../../../dist/components/ds-icon.js';
 import '../../../../dist/components/ds-button-filled.js';
 import '../../../../dist/components/ds-button-unfilled.js';
 import '../../../../dist/components/ds-tag.js';
+import '../../../../dist/components/ds-data-toolbar.js';
 
 const TEXT_VARIANTS = [
   'text-display-medium',
@@ -501,6 +502,62 @@ export const ControlAppearances: Story = {
           .hasBorder=${false}
         ></ds-button-unfilled>
       </ds-skeleton>
+    </div>
+  `,
+};
+
+export const CompactToolbar: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Resize the toolbar: collapsible control placeholders use the same compact presentation as their mounted controls. Search keeps its icon and text anatomy.',
+      },
+    },
+  },
+  render: () => html`
+    <div
+      style="resize:horizontal;overflow:auto;width:100%;min-width:var(--dimension-menu-width-xs);max-width:100%;"
+    >
+      <ds-data-toolbar label="Loading table controls">
+        <ds-skeleton
+          slot="start"
+          preserve-layout
+          variant="control"
+          control-appearance="outlined"
+          control-content="icon-label"
+          collapse-label
+        >
+          <ds-button-unfilled
+            variant="icon-label"
+            icon="Bookmark"
+            label="Views"
+            collapse-label
+          ></ds-button-unfilled>
+        </ds-skeleton>
+        <ds-skeleton
+          slot="search"
+          variant="control"
+          control-appearance="outlined"
+          control-content="icon-label"
+          width="100%"
+        ></ds-skeleton>
+        <ds-skeleton
+          slot="trailing"
+          preserve-layout
+          variant="control"
+          control-appearance="outlined"
+          control-content="icon-label"
+          collapse-label
+        >
+          <ds-button-unfilled
+            variant="icon-label"
+            icon="Filters"
+            label="Filter"
+            collapse-label
+          ></ds-button-unfilled>
+        </ds-skeleton>
+      </ds-data-toolbar>
     </div>
   `,
 };

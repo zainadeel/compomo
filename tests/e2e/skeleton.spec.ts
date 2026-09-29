@@ -145,3 +145,51 @@ test('supports static mode and removes shimmer motion under reduced motion', asy
     )
     .toBe('none');
 });
+
+test('retained text and icon skeletons paint the same base under secondary copy @cross-browser', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.locator('section').evaluate(element => {
+    element.style.color = 'var(--color-foreground-secondary)';
+    element.style.background = 'var(--color-background-primary)';
+    const text = element.querySelector<HTMLDsSkeletonElement>('#text')!;
+    text.preserveLayout = true;
+    text.width = 80;
+    text.innerHTML = '<span style="line-height:var(--typography-lineheight-md)">Rows</span>';
+  });
+  await expect(page.locator('#text')).toHaveClass(/skeleton--preserve-layout/);
+  for (const theme of ['light', 'dark']) {
+    await page.locator('html').evaluate((element, value) => (element.dataset.theme = value), theme);
+    const images = await Promise.all(
+      ['#text', '#icon'].map(async selector =>
+        (await page.locator(selector).screenshot({ animations: 'disabled' })).toString('base64')
+      )
+    );
+    const colors = await page.evaluate(async sources => {
+      return Promise.all(
+        sources.map(async source => {
+          const image = new Image();
+          image.src = `data:image/png;base64,${source}`;
+          await image.decode();
+          const canvas = document.createElement('canvas');
+          canvas.width = image.width;
+          canvas.height = image.height;
+          const context = canvas.getContext('2d')!;
+          context.drawImage(image, 0, 0);
+          return Array.from(
+            context.getImageData(Math.floor(image.width / 2), Math.floor(image.height / 2), 1, 1)
+              .data
+          );
+        })
+      );
+    }, images);
+    // Masked surfaces can round an 8-bit channel by one during compositing.
+    for (let channel = 0; channel < 4; channel++) {
+      expect(
+        Math.abs(colors[0][channel] - colors[1][channel]),
+        `${theme}: text must not apply secondary-foreground alpha twice`
+      ).toBeLessThanOrEqual(1);
+    }
+  }
+});

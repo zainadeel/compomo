@@ -24,7 +24,7 @@
 }
 
 .field__copy-source--loading,
-:host(.field--loading) .field__control > :not(slot):not(.field__control-skeleton) {
+:host(.field--loading) .field__control ::slotted(:not(.field__control-skeleton)) {
   visibility: hidden;
 }
 
