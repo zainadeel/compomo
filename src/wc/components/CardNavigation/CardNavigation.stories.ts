@@ -31,6 +31,7 @@ type Story = StoryObj;
 export const NavigationOnly: Story = {
   render: args => html`
     <ds-card-navigation
+      .isLoading=${args['isLoading'] ?? false}
       heading=${args['heading']}
       description=${args['description']}
       href=${args['href']}
@@ -86,3 +87,5 @@ export const WithContent: Story = {
     </ds-card-navigation>
   `,
 };
+
+export const Loading: Story = { ...NavigationOnly, args: { isLoading: true } };

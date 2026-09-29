@@ -175,6 +175,11 @@ ds-text.ds-table__footer-summary {
   margin-inline-start: auto;
 }
 
+.ds-table__footer-summary-skeleton {
+  min-width: 0;
+  margin-inline-start: auto;
+}
+
 .ds-table__bar-trailing ds-pagination {
   max-inline-size: 100%;
 }
@@ -202,6 +207,20 @@ ds-skeleton.ds-table__skeleton-checkbox {
   justify-content: center;
   inline-size: var(--dimension-size-300);
   block-size: var(--dimension-size-300);
+}
+
+.ds-table__loading-label {
+  display: inline-grid;
+  min-inline-size: 0;
+  align-items: center;
+}
+
+.ds-table__loading-label > * {
+  grid-area: 1 / 1;
+}
+
+.ds-table__loading-label > ds-text {
+  visibility: hidden;
 }
 
 .ds-table__caption-customizer {

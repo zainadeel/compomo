@@ -35,6 +35,8 @@ export class CardNavigation {
 
   /** Optional supporting copy shown below the heading. */
   @Prop() description: string | undefined;
+  /** Preserve the card layout while its copy and navigation affordance show skeletons. */
+  @Prop() isLoading = false;
 
   /**
    * `navigation-only` makes the complete card the link. `content` keeps the
@@ -70,6 +72,7 @@ export class CardNavigation {
           'ds-focus-ring-inset': !!href,
         }}
         href={href}
+        inert={this.isLoading}
         onClick={href ? (event: MouseEvent) => this.handleNavigation(href, event) : undefined}
       >
         <div
@@ -81,41 +84,58 @@ export class CardNavigation {
             'ds-interaction-fill__content': true,
           }}
         >
-          <ds-text
-            class="card-navigation__title ds-chrome-header__heading"
-            variant="text-title-small"
-            emphasis
-            color="primary"
-            as="h2"
-          >
-            {this.heading}
-          </ds-text>
-          {description ? (
+          <div class="card-navigation__line">
             <ds-text
-              class="card-navigation__description ds-chrome-header__description"
-              variant="text-body-small"
-              color="secondary"
-              as="span"
+              class="card-navigation__title ds-chrome-header__heading"
+              variant="text-title-small"
+              emphasis
+              color="primary"
+              as="h2"
             >
-              {description}
+              {this.heading}
             </ds-text>
+            {this.isLoading && (
+              <ds-skeleton
+                width="min(60%, calc(var(--dimension-size-800) * 2))"
+                textVariant="text-title-small"
+              />
+            )}
+          </div>
+          {description ? (
+            <div class="card-navigation__line">
+              <ds-text
+                class="card-navigation__description ds-chrome-header__description"
+                variant="text-body-small"
+                color="secondary"
+                as="span"
+              >
+                {description}
+              </ds-text>
+              {this.isLoading && <ds-skeleton width="95%" textVariant="text-body-small" />}
+            </div>
           ) : null}
         </div>
         <span class="card-navigation__chevron ds-chrome-header__trailing ds-interaction-fill__content">
-          <ds-icon name="ChevronRight" size="md" color="inherit" aria-hidden="true" />
+          {this.isLoading ? (
+            <ds-skeleton variant="icon" iconSize="md" />
+          ) : (
+            <ds-icon name="ChevronRight" size="md" color="inherit" aria-hidden="true" />
+          )}
         </span>
       </Target>
     );
   }
 
   render() {
-    const href = resolveSafeUrl(this.href);
+    const href = this.isLoading ? undefined : resolveSafeUrl(this.href);
     const hasContent = this.variant === 'content';
 
     return (
       <Host
+        aria-busy={this.isLoading ? 'true' : undefined}
         class={{
           'card-navigation': true,
+          'card-navigation--loading': this.isLoading,
           'card-navigation--navigation-only': !hasContent,
           'card-navigation--content': hasContent,
         }}

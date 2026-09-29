@@ -20,6 +20,7 @@ type Story = StoryObj;
 export const Default: Story = {
   render: args => html`
     <ds-setting-row-toggle
+      .isLoading=${args['isLoading'] ?? false}
       label=${args['label']}
       description=${args['description']}
       .checked=${args['checked']}
@@ -98,3 +99,5 @@ export const Narrow: Story = {
     </div>
   `,
 };
+
+export const Loading: Story = { ...Default, args: { isLoading: true } };

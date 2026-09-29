@@ -42,7 +42,8 @@
   "states": [
     "Rows expose distinct rest, hover, pressed, keyboard-focus, and inactive states.",
     "An empty sections array or groups with no items render the configured empty message.",
-    "The application owns loading, error, permission, routing, and post-activation consequences and reflects availability through the supplied item data."
+    "The application owns data fetching, error, permission, routing, and post-activation consequences and reflects availability through the supplied item data.",
+    "isLoading preserves the section and row layout while skeletonizing all headings, labels, and values; actions become inert and the card exposes its busy state."
   ],
   "responsiveBehavior": [
     "The card fills its parent width and never establishes a product breakpoint.",

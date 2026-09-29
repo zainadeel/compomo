@@ -49,7 +49,9 @@
     "Shimmer is on by default and may be disabled for a static placeholder. Reduced motion always produces the static final shape.",
     "Rounded is an optional visual treatment for icon and control atoms rather than a semantic state.",
     "Omitted background is for primary and secondary surfaces. Explicit faint documents a faint parent while using the same standard base and shimmer tokens; other contexts use matching surface tokens.",
-    "The owner decides whether to delay initial visibility and when to replace the complete composition."
+    "The owner decides whether to delay initial visibility and when to replace the complete composition.",
+    "preserveLayout uses projected text or a control as the hidden, inert size source, retaining wrapping and responsive dimensions; set isLoading false to reveal that same mounted content. Use one atom per text or control, not a whole page.",
+    "Control appearance mirrors the pending control: filled masks the entire container; outlined retains its border with icon or text atoms; borderless masks only those contents. Set controlContent to match the control anatomy and preserveLayout to retain its exact footprint."
   ],
   "responsiveBehavior": [
     "The owning layout changes placeholder count, width, visibility, and arrangement to match its real responsive content.",
@@ -88,12 +90,22 @@
           "border-radius"
         ],
         "reason": "The selected presentation owns its metric canvas; use the supported size or variant props and keep placement in the parent.",
-        "props": ["variant", "textVariant", "iconSize", "controlSize", "rounded"]
+        "props": [
+          "variant",
+          "textVariant",
+          "iconSize",
+          "controlSize",
+          "rounded",
+          "preserveLayout",
+          "isLoading",
+          "controlAppearance",
+          "controlContent"
+        ]
       },
       {
         "properties": ["background", "border", "box-shadow", "color"],
         "reason": "The component owns its surface and interaction treatment; use its semantic presentation props or compose an application-owned surrounding surface.",
-        "props": ["background", "variant"]
+        "props": ["background", "variant", "controlAppearance", "controlContent"]
       }
     ],
     "customProperties": []

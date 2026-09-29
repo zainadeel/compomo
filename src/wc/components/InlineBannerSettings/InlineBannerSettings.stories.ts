@@ -53,3 +53,11 @@ export const Wrapping: Story = {
     </div>
   `,
 };
+
+export const Loading: Story = {
+  render: () =>
+    html`<ds-inline-banner-settings
+      description=${EVENT_VALIDATION_DESCRIPTION}
+      is-loading
+    ></ds-inline-banner-settings>`,
+};

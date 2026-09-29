@@ -45,6 +45,12 @@ export class Pagination {
   @Prop() showFirstLastButtons: boolean = false;
   /** Prevent interaction while the owner replaces the current data page. */
   @Prop() loading: boolean = false;
+  /** Show skeletons for the existing controls without changing their geometry. */
+  @Prop() chromeLoading: boolean = false;
+
+  private get busy(): boolean {
+    return this.loading || this.chromeLoading;
+  }
 
   /** Emits the complete next controlled state after a page or page-size request. */
   @Event() dsChange!: EventEmitter<PaginationChangeDetail>;
@@ -79,7 +85,7 @@ export class Pagination {
   private requestPage(pageIndex: number): void {
     const state = this.resolvedState;
     if (
-      this.loading ||
+      this.busy ||
       pageIndex === state.pageIndex ||
       pageIndex < 0 ||
       pageIndex >= state.totalPages
@@ -109,7 +115,7 @@ export class Pagination {
   }
 
   private requestPageSize(value: string | string[]): void {
-    if (this.loading || typeof value !== 'string' || (value === 'fit' && this.fitToPageInactive))
+    if (this.busy || typeof value !== 'string' || (value === 'fit' && this.fitToPageInactive))
       return;
     const state = this.resolvedState;
     const nextMode: PaginationPageSizeMode = value === 'fit' ? 'fit' : 'fixed';
@@ -157,7 +163,7 @@ export class Pagination {
     if (fromChoiceControl || (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight')) return;
     const state = this.resolvedState;
     const pageIndex = event.key === 'ArrowLeft' ? state.pageIndex - 1 : state.pageIndex + 1;
-    if (this.loading || pageIndex < 0 || pageIndex >= state.totalPages) return;
+    if (this.busy || pageIndex < 0 || pageIndex >= state.totalPages) return;
     event.preventDefault();
     this.requestPage(pageIndex);
   }
@@ -204,40 +210,52 @@ export class Pagination {
             'pagination--table-compact': this.tableCompact,
           }}
           aria-label={this.label}
-          aria-busy={this.loading ? 'true' : undefined}
+          aria-busy={this.busy ? 'true' : undefined}
           onKeyDown={event => this.handleKeyDown(event)}
         >
           <div class="pagination__page-size">
-            <ds-text
-              class="pagination__label"
-              as="span"
-              variant="text-body-medium"
-              color="secondary"
-              aria-hidden="true"
-            >
-              {this.pageSizeLabel}:
-            </ds-text>
+            <ds-skeleton preserveLayout={true} isLoading={this.chromeLoading}>
+              <ds-text
+                class="pagination__label"
+                as="span"
+                variant="text-body-medium"
+                color="secondary"
+                aria-hidden="true"
+              >
+                {this.pageSizeLabel}:
+              </ds-text>
+            </ds-skeleton>
             <span id={`${this.pageSizeControlId}-label`} class="ds-visually-hidden">
               {pageSizeAriaLabel}
             </span>
-            <ds-select
-              class="pagination__page-size-select"
-              size="md"
-              inputId={this.pageSizeControlId}
-              ariaLabelledby={`${this.pageSizeControlId}-label`}
-              options={options}
-              value={state.pageSizeMode === 'fit' ? 'fit' : String(state.pageSize)}
-              triggerLabel={state.pageSizeMode === 'fit' ? this.fitPageSizeTriggerLabel : undefined}
-              indicator="up-down"
-              allowClear={false}
-              activeFill={false}
-              hasBorder={false}
-              isInactive={this.loading}
-              onDsChange={event => {
-                event.stopPropagation();
-                this.requestPageSize(event.detail);
-              }}
-            />
+            <ds-skeleton
+              preserveLayout={true}
+              isLoading={this.chromeLoading}
+              variant="control"
+              controlAppearance="borderless"
+              controlContent="label-icon"
+            >
+              <ds-select
+                class="pagination__page-size-select"
+                size="md"
+                inputId={this.pageSizeControlId}
+                ariaLabelledby={`${this.pageSizeControlId}-label`}
+                options={options}
+                value={state.pageSizeMode === 'fit' ? 'fit' : String(state.pageSize)}
+                triggerLabel={
+                  state.pageSizeMode === 'fit' ? this.fitPageSizeTriggerLabel : undefined
+                }
+                indicator="up-down"
+                allowClear={false}
+                activeFill={false}
+                hasBorder={false}
+                isInactive={this.busy}
+                onDsChange={event => {
+                  event.stopPropagation();
+                  this.requestPageSize(event.detail);
+                }}
+              />
+            </ds-skeleton>
           </div>
           <ds-divider
             class="pagination__divider"
@@ -246,59 +264,95 @@ export class Pagination {
           />
           <div class="pagination__navigation">
             {this.showFirstLastButtons ? (
-              <ds-button-unfilled
+              <ds-skeleton
                 class="pagination__boundary"
-                variant="icon"
-                size="md"
-                icon="ChevronLeftDouble"
-                ariaLabel="First page"
-                hasBorder={false}
-                isInactive={this.loading || atStart}
-                onDsClick={() => this.requestPage(0)}
-              />
+                preserveLayout={true}
+                isLoading={this.chromeLoading}
+                variant="control"
+                controlAppearance="borderless"
+                controlContent="icon"
+              >
+                <ds-button-unfilled
+                  variant="icon"
+                  size="md"
+                  icon="ChevronLeftDouble"
+                  ariaLabel="First page"
+                  hasBorder={false}
+                  isInactive={this.busy || atStart}
+                  onDsClick={() => this.requestPage(0)}
+                />
+              </ds-skeleton>
             ) : null}
-            <ds-button-unfilled
-              variant="icon"
-              size="md"
-              icon="ChevronLeft"
-              ariaLabel="Previous page"
-              hasBorder={false}
-              isInactive={this.loading || atStart}
-              onDsClick={() => this.requestPage(state.pageIndex - 1)}
-            />
-            <ds-text
-              class="pagination__page"
-              as="span"
-              variant="text-body-medium"
-              color="secondary"
-              fontFeature="tabular-nums"
+            <ds-skeleton
+              preserveLayout={true}
+              isLoading={this.chromeLoading}
+              variant="control"
+              controlAppearance="borderless"
+              controlContent="icon"
             >
-              {page}
-            </ds-text>
-            <ds-button-unfilled
-              variant="icon"
-              size="md"
-              icon="ChevronRight"
-              ariaLabel="Next page"
-              hasBorder={false}
-              isInactive={this.loading || atEnd}
-              onDsClick={() => this.requestPage(state.pageIndex + 1)}
-            />
-            {this.showFirstLastButtons ? (
               <ds-button-unfilled
-                class="pagination__boundary"
                 variant="icon"
                 size="md"
-                icon="ChevronRightDouble"
-                ariaLabel="Last page"
+                icon="ChevronLeft"
+                ariaLabel="Previous page"
                 hasBorder={false}
-                isInactive={this.loading || atEnd}
-                onDsClick={() => this.requestPage(state.totalPages - 1)}
+                isInactive={this.busy || atStart}
+                onDsClick={() => this.requestPage(state.pageIndex - 1)}
               />
+            </ds-skeleton>
+            <ds-skeleton preserveLayout={true} isLoading={this.chromeLoading}>
+              <ds-text
+                class="pagination__page"
+                as="span"
+                variant="text-body-medium"
+                color="secondary"
+                fontFeature="tabular-nums"
+              >
+                {page}
+              </ds-text>
+            </ds-skeleton>
+            <ds-skeleton
+              preserveLayout={true}
+              isLoading={this.chromeLoading}
+              variant="control"
+              controlAppearance="borderless"
+              controlContent="icon"
+            >
+              <ds-button-unfilled
+                variant="icon"
+                size="md"
+                icon="ChevronRight"
+                ariaLabel="Next page"
+                hasBorder={false}
+                isInactive={this.busy || atEnd}
+                onDsClick={() => this.requestPage(state.pageIndex + 1)}
+              />
+            </ds-skeleton>
+            {this.showFirstLastButtons ? (
+              <ds-skeleton
+                class="pagination__boundary"
+                preserveLayout={true}
+                isLoading={this.chromeLoading}
+                variant="control"
+                controlAppearance="borderless"
+                controlContent="icon"
+              >
+                <ds-button-unfilled
+                  variant="icon"
+                  size="md"
+                  icon="ChevronRightDouble"
+                  ariaLabel="Last page"
+                  hasBorder={false}
+                  isInactive={this.busy || atEnd}
+                  onDsClick={() => this.requestPage(state.totalPages - 1)}
+                />
+              </ds-skeleton>
             ) : null}
           </div>
           <span class="ds-visually-hidden" role="status" aria-live="polite" aria-atomic="true">
-            {announcedRange} {this.itemLabel}. {announcedPage}.
+            {this.chromeLoading
+              ? 'Loading pages'
+              : `${announcedRange} ${this.itemLabel}. ${announcedPage}.`}
           </span>
         </nav>
       </Host>

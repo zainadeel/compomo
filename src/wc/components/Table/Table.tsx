@@ -210,7 +210,7 @@ export class Table {
 
   /** Initial loading state. Existing rows stay visible; incremental loading uses loadingMore. */
   @Prop() loading: boolean = false;
-  /** Replace opted-in table-owned caption controls with same-size visual skeletons. */
+  /** Replace column headers and table-owned caption controls with same-size visual skeletons. */
   @Prop() chromeLoading: boolean = false;
   /** Initial-loading rows. Defaults to ten so bounded tables retain a useful filled viewport. */
   @Prop() skeletonRows: number = 10;
@@ -1779,6 +1779,7 @@ export class Table {
     presentational = false,
     headerLane?: { start: number; spanning: boolean }
   ) {
+    interactive = interactive && !this.chromeLoading;
     const groupedColumn = this.grouping?.fieldId === column.id;
     const previousColumn = headerLane
       ? this.visibleColumns[this.visibleColumns.indexOf(column) - 1]
@@ -1807,7 +1808,7 @@ export class Table {
         {segments.map((segment, index) => {
           const segmentActive = activeMemberSegment?.sortKey === segment.sortKey;
           const segmentInteractive = interactive && !!column.sortable;
-          const label = (
+          const text = (
             <ds-text
               class="ds-table__header-label-box ds-control-label-box"
               as="span"
@@ -1820,6 +1821,15 @@ export class Table {
               {segment.label}
             </ds-text>
           );
+          const label =
+            this.chromeLoading && segment.label ? (
+              <span class="ds-table__loading-label" aria-hidden="true">
+                {text}
+                <ds-skeleton textVariant="text-caption" width="100%" />
+              </span>
+            ) : (
+              text
+            );
           const control = segmentInteractive ? (
             <button
               class="ds-table__header-label ds-table__header-label--interactive ds-focus-ring"
@@ -1932,6 +1942,11 @@ export class Table {
           'ds-table__header-cell--collapse-all': actionCollapseHost,
         }}
         scope={presentational ? undefined : 'col'}
+        aria-label={
+          !presentational && this.chromeLoading
+            ? column.accessibleLabel?.trim() || segments.map(segment => segment.label).join(' / ')
+            : undefined
+        }
         aria-sort={presentational ? undefined : memberAriaSort}
         data-column-id={column.id}
         data-grouped={groupedColumn ? 'true' : undefined}
@@ -2023,7 +2038,15 @@ export class Table {
         style={multirow ? { gridColumn: '1', gridRow: '1 / span 2' } : undefined}
         scope={presentational ? undefined : 'col'}
       >
-        {controls ? (
+        {this.chromeLoading ? (
+          <span class="ds-table__skeleton-checkbox-canvas" aria-label="Select rows">
+            <ds-skeleton
+              class="ds-table__skeleton-checkbox"
+              variant="control"
+              width="var(--dimension-iconography-sm)"
+            />
+          </span>
+        ) : controls ? (
           this.renderSelectionControl(
             selection.allSelected ? 'Deselect all loaded rows' : 'Select all loaded rows',
             selection.allSelected,
@@ -2096,6 +2119,7 @@ export class Table {
                     'ds-table__cell--sticky-end': band.sticky === 'end',
                   }}
                   scope={presentational || !band.label ? undefined : 'colgroup'}
+                  aria-label={!presentational && this.chromeLoading ? band.label : undefined}
                   colSpan={band.span}
                   style={{
                     gridColumn: `${band.start} / span ${band.span}`,
@@ -2109,17 +2133,22 @@ export class Table {
                   <span class="ds-table__header-content">
                     <span class="ds-table__header-labels">
                       <span class="ds-table__header-segment">
-                        {/* eslint-disable-next-line compomo/prefer-direct-ds-text -- Match the normal header's structural label canvas and inner text inset. */}
                         <span class="ds-table__header-label ds-table__header-static">
-                          <ds-text
-                            class="ds-table__header-label-box ds-control-label-box"
-                            as="span"
-                            variant="text-caption"
-                            color="inherit"
-                            lineTruncation={1}
+                          <ds-skeleton
+                            preserveLayout={true}
+                            isLoading={this.chromeLoading}
+                            textVariant="text-caption"
                           >
-                            {band.label}
-                          </ds-text>
+                            <ds-text
+                              class="ds-table__header-label-box ds-control-label-box"
+                              as="span"
+                              variant="text-caption"
+                              color="inherit"
+                              lineTruncation={1}
+                            >
+                              {band.label}
+                            </ds-text>
+                          </ds-skeleton>
                         </span>
                       </span>
                     </span>
@@ -2584,15 +2613,21 @@ export class Table {
           {hasCopy ? (
             <slot name="footer" onSlotchange={this.syncFooterSlotPresence} />
           ) : summary ? (
-            <ds-text
-              class="ds-table__footer-summary ds-table__bar-text"
-              as="span"
-              variant="text-body-medium"
-              color="secondary"
-              lineTruncation={1}
+            <ds-skeleton
+              class="ds-table__footer-summary-skeleton"
+              preserveLayout={true}
+              isLoading={this.chromeLoading}
             >
-              {summary}
-            </ds-text>
+              <ds-text
+                class="ds-table__footer-summary ds-table__bar-text"
+                as="span"
+                variant="text-body-medium"
+                color="secondary"
+                lineTruncation={1}
+              >
+                {summary}
+              </ds-text>
+            </ds-skeleton>
           ) : null}
         </div>
         {(pagination || hasTrailing) && (
@@ -2614,6 +2649,7 @@ export class Table {
                 label={pagination.ariaLabel ?? `${this.caption} pagination`}
                 showFirstLastButtons={pagination.showFirstLastButtons ?? false}
                 loading={this.loading}
+                chromeLoading={this.chromeLoading}
                 onDsChange={(event: CustomEvent<PaginationChangeDetail>) =>
                   this.dsPaginationChange.emit(event.detail)
                 }

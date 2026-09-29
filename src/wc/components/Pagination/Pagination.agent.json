@@ -24,7 +24,7 @@
   ],
   "accessibility": [
     "The component renders a named navigation region, gives its compact page-size noun a complete accessible label, and gives every icon-only boundary control an explicit page action name.",
-    "The visible page-size cluster states the localized noun and selected size, then a vertical divider, then page position, for example Rows: [25] | 1 of 20. A polite atomic status update retains the complete current range and ‘Page’ phrasing with the localized item noun.",
+    "The visible page-size cluster states the localized noun and selected size, then a vertical divider, then page position, for example Rows: [25] | 1 of 20. A polite atomic status update retains the complete current range and \u2018Page\u2019 phrasing with the localized item noun.",
     "Left and Right Arrow request the adjacent page while focus is within pagination navigation controls. The page-size combobox retains its own arrow-key behavior.",
     "Inactive boundary controls and every control during loading remain non-interactive while retaining their accessible names.",
     "showFirstLastButtons adds explicitly named First page and Last page controls; Previous and Next remain present in either mode."
@@ -35,7 +35,8 @@
     "Zero results display Page 1 of 1. A partial final page still derives from totalItems. Assistive status keeps the complete item range.",
     "loading preserves the full pagination surface, applies aria-busy to the navigation region, and prevents page or page-size requests.",
     "fitToPage appends a Fit to page choice. fitPageSize supplies its effective whole-item capacity; the closed trigger says Fit while page position reflects the resulting window. fitToPageInactive keeps that choice visible but unavailable when fitting is not meaningful for the current data shape. Pagination does not measure layouts itself.",
-    "showFirstLastButtons defaults to false. Enable it when direct jumps to both result boundaries materially help the workflow."
+    "showFirstLastButtons defaults to false. Enable it when direct jumps to both result boundaries materially help the workflow.",
+    "chromeLoading shows separate skeletons for the page-size label, selector, page position and each configured navigation control, retaining their intrinsic and responsive geometry. It also prevents requests."
   ],
   "responsiveBehavior": [
     "The full-width controls remain on one line with noun, selected size, a vertical divider, page position, Previous and Next, plus optional First and Last navigation.",

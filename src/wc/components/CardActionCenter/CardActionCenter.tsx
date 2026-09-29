@@ -43,6 +43,8 @@ export class CardActionCenter {
 
   /** Copy shown when no section contains an action. */
   @Prop() emptyMessage: string = 'No actions available';
+  /** Retain sections and rows while replacing their headings, labels, and values with skeletons. */
+  @Prop() isLoading: boolean = false;
 
   /**
    * Emitted when an available row is activated. When a row has an `href`,
@@ -67,7 +69,7 @@ export class CardActionCenter {
     href: string | undefined,
     originalEvent: MouseEvent
   ) {
-    if (item.isInactive) return;
+    if (item.isInactive || this.isLoading) return;
 
     const actionEvent = this.dsAction.emit({
       sectionId: section.id,
@@ -85,41 +87,51 @@ export class CardActionCenter {
 
     if (item.tag) {
       return (
-        <ds-tag
-          class="card-action-center__item-value ds-interaction-fill__content"
-          label={value}
-          intent={item.tag.intent ?? 'neutral'}
-          contrast={item.tag.contrast ?? 'faint'}
-          size="sm"
-          isInset
+        <ds-skeleton
+          class="card-action-center__item-value"
+          preserveLayout
+          isLoading={this.isLoading}
+          variant="control"
           rounded
-        ></ds-tag>
+        >
+          <ds-tag
+            class="ds-interaction-fill__content"
+            label={value}
+            intent={item.tag.intent ?? 'neutral'}
+            contrast={item.tag.contrast ?? 'faint'}
+            size="sm"
+            isInset
+            rounded
+          ></ds-tag>
+        </ds-skeleton>
       );
     }
 
     return (
-      <ds-text
-        class="card-action-center__item-value ds-interaction-fill__content"
-        variant="text-body-medium"
-        color="secondary"
-        emphasis
-        wrap="nowrap"
-        fontFeature="tabular-nums"
-        as="span"
-      >
-        {value}
-      </ds-text>
+      <ds-skeleton class="card-action-center__item-value" preserveLayout isLoading={this.isLoading}>
+        <ds-text
+          class="ds-interaction-fill__content"
+          variant="text-body-medium"
+          color="secondary"
+          emphasis
+          wrap="nowrap"
+          fontFeature="tabular-nums"
+          as="span"
+        >
+          {value}
+        </ds-text>
+      </ds-skeleton>
     );
   }
 
   private renderItem(section: CardActionCenterSection, item: CardActionCenterItem) {
-    const href = item.isInactive ? undefined : resolveSafeUrl(item.href);
+    const href = item.isInactive || this.isLoading ? undefined : resolveSafeUrl(item.href);
     const classes = {
       'card-action-center__item': true,
       'card-action-center__item--tagged': !!item.tag && item.value != null,
       'ds-interaction-fill': true,
       'ds-focus-ring-inset': true,
-      'ds-control-inactive': !!item.isInactive,
+      'ds-control-inactive': !!item.isInactive && !this.isLoading,
     };
     const content = [
       <ds-text
@@ -128,8 +140,10 @@ export class CardActionCenter {
         color="secondary"
         wrap="balance"
         as="span"
+        aria-hidden={this.isLoading ? 'true' : undefined}
       >
-        {item.label}
+        <span class="card-action-center__copy">{item.label}</span>
+        {this.isLoading && <ds-skeleton class="card-action-center__copy-skeleton" width="75%" />}
       </ds-text>,
       this.renderValue(item),
     ];
@@ -150,7 +164,9 @@ export class CardActionCenter {
       <button
         type="button"
         class={classes}
-        disabled={item.isInactive || undefined}
+        disabled={this.isLoading || item.isInactive || undefined}
+        inert={this.isLoading}
+        aria-hidden={this.isLoading ? 'true' : undefined}
         onClick={(event: MouseEvent) => this.handleAction(section, item, undefined, event)}
       >
         {content}
@@ -162,7 +178,10 @@ export class CardActionCenter {
     const sections = this.visibleSections;
 
     return (
-      <Host>
+      <Host
+        class={{ 'card-action-center--loading': this.isLoading }}
+        aria-busy={this.isLoading ? 'true' : undefined}
+      >
         {sections.length ? (
           sections.map((section, sectionIndex) => (
             <div class="card-action-center__group">
@@ -186,8 +205,16 @@ export class CardActionCenter {
                   color="primary"
                   wrap="balance"
                   as="h2"
+                  aria-hidden={this.isLoading ? 'true' : undefined}
                 >
-                  {section.heading}
+                  <span class="card-action-center__copy">{section.heading}</span>
+                  {this.isLoading && (
+                    <ds-skeleton
+                      class="card-action-center__copy-skeleton"
+                      textVariant="text-title-small"
+                      width="min(60%, calc(var(--dimension-size-800) * 2))"
+                    />
+                  )}
                 </ds-text>
                 <ul class="card-action-center__list">
                   {section.items.map(item => (

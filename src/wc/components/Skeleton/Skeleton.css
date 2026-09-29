@@ -1,5 +1,6 @@
 @import '../../utils/radius.css';
 @import '../../utils/control-density.css';
+@import '../../utils/control-parts.css';
 @import '../../utils/shimmer.css';
 
 :host {
@@ -11,6 +12,7 @@
   vertical-align: middle;
   --ds-skeleton-base: var(--color-foreground-quaternary);
   --ds-shimmer: var(--color-shimmer-shimmer);
+  --ds-skeleton-border: var(--color-border-secondary);
 }
 
 .skeleton__shape {
@@ -27,36 +29,43 @@
 /* ── Background context ────────────────────────────────────────────────── */
 
 :host(.skeleton--background-medium) {
+  --ds-skeleton-border: var(--color-border-on-medium-background-secondary);
   --ds-skeleton-base: var(--color-foreground-on-medium-background-quaternary);
   --ds-shimmer: var(--color-shimmer-shimmer-on-medium-background);
 }
 
 :host(.skeleton--background-bold) {
+  --ds-skeleton-border: var(--color-border-on-bold-background-secondary);
   --ds-skeleton-base: var(--color-foreground-on-bold-background-quaternary);
   --ds-shimmer: var(--color-shimmer-shimmer-on-bold-background);
 }
 
 :host(.skeleton--background-strong) {
+  --ds-skeleton-border: var(--color-border-on-strong-background-secondary);
   --ds-skeleton-base: var(--color-foreground-on-strong-background-quaternary);
   --ds-shimmer: var(--color-shimmer-shimmer-on-strong-background);
 }
 
 :host(.skeleton--background-translucent) {
+  --ds-skeleton-border: var(--color-translucent-border-secondary);
   --ds-skeleton-base: var(--color-translucent-foreground-quaternary);
   --ds-shimmer: var(--color-translucent-shimmer);
 }
 
 :host(.skeleton--background-inverted) {
+  --ds-skeleton-border: var(--color-inverted-border-secondary);
   --ds-skeleton-base: var(--color-inverted-foreground-quaternary);
   --ds-shimmer: var(--color-inverted-shimmer);
 }
 
 :host(.skeleton--background-media) {
+  --ds-skeleton-border: var(--color-media-border-secondary);
   --ds-skeleton-base: var(--color-media-foreground-quaternary);
   --ds-shimmer: var(--color-media-shimmer);
 }
 
 :host(.skeleton--background-always-dark) {
+  --ds-skeleton-border: var(--color-always-dark-border-secondary);
   --ds-skeleton-base: var(--color-always-dark-foreground-quaternary);
   --ds-shimmer: var(--color-always-dark-shimmer);
 }
@@ -156,8 +165,82 @@
   border-radius: var(--dimension-radius-half);
 }
 
+.skeleton__control {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+}
+
+.skeleton__control--icon {
+  justify-content: center;
+  padding: 0;
+}
+
+.skeleton__control-label {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  overflow: hidden;
+}
+
+:host(.skeleton--control-outlined) .skeleton__control {
+  box-shadow: inset 0 0 0 var(--dimension-stroke-width-012) var(--ds-skeleton-border);
+}
+
+:host(.skeleton--rounded) .skeleton__control {
+  border-radius: var(--dimension-radius-half);
+}
+
 @media (forced-colors: active) {
   .skeleton__shape {
     background-color: var(--ds-forced-color-disabled);
   }
+  :host(.skeleton--control-outlined) .skeleton__control {
+    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-disabled);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-012));
+  }
+}
+
+/* Projected content supplies its intrinsic size, wrapping and responsive metrics. */
+:host(.skeleton--preserve-layout) {
+  display: grid;
+  width: auto;
+  height: auto;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0;
+}
+
+:host(.skeleton--preserve-layout) .skeleton__source,
+:host(.skeleton--preserve-layout) .skeleton__control,
+:host(.skeleton--preserve-layout) .skeleton__shape {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+
+.skeleton__source {
+  display: grid;
+  visibility: hidden;
+}
+
+:host(.skeleton--preserve-layout) .skeleton__shape {
+  height: 100%;
+  width: 100%;
+}
+
+:host(.skeleton--preserve-layout.skeleton--text) .skeleton__shape {
+  /* Alpha mask only: each retained line uses the atomic text skeleton's inset. */
+  mask-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(var(--ds-skeleton-canvas-size) * 0.125),
+    currentColor calc(var(--ds-skeleton-canvas-size) * 0.125),
+    currentColor calc(var(--ds-skeleton-canvas-size) * 0.875),
+    transparent calc(var(--ds-skeleton-canvas-size) * 0.875),
+    transparent var(--ds-skeleton-canvas-size)
+  );
+}
+
+:host(.skeleton--content-ready) .skeleton__source {
+  visibility: inherit;
 }

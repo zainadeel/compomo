@@ -26,6 +26,7 @@ export const Playground: Story = {
     const [, updateArgs] = useArgs();
     return html`
       <ds-card-settings-scope
+        .isLoading=${args['isLoading'] ?? false}
         area-label=${args['areaLabel']}
         settings-label=${args['settingsLabel']}
         profile-label=${args['profileLabel']}
@@ -70,6 +71,8 @@ export const Playground: Story = {
     `;
   },
 };
+
+export const Loading: Story = { ...Playground, args: { isLoading: true } };
 
 export const Narrow: Story = {
   render: () =>

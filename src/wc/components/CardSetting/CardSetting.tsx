@@ -64,6 +64,8 @@ export class CardSetting {
 
   /** Controlled edit state — parent owns single-edit orchestration. */
   @Prop() editing = false;
+  /** Keep the card and projected content in place while its header shows skeletons. */
+  @Prop() isLoading = false;
   @Prop() editLabel: string = 'Edit';
   @Prop() cancelLabel: string = 'Cancel';
   @Prop() saveLabel: string = 'Save';
@@ -130,8 +132,10 @@ export class CardSetting {
 
     return (
       <Host
+        aria-busy={this.isLoading ? 'true' : undefined}
         class={{
           'card-setting': true,
+          'card-setting--loading': this.isLoading,
           'card-setting--editing': editing,
           'card-setting--immediate': this.variant === 'immediate',
           'card-setting--empty': !this.hugContent,
@@ -142,7 +146,6 @@ export class CardSetting {
         }}
       >
         <header class="card-setting__header ds-chrome-header">
-          {/* eslint-disable-next-line compomo/prefer-direct-ds-text -- Shared header copy owns the control-density geometry around the semantic heading. */}
           <div class="card-setting__copy ds-chrome-header__copy ds-control--md">
             <ds-text
               class="card-setting__title ds-chrome-header__heading"
@@ -153,44 +156,74 @@ export class CardSetting {
             >
               {this.heading}
             </ds-text>
+            {this.isLoading && (
+              <ds-skeleton
+                class="card-setting__heading-skeleton"
+                width="min(60%, calc(var(--dimension-size-800) * 2))"
+                textVariant="text-title-small"
+              />
+            )}
           </div>
           {this.variant === 'editable' && (
-            <div class="card-setting__actions ds-chrome-header__trailing">
+            <div class="card-setting__actions ds-chrome-header__trailing" inert={this.isLoading}>
               {!editing ? (
-                <ds-button-unfilled
-                  variant="icon"
-                  type="button"
-                  icon="Pencil"
-                  aria-label={this.editLabel}
-                  onDsClick={(event: CustomEvent<MouseEvent>) =>
-                    this.emitAction('edit', event.detail)
-                  }
-                />
+                <ds-skeleton
+                  preserveLayout
+                  isLoading={this.isLoading}
+                  variant="control"
+                  controlAppearance="outlined"
+                  controlContent="icon"
+                >
+                  <ds-button-unfilled
+                    variant="icon"
+                    type="button"
+                    icon="Pencil"
+                    aria-label={this.editLabel}
+                    onDsClick={(event: CustomEvent<MouseEvent>) =>
+                      this.emitAction('edit', event.detail)
+                    }
+                  />
+                </ds-skeleton>
               ) : (
                 [
-                  <ds-button-unfilled
+                  <ds-skeleton
                     key="cancel"
-                    variant="icon"
-                    type="button"
-                    icon="Cross"
+                    preserveLayout
+                    isLoading={this.isLoading}
+                    variant="control"
+                    controlAppearance="outlined"
+                    controlContent="icon"
                     background="bold"
-                    aria-label={this.cancelLabel}
-                    onDsClick={(event: CustomEvent<MouseEvent>) =>
-                      this.emitAction('cancel', event.detail)
-                    }
-                  />,
-                  <ds-button-filled
+                  >
+                    <ds-button-unfilled
+                      variant="icon"
+                      type="button"
+                      icon="Cross"
+                      background="bold"
+                      aria-label={this.cancelLabel}
+                      onDsClick={(event: CustomEvent<MouseEvent>) =>
+                        this.emitAction('cancel', event.detail)
+                      }
+                    />
+                  </ds-skeleton>,
+                  <ds-skeleton
                     key="save"
-                    variant="icon"
-                    type="button"
-                    icon="Check"
-                    intent="brand"
-                    contrast="faint"
-                    aria-label={this.saveLabel}
-                    onDsClick={(event: CustomEvent<MouseEvent>) =>
-                      this.emitAction('save', event.detail)
-                    }
-                  />,
+                    preserveLayout
+                    isLoading={this.isLoading}
+                    variant="control"
+                  >
+                    <ds-button-filled
+                      variant="icon"
+                      type="button"
+                      icon="Check"
+                      intent="brand"
+                      contrast="faint"
+                      aria-label={this.saveLabel}
+                      onDsClick={(event: CustomEvent<MouseEvent>) =>
+                        this.emitAction('save', event.detail)
+                      }
+                    />
+                  </ds-skeleton>,
                 ]
               )}
             </div>

@@ -55,6 +55,20 @@
   justify-content: flex-start;
 }
 
+.card-navigation__line {
+  display: grid;
+  min-width: 0;
+  align-items: start;
+}
+
+.card-navigation__line > * {
+  grid-area: 1 / 1;
+}
+
+:host(.card-navigation--loading) ds-text {
+  visibility: hidden;
+}
+
 ds-text.card-navigation__title,
 ds-text.card-navigation__description {
   overflow-wrap: anywhere;

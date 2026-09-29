@@ -28,6 +28,8 @@ export class SettingRowRadio {
   @Prop() valueLabel?: string;
   /** Optional consequence or supporting copy for the saved option. */
   @Prop() description?: string;
+  /** Skeletonize the row copy without changing the saved choice or edit presentation. */
+  @Prop() isLoading: boolean = false;
 
   private readonly headingId = `ds-setting-row-radio-heading-${++settingRowRadioHeadingId}`;
 
@@ -51,32 +53,50 @@ export class SettingRowRadio {
 
   render() {
     return (
-      <Host>
-        <ds-text
-          key="setting-row-radio-heading"
-          class="setting-row-radio__heading"
-          as="span"
-          variant={CONTROL_TEXT_VARIANT.md}
-          emphasis
-          textId={this.label ? this.headingId : undefined}
+      <Host aria-busy={this.isLoading ? 'true' : undefined}>
+        <ds-skeleton
+          preserveLayout
+          isLoading={this.isLoading}
+          textVariant={CONTROL_TEXT_VARIANT.md}
         >
-          {this.label}
-        </ds-text>
+          <ds-text
+            key="setting-row-radio-heading"
+            class="setting-row-radio__heading"
+            as="span"
+            variant={CONTROL_TEXT_VARIANT.md}
+            emphasis
+            textId={this.label ? this.headingId : undefined}
+          >
+            {this.label}
+          </ds-text>
+        </ds-skeleton>
         <div key="setting-row-radio-choice" class="setting-row-radio__choice">
           {this.valueLabel ? (
-            <ds-text key="setting-row-radio-value" as="span" variant={CONTROL_TEXT_VARIANT.md}>
-              {this.valueLabel}
-            </ds-text>
+            <ds-skeleton
+              preserveLayout
+              isLoading={this.isLoading}
+              textVariant={CONTROL_TEXT_VARIANT.md}
+            >
+              <ds-text key="setting-row-radio-value" as="span" variant={CONTROL_TEXT_VARIANT.md}>
+                {this.valueLabel}
+              </ds-text>
+            </ds-skeleton>
           ) : null}
           {this.description ? (
-            <ds-text
-              key="setting-row-radio-description"
-              as="span"
-              variant={CONTROL_SUPPORTING_TEXT_VARIANT.md}
-              color="secondary"
+            <ds-skeleton
+              preserveLayout
+              isLoading={this.isLoading}
+              textVariant={CONTROL_SUPPORTING_TEXT_VARIANT.md}
             >
-              {this.description}
-            </ds-text>
+              <ds-text
+                key="setting-row-radio-description"
+                as="span"
+                variant={CONTROL_SUPPORTING_TEXT_VARIANT.md}
+                color="secondary"
+              >
+                {this.description}
+              </ds-text>
+            </ds-skeleton>
           ) : null}
         </div>
         <slot onSlotchange={this.syncSlottedRadio} />

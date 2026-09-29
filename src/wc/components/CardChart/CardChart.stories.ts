@@ -159,3 +159,14 @@ export const Custom: Story = {
     </ds-card-chart>
   `,
 };
+
+export const Loading: Story = {
+  render: () =>
+    html`<ds-card-chart
+      heading="Safety score trend"
+      variant="chart"
+      card-width="sm"
+      show-filter
+      is-loading
+    ></ds-card-chart>`,
+};

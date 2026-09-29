@@ -66,6 +66,8 @@ export class Radio {
   @Prop() direction: 'vertical' | 'horizontal' = 'vertical';
   /** Design-system inactive state for the complete set. */
   @Prop() isInactive: boolean = false;
+  /** Preserve each option while replacing its circle and copy with loading atoms. */
+  @Prop() isLoading: boolean = false;
   /** Show full-row hover and pressed feedback for choice-list presentations. */
   @Prop() hasInteractionFill: boolean = false;
   /** Accessible name when visible group labeling is unavailable. */
@@ -140,6 +142,7 @@ export class Radio {
 
   @Listen('keydown')
   handleKeyDown(e: KeyboardEvent) {
+    if (this.isLoading) return;
     const items = this.activeItems;
     if (!items.length) return;
 
@@ -181,7 +184,7 @@ export class Radio {
   }
 
   private selectItem(optValue: string) {
-    if (this.isInactive || this.disabled || this.formDisabled) return;
+    if (this.isLoading || this.isInactive || this.disabled || this.formDisabled) return;
     if (optValue !== this.value) {
       this.value = optValue;
       this.dsChange.emit(optValue);
@@ -204,7 +207,9 @@ export class Radio {
           aria-disabled={isItemInactive ? 'true' : undefined}
           aria-labelledby={labelId}
           aria-describedby={option.description ? descriptionId : undefined}
-          tabIndex={tabIdx}
+          tabIndex={this.isLoading ? -1 : tabIdx}
+          aria-hidden={this.isLoading ? 'true' : undefined}
+          inert={this.isLoading}
           data-radio-item
           data-value={option.value}
           data-inactive={isItemInactive || undefined}
@@ -225,28 +230,42 @@ export class Radio {
           }}
         >
           <span class="radio__placement ds-interaction-fill__content" aria-hidden="true">
-            <span class={{ radio__circle: true, 'radio__circle--checked': isChecked }}>
-              {isChecked && <span class="radio__dot" />}
-            </span>
+            <ds-skeleton preserveLayout isLoading={this.isLoading} variant="control" rounded>
+              <span class={{ radio__circle: true, 'radio__circle--checked': isChecked }}>
+                {isChecked && <span class="radio__dot" />}
+              </span>
+            </ds-skeleton>
           </span>
           <span class="radio__copy ds-interaction-fill__content">
-            <ds-text
-              class="radio__label"
-              as="span"
-              variant={CONTROL_TEXT_VARIANT[this.size]}
-              textId={labelId}
+            <ds-skeleton
+              preserveLayout
+              isLoading={this.isLoading}
+              textVariant={CONTROL_TEXT_VARIANT[this.size]}
             >
-              {option.label}
-            </ds-text>
-            {option.description ? (
               <ds-text
+                class="radio__label"
                 as="span"
-                variant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
-                color="secondary"
-                textId={descriptionId}
+                variant={CONTROL_TEXT_VARIANT[this.size]}
+                textId={labelId}
               >
-                {option.description}
+                {option.label}
               </ds-text>
+            </ds-skeleton>
+            {option.description ? (
+              <ds-skeleton
+                preserveLayout
+                isLoading={this.isLoading}
+                textVariant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
+              >
+                <ds-text
+                  as="span"
+                  variant={CONTROL_SUPPORTING_TEXT_VARIANT[this.size]}
+                  color="secondary"
+                  textId={descriptionId}
+                >
+                  {option.description}
+                </ds-text>
+              </ds-skeleton>
             ) : null}
           </span>
         </div>
@@ -268,6 +287,7 @@ export class Radio {
     return (
       <Host
         role="radiogroup"
+        aria-busy={this.isLoading ? 'true' : undefined}
         aria-label={this.showGroupLabel ? this.groupLabel : this.ariaLabel}
         aria-labelledby={this.ariaLabelledby}
         aria-required={this.required ? 'true' : undefined}
@@ -280,15 +300,17 @@ export class Radio {
         }}
       >
         {this.showGroupLabel ? (
-          <ds-text
-            key="radio-group-label"
-            class={`radio__group-label ds-control-section-heading ds-control--${this.size}`}
-            as="span"
-            variant="text-body-small"
-            emphasis
-          >
-            {this.groupLabel}
-          </ds-text>
+          <ds-skeleton preserveLayout isLoading={this.isLoading} textVariant={'text-body-small'}>
+            <ds-text
+              key="radio-group-label"
+              class={`radio__group-label ds-control-section-heading ds-control--${this.size}`}
+              as="span"
+              variant="text-body-small"
+              emphasis
+            >
+              {this.groupLabel}
+            </ds-text>
+          </ds-skeleton>
         ) : null}
         <div key="radio-options" class="radio__options">
           {renderedOptions}

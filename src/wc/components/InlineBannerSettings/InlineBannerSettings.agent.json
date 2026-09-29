@@ -39,7 +39,8 @@
   "states": [
     "The description renders verbatim in every state in which the owning settings card projects the component.",
     "The component has no internal visibility, editing, or dismissal state; the owning settings card controls whether it is present.",
-    "The content height is intrinsic: the banner contributes 8px block padding and its inner content container contributes 4px block padding. A single body-small line is 24px inside that container (4px + 16px line-height + 4px), followed by the tertiary bottom boundary."
+    "The content height is intrinsic: the banner contributes 8px block padding and its inner content container contributes 4px block padding. A single body-small line is 24px inside that container (4px + 16px line-height + 4px), followed by the tertiary bottom boundary.",
+    "isLoading replaces the copy with a wrapping text skeleton inside the original banner geometry."
   ],
   "responsiveBehavior": [
     "The component fills the available inline size and lets body-small copy wrap naturally.",

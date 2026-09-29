@@ -16,3 +16,24 @@
   -webkit-user-select: none;
   user-select: none;
 }
+
+.setting-row-toggle__line,
+.setting-row-toggle__control {
+  display: grid;
+  min-width: 0;
+  align-items: center;
+}
+
+.setting-row-toggle__line > *,
+.setting-row-toggle__control > * {
+  grid-area: 1 / 1;
+}
+
+:host(.setting-row-toggle--loading) ds-text,
+:host(.setting-row-toggle--loading) ds-switch {
+  visibility: hidden;
+}
+
+.setting-row-toggle__control > ds-skeleton {
+  height: 100%;
+}

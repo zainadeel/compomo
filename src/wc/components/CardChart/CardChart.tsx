@@ -41,6 +41,8 @@ export class CardChart {
   /** Renders the standard filter action before custom actions. */
   @Prop() showFilter: boolean = false;
   @Prop() filterLabel: string = 'Filter';
+  /** Skeletonize the header and chart canvas; custom body content owns its loading atoms. */
+  @Prop() isLoading: boolean = false;
 
   /** Emits when the standard header filter control is activated. */
   @Event() dsFilterClick!: EventEmitter<void>;
@@ -62,6 +64,7 @@ export class CardChart {
   }
 
   private handleFilterClick = () => {
+    if (this.isLoading) return;
     this.dsFilterClick.emit();
   };
 
@@ -72,14 +75,15 @@ export class CardChart {
         class={{
           'card-chart': true,
           [`card-chart--${this.variant}`]: true,
+          'card-chart--loading': this.isLoading,
         }}
+        aria-busy={this.isLoading ? 'true' : undefined}
         style={{
           '--_card-chart-width': CARD_WIDTH_VARS[this.cardWidth],
           '--_card-chart-min-height': CARD_HEIGHT_VARS[this.cardWidth],
         }}
       >
         <header class="card-chart__header ds-chrome-header">
-          {/* eslint-disable-next-line compomo/prefer-direct-ds-text -- Shared header copy owns the control-density geometry around the semantic heading. */}
           <div class="card-chart__copy ds-chrome-header__copy ds-control--md">
             <ds-text
               class="card-chart__title ds-chrome-header__heading"
@@ -87,19 +91,31 @@ export class CardChart {
               emphasis
               color="primary"
               as="h2"
+              aria-hidden={this.isLoading ? 'true' : undefined}
             >
               {this.heading}
             </ds-text>
+            {this.isLoading && (
+              <ds-skeleton class="card-chart__heading-skeleton" textVariant="text-title-small" />
+            )}
           </div>
           <div class="card-chart__actions ds-chrome-header__trailing">
             {this.showFilter ? (
-              <ds-button-unfilled
-                variant="icon"
-                type="button"
-                icon="Filters"
-                aria-label={this.filterLabel}
-                onDsClick={this.handleFilterClick}
-              />
+              <ds-skeleton
+                preserveLayout
+                isLoading={this.isLoading}
+                variant="control"
+                controlAppearance="outlined"
+                controlContent="icon"
+              >
+                <ds-button-unfilled
+                  variant="icon"
+                  type="button"
+                  icon="Filters"
+                  aria-label={this.filterLabel}
+                  onDsClick={this.handleFilterClick}
+                />
+              </ds-skeleton>
             ) : null}
             <slot name="actions" />
           </div>
@@ -107,18 +123,27 @@ export class CardChart {
         <div class="card-chart__body">
           {usesChartLayout ? (
             <div class="card-chart__layout">
-              {this.hasChartSlot ? (
+              {this.hasChartSlot || this.isLoading ? (
                 <div
                   class={{
                     'card-chart__chart': true,
                   }}
                 >
                   <slot name="chart" />
+                  {this.isLoading && (
+                    <ds-skeleton class="card-chart__plot-skeleton" variant="control" />
+                  )}
                 </div>
               ) : null}
               {this.hasLegendSlot ? (
                 <div class="card-chart__legend">
                   <slot name="legend" />
+                  {this.isLoading && (
+                    <ds-skeleton
+                      class="card-chart__legend-skeleton"
+                      width="min(60%, calc(var(--dimension-size-800) * 2))"
+                    />
+                  )}
                 </div>
               ) : null}
               <slot />

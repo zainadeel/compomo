@@ -4,6 +4,7 @@ import '../../../../dist/components/ds-skeleton.js';
 import '../../../../dist/components/ds-text.js';
 import '../../../../dist/components/ds-icon.js';
 import '../../../../dist/components/ds-button-filled.js';
+import '../../../../dist/components/ds-button-unfilled.js';
 import '../../../../dist/components/ds-tag.js';
 
 const TEXT_VARIANTS = [
@@ -448,6 +449,58 @@ export const Composition: Story = {
         </div>
         <ds-skeleton variant="control" control-size="sm" width="96px" rounded></ds-skeleton>
       </div>
+    </div>
+  `,
+};
+
+export const PreservedContent: Story = {
+  args: { isLoading: true },
+  render: args => html`
+    <div style="display:grid;gap:var(--dimension-space-200);width:var(--dimension-card-width-xs);">
+      <ds-skeleton preserve-layout .isLoading=${args['isLoading']}>
+        <ds-text
+          >Content keeps its natural width and wrapping as this container becomes narrower.</ds-text
+        >
+      </ds-skeleton>
+      <ds-skeleton
+        preserve-layout
+        variant="control"
+        .isLoading=${args['isLoading']}
+        style="justify-self:start;"
+      >
+        <ds-button-filled label="Create a new item"></ds-button-filled>
+      </ds-skeleton>
+    </div>
+  `,
+};
+
+export const ControlAppearances: Story = {
+  render: () => html`
+    <div style="display:flex;gap:var(--dimension-space-200);align-items:center;">
+      <ds-skeleton preserve-layout variant="control">
+        <ds-button-filled label="Save changes"></ds-button-filled>
+      </ds-skeleton>
+      <ds-skeleton
+        preserve-layout
+        variant="control"
+        control-appearance="outlined"
+        control-content="icon-label"
+      >
+        <ds-button-unfilled variant="icon-label" icon="Filters" label="Filter"></ds-button-unfilled>
+      </ds-skeleton>
+      <ds-skeleton
+        preserve-layout
+        variant="control"
+        control-appearance="borderless"
+        control-content="icon"
+      >
+        <ds-button-unfilled
+          variant="icon"
+          icon="ChevronRight"
+          aria-label="Next"
+          .hasBorder=${false}
+        ></ds-button-unfilled>
+      </ds-skeleton>
     </div>
   `,
 };

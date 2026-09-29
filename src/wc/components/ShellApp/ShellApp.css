@@ -137,6 +137,9 @@
 
 .shell-app__content {
   grid-area: content;
+  /* Full-height pages use this lane, including banner and mobile navigation reflow. */
+  container-type: size;
+  container-name: ds-shell-content;
   flex: 1 1 auto;
   min-width: 0;
   min-height: 0;
@@ -205,6 +208,7 @@
 }
 
 .shell-app__content > ds-shell-page {
+  --ds-shell-content-block-size: 100cqh;
   display: block;
   min-height: 100%;
 }

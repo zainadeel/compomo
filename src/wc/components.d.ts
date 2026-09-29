@@ -83,7 +83,7 @@ import { SettingRowToggleVariant } from "./components/SettingRowToggle/SettingRo
 import { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellSectionNavigation, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
 import { ShellGradientPreset } from "./shell/shell-gradient-presets";
 import { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageDesktopHeaderPlacement, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
-import { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
+import { SkeletonBackground, SkeletonControlAppearance, SkeletonControlContent, SkeletonVariant } from "./components/Skeleton/Skeleton";
 import { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 import { SliderOrientation, SliderSize, SliderThumbAlignment, SliderTick, SliderValue } from "./components/Slider/Slider";
 import { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
@@ -173,7 +173,7 @@ export { SettingRowToggleVariant } from "./components/SettingRowToggle/SettingRo
 export { ShellAppComposition, ShellNavigationConfig, ShellPageChromeConfig, ShellSectionNavigation, ShellToolsConfig } from "./components/ShellApp/shell-app-types";
 export { ShellGradientPreset } from "./shell/shell-gradient-presets";
 export { ShellPageCapacity, ShellPageContentInset, ShellPageContentSurface, ShellPageDesktopHeaderPlacement, ShellPageHeaderPresentation } from "./components/ShellPage/shell-page-types";
-export { SkeletonBackground, SkeletonVariant } from "./components/Skeleton/Skeleton";
+export { SkeletonBackground, SkeletonControlAppearance, SkeletonControlContent, SkeletonVariant } from "./components/Skeleton/Skeleton";
 export { LineTruncation, TextAlign, TextColor, TextDecoration, TextElement, TextFontFeature, TextVariant, TextWrap } from "./components/Text/text-types";
 export { SliderOrientation, SliderSize, SliderThumbAlignment, SliderTick, SliderValue } from "./components/Slider/Slider";
 export { SwatchPickerOption, SwatchPickerSection } from "./components/SwatchPicker/swatch-picker-types";
@@ -1062,6 +1062,11 @@ export namespace Components {
          */
         "emptyMessage": string;
         /**
+          * Retain sections and rows while replacing their headings, labels, and values with skeletons.
+          * @default false
+         */
+        "isLoading": boolean;
+        /**
           * Ordered groups of actions rendered in the card. Empty groups are omitted.
           * @default []
          */
@@ -1085,6 +1090,11 @@ export namespace Components {
           * Chart heading shown in the card header.
          */
         "heading": string;
+        /**
+          * Skeletonize the header and chart canvas; custom body content owns its loading atoms.
+          * @default false
+         */
+        "isLoading": boolean;
         /**
           * Renders the standard filter action before custom actions.
           * @default false
@@ -1114,6 +1124,11 @@ export namespace Components {
           * Destination for the card's native link.
          */
         "href": string;
+        /**
+          * Preserve the card layout while its copy and navigation affordance show skeletons.
+          * @default false
+         */
+        "isLoading": boolean;
         /**
           * `navigation-only` makes the complete card the link. `content` keeps the header as the link and exposes a non-interactive body slot below it.
           * @default 'navigation-only'
@@ -1199,6 +1214,11 @@ export namespace Components {
          */
         "heading": string;
         /**
+          * Keep the card and projected content in place while its header shows skeletons.
+          * @default false
+         */
+        "isLoading": boolean;
+        /**
           * @default 'Save'
          */
         "saveLabel": string;
@@ -1228,6 +1248,11 @@ export namespace Components {
           * @default 'for'
          */
         "forLabel": string;
+        /**
+          * Replace sentence fragments and controls with skeletons inside the same card.
+          * @default false
+         */
+        "isLoading": boolean;
         /**
           * Sentence prefix, supplied separately for localization.
           * @default 'Managing'
@@ -2183,6 +2208,11 @@ export namespace Components {
           * Authored informational copy rendered without transformation.
          */
         "description": string;
+        /**
+          * Keep the informational row footprint while its copy is loading.
+          * @default false
+         */
+        "isLoading": boolean;
     }
     interface DsInput {
         /**
@@ -3083,6 +3113,11 @@ export namespace Components {
     }
     interface DsPagination {
         /**
+          * Show skeletons for the existing controls without changing their geometry.
+          * @default false
+         */
+        "chromeLoading": boolean;
+        /**
           * Effective whole-item capacity to request when Fit is selected.
          */
         "fitPageSize": number | undefined;
@@ -3521,6 +3556,11 @@ export namespace Components {
          */
         "isInactive": boolean;
         /**
+          * Preserve each option while replacing its circle and copy with loading atoms.
+          * @default false
+         */
+        "isLoading": boolean;
+        /**
           * Native form field name.
          */
         "name": string | undefined;
@@ -3956,6 +3996,11 @@ export namespace Components {
          */
         "description"?: string;
         /**
+          * Skeletonize the row copy without changing the saved choice or edit presentation.
+          * @default false
+         */
+        "isLoading": boolean;
+        /**
           * Settings heading shown in both presentations. Not Radio's form groupLabel.
          */
         "label"?: string;
@@ -3987,6 +4032,11 @@ export namespace Components {
           * @default false
          */
         "disabled": boolean;
+        /**
+          * Preserve the real row geometry while replacing copy and switch with skeletons.
+          * @default false
+         */
+        "isLoading": boolean;
         /**
           * Name of the enabled setting.
          */
@@ -4188,6 +4238,16 @@ export namespace Components {
          */
         "background": SkeletonBackground | undefined;
         /**
+          * Filled controls replace the entire shape; other appearances retain the frame and mask its contents.
+          * @default 'filled'
+         */
+        "controlAppearance": SkeletonControlAppearance;
+        /**
+          * Content anatomy for outlined and borderless control placeholders.
+          * @default 'label'
+         */
+        "controlContent": SkeletonControlContent;
+        /**
           * Shared control-density size whose height defines the control canvas.
           * @default 'md'
          */
@@ -4197,6 +4257,16 @@ export namespace Components {
           * @default 'md'
          */
         "iconSize": IconSize1;
+        /**
+          * With preserveLayout, reveal the same projected content when loading completes.
+          * @default true
+         */
+        "isLoading": boolean;
+        /**
+          * Derive geometry from a projected control or text instead of estimating its footprint.
+          * @default false
+         */
+        "preserveLayout": boolean;
         /**
           * Round icon skeletons into circles and control skeletons into pills. Ignored for text.
           * @default false
@@ -4487,7 +4557,7 @@ export namespace Components {
          */
         "chromeLayout": TableChromeLayout;
         /**
-          * Replace opted-in table-owned caption controls with same-size visual skeletons.
+          * Replace column headers and table-owned caption controls with same-size visual skeletons.
           * @default false
          */
         "chromeLoading": boolean;
@@ -8110,6 +8180,11 @@ declare namespace LocalJSX {
          */
         "emptyMessage"?: string;
         /**
+          * Retain sections and rows while replacing their headings, labels, and values with skeletons.
+          * @default false
+         */
+        "isLoading"?: boolean;
+        /**
           * Emitted when an available row is activated. When a row has an `href`, prevent this event to take over navigation with an application router.
          */
         "onDsAction"?: (event: DsCardActionCenterCustomEvent<CardActionCenterActionDetail>) => void;
@@ -8137,6 +8212,11 @@ declare namespace LocalJSX {
           * Chart heading shown in the card header.
          */
         "heading": string;
+        /**
+          * Skeletonize the header and chart canvas; custom body content owns its loading atoms.
+          * @default false
+         */
+        "isLoading"?: boolean;
         /**
           * Emits when the standard header filter control is activated.
          */
@@ -8170,6 +8250,11 @@ declare namespace LocalJSX {
           * Destination for the card's native link.
          */
         "href": string;
+        /**
+          * Preserve the card layout while its copy and navigation affordance show skeletons.
+          * @default false
+         */
+        "isLoading"?: boolean;
         /**
           * Emits before native navigation. Prevent this event to take over routing; the component will then prevent the original link navigation.
          */
@@ -8263,6 +8348,11 @@ declare namespace LocalJSX {
          */
         "heading": string;
         /**
+          * Keep the card and projected content in place while its header shows skeletons.
+          * @default false
+         */
+        "isLoading"?: boolean;
+        /**
           * Emits a controlled edit, save, or cancel request.
          */
         "onDsAction"?: (event: DsCardSettingCustomEvent<CardSettingActionDetail>) => void;
@@ -8296,6 +8386,11 @@ declare namespace LocalJSX {
           * @default 'for'
          */
         "forLabel"?: string;
+        /**
+          * Replace sentence fragments and controls with skeletons inside the same card.
+          * @default false
+         */
+        "isLoading"?: boolean;
         /**
           * Sentence prefix, supplied separately for localization.
           * @default 'Managing'
@@ -9381,6 +9476,11 @@ declare namespace LocalJSX {
           * Authored informational copy rendered without transformation.
          */
         "description": string;
+        /**
+          * Keep the informational row footprint while its copy is loading.
+          * @default false
+         */
+        "isLoading"?: boolean;
     }
     interface DsInput {
         /**
@@ -10333,6 +10433,11 @@ declare namespace LocalJSX {
     }
     interface DsPagination {
         /**
+          * Show skeletons for the existing controls without changing their geometry.
+          * @default false
+         */
+        "chromeLoading"?: boolean;
+        /**
           * Effective whole-item capacity to request when Fit is selected.
          */
         "fitPageSize"?: number | undefined;
@@ -10820,6 +10925,11 @@ declare namespace LocalJSX {
          */
         "isInactive"?: boolean;
         /**
+          * Preserve each option while replacing its circle and copy with loading atoms.
+          * @default false
+         */
+        "isLoading"?: boolean;
+        /**
           * Native form field name.
          */
         "name"?: string | undefined;
@@ -11271,6 +11381,11 @@ declare namespace LocalJSX {
          */
         "description"?: string;
         /**
+          * Skeletonize the row copy without changing the saved choice or edit presentation.
+          * @default false
+         */
+        "isLoading"?: boolean;
+        /**
           * Settings heading shown in both presentations. Not Radio's form groupLabel.
          */
         "label"?: string;
@@ -11302,6 +11417,11 @@ declare namespace LocalJSX {
           * @default false
          */
         "disabled"?: boolean;
+        /**
+          * Preserve the real row geometry while replacing copy and switch with skeletons.
+          * @default false
+         */
+        "isLoading"?: boolean;
         /**
           * Name of the enabled setting.
          */
@@ -11559,6 +11679,16 @@ declare namespace LocalJSX {
          */
         "background"?: SkeletonBackground | undefined;
         /**
+          * Filled controls replace the entire shape; other appearances retain the frame and mask its contents.
+          * @default 'filled'
+         */
+        "controlAppearance"?: SkeletonControlAppearance;
+        /**
+          * Content anatomy for outlined and borderless control placeholders.
+          * @default 'label'
+         */
+        "controlContent"?: SkeletonControlContent;
+        /**
           * Shared control-density size whose height defines the control canvas.
           * @default 'md'
          */
@@ -11568,6 +11698,16 @@ declare namespace LocalJSX {
           * @default 'md'
          */
         "iconSize"?: IconSize1;
+        /**
+          * With preserveLayout, reveal the same projected content when loading completes.
+          * @default true
+         */
+        "isLoading"?: boolean;
+        /**
+          * Derive geometry from a projected control or text instead of estimating its footprint.
+          * @default false
+         */
+        "preserveLayout"?: boolean;
         /**
           * Round icon skeletons into circles and control skeletons into pills. Ignored for text.
           * @default false
@@ -11868,7 +12008,7 @@ declare namespace LocalJSX {
          */
         "chromeLayout"?: TableChromeLayout;
         /**
-          * Replace opted-in table-owned caption controls with same-size visual skeletons.
+          * Replace column headers and table-owned caption controls with same-size visual skeletons.
           * @default false
          */
         "chromeLoading"?: boolean;
@@ -12785,6 +12925,7 @@ declare namespace LocalJSX {
     }
     interface DsCardActionCenterAttributes {
         "emptyMessage": string;
+        "isLoading": boolean;
     }
     interface DsCardChartAttributes {
         "heading": string;
@@ -12792,11 +12933,13 @@ declare namespace LocalJSX {
         "cardWidth": CardChartWidth;
         "showFilter": boolean;
         "filterLabel": string;
+        "isLoading": boolean;
     }
     interface DsCardNavigationAttributes {
         "href": string;
         "heading": string;
         "description": string | undefined;
+        "isLoading": boolean;
         "variant": CardNavigationVariant;
         "cardWidth": CardNavigationWidth;
     }
@@ -12816,6 +12959,7 @@ declare namespace LocalJSX {
         "cardWidth": CardSettingWidth;
         "variant": CardSettingVariant;
         "editing": boolean;
+        "isLoading": boolean;
         "editLabel": string;
         "cancelLabel": string;
         "saveLabel": string;
@@ -12832,6 +12976,7 @@ declare namespace LocalJSX {
         "areaExpanded": boolean;
         "profileExpanded": boolean;
         "profilePopup": 'menu' | 'dialog';
+        "isLoading": boolean;
     }
     interface DsChartAttributes {
         "label": string;
@@ -13030,6 +13175,7 @@ declare namespace LocalJSX {
     }
     interface DsInlineBannerSettingsAttributes {
         "description": string;
+        "isLoading": boolean;
     }
     interface DsInputAttributes {
         "value": string;
@@ -13289,6 +13435,7 @@ declare namespace LocalJSX {
         "label": string;
         "showFirstLastButtons": boolean;
         "loading": boolean;
+        "chromeLoading": boolean;
     }
     interface DsPanelNavAttributes {
         "navStyle": NavChromeStyle;
@@ -13367,6 +13514,7 @@ declare namespace LocalJSX {
         "requiredMessage": string;
         "direction": 'vertical' | 'horizontal';
         "isInactive": boolean;
+        "isLoading": boolean;
         "hasInteractionFill": boolean;
         "ariaLabel": string | null;
         "ariaLabelledby": string | undefined;
@@ -13464,12 +13612,14 @@ declare namespace LocalJSX {
         "label": string;
         "valueLabel": string;
         "description": string;
+        "isLoading": boolean;
     }
     interface DsSettingRowToggleAttributes {
         "label": string;
         "description": string;
         "checked": boolean;
         "disabled": boolean;
+        "isLoading": boolean;
         "variant": SettingRowToggleVariant;
     }
     interface DsShellAppAttributes {
@@ -13510,9 +13660,13 @@ declare namespace LocalJSX {
         "textVariant": TextVariant;
         "iconSize": IconSize;
         "controlSize": ControlSize;
+        "controlAppearance": SkeletonControlAppearance;
+        "controlContent": SkeletonControlContent;
         "width": string;
         "rounded": boolean;
         "shimmer": boolean;
+        "preserveLayout": boolean;
+        "isLoading": boolean;
         "background": SkeletonBackground | undefined;
     }
     interface DsSliderAttributes {
