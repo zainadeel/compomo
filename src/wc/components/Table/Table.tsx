@@ -2037,9 +2037,10 @@ export class Table {
         rowSpan={multirow ? 2 : undefined}
         style={multirow ? { gridColumn: '1', gridRow: '1 / span 2' } : undefined}
         scope={presentational ? undefined : 'col'}
+        aria-label={this.chromeLoading && !presentational ? 'Select rows' : undefined}
       >
         {this.chromeLoading ? (
-          <span class="ds-table__skeleton-checkbox-canvas" aria-label="Select rows">
+          <span class="ds-table__skeleton-checkbox-canvas" aria-hidden="true">
             <ds-skeleton
               class="ds-table__skeleton-checkbox"
               variant="control"
