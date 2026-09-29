@@ -27,6 +27,7 @@
   display: inline-flex;
   align-items: center;
   min-height: var(--dimension-size-400);
+  min-width: 0;
   max-width: 100%;
   margin: 0;
   padding: 0;
@@ -36,7 +37,7 @@
   cursor: pointer;
 }
 
-.card-settings-scope > ds-skeleton {
+.card-settings-scope ds-skeleton {
   min-width: 0;
   max-width: 100%;
 }

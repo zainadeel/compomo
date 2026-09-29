@@ -4179,7 +4179,7 @@
             "The shared text-action recipe supplies brand foreground, hover underline, and keyboard focus indication."
           ],
           "states": [
-            "Loading retains the card surface, sentence wrapping, and control footprints while replacing each fragment with an inert skeleton.",
+            "Loading retains the card surface, sentence wrapping, and control footprints while replacing each fragment with an inert text skeleton. Text actions mask only their labels, preserving the surrounding button's hit area.",
             "The application owns the selected area, profile, available choices, permissions, and empty-state copy. Existing complete area-trigger labels remain compatible. Applications that separate the localizable settings noun from the control supply the area-only trigger label and noun together.",
             "The card reports popup requests without changing selection or expanded state.",
             "The surface follows the active theme rather than imposing always-dark colors."
@@ -14926,7 +14926,8 @@
           ],
           "responsiveBehavior": [
             "The owning layout changes placeholder count, width, visibility, and arrangement to match its real responsive content.",
-            "Skeleton does not infer breakpoints or rearrange sibling atoms."
+            "Set collapseLabel on a control skeleton when its real control opts into compact table-caption behavior. It follows the same table or standalone data-toolbar measurement, replacing icon-and-label anatomy with a centered icon while preserving the enclosing control footprint.",
+            "Other skeletons do not infer breakpoints or rearrange sibling atoms. Icon canvases retain their square geometry in flex layouts."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -14995,6 +14996,10 @@
         "props": {
           "background": {
             "type": "SkeletonBackground | undefined",
+            "required": false
+          },
+          "collapseLabel": {
+            "type": "boolean",
             "required": false
           },
           "controlAppearance": {

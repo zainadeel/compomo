@@ -1,7 +1,8 @@
-import { Component, Prop, h, Host } from '@stencil/core';
+import { Component, Element, Prop, State, Watch, h, Host } from '@stencil/core';
 import type { IconSize } from '../Icon/Icon';
 import type { TextVariant } from '../Text/text-types';
 import { CONTROL_TEXT_VARIANT, type ControlSize } from '../../utils/control-text';
+import { observeTableCaptionCompact } from '../../utils/table-caption-compact';
 
 export type SkeletonVariant = 'text' | 'icon' | 'control';
 export type SkeletonControlAppearance = 'filled' | 'outlined' | 'borderless';
@@ -29,6 +30,7 @@ export type SkeletonBackground =
   shadow: true,
 })
 export class Skeleton {
+  @Element() el!: HTMLElement;
   @Prop() variant: SkeletonVariant = 'text';
   /** Text metric recipe whose line-height defines the text canvas. */
   @Prop() textVariant: TextVariant = 'text-body-medium';
@@ -40,6 +42,8 @@ export class Skeleton {
   @Prop() controlAppearance: SkeletonControlAppearance = 'filled';
   /** Content anatomy for outlined and borderless control placeholders. */
   @Prop() controlContent: SkeletonControlContent = 'label';
+  /** Follow the owning table or data toolbar's compact icon-only control presentation. */
+  @Prop() collapseLabel: boolean = false;
   /** Width of text and control skeleton canvases. Numbers resolve to px. Ignored for icons. */
   @Prop() width: string | number | undefined;
   /** Round icon skeletons into circles and control skeletons into pills. Ignored for text. */
@@ -53,6 +57,40 @@ export class Skeleton {
   /** Actual parent surface context. Omit on primary and secondary surfaces. */
   @Prop() background: SkeletonBackground | undefined;
 
+  @State() private captionCompact = false;
+  private captionCompactDisconnect: (() => void) | undefined;
+  private hasLoaded = false;
+
+  componentDidLoad(): void {
+    this.hasLoaded = true;
+    this.syncCaptionCompactObserver();
+  }
+
+  connectedCallback(): void {
+    if (this.hasLoaded) this.syncCaptionCompactObserver();
+  }
+
+  disconnectedCallback(): void {
+    this.disconnectCaptionCompactObserver();
+  }
+
+  private disconnectCaptionCompactObserver(): void {
+    this.captionCompactDisconnect?.();
+    this.captionCompactDisconnect = undefined;
+  }
+
+  @Watch('collapseLabel')
+  syncCaptionCompactObserver(): void {
+    this.disconnectCaptionCompactObserver();
+    if (!this.collapseLabel) {
+      this.captionCompact = false;
+      return;
+    }
+    this.captionCompactDisconnect = observeTableCaptionCompact(this.el, compact => {
+      this.captionCompact = compact;
+    });
+  }
+
   private get widthCss() {
     const v = this.width;
     if (v == null) return undefined;
@@ -60,7 +98,9 @@ export class Skeleton {
   }
 
   private renderControl() {
-    const iconOnly = this.controlContent === 'icon';
+    const iconOnly =
+      this.controlContent === 'icon' ||
+      (this.collapseLabel && this.captionCompact && this.controlContent.includes('icon'));
     const icon = () => (
       <ds-skeleton
         variant="icon"

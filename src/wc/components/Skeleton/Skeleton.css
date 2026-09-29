@@ -114,6 +114,7 @@
 /* ── Icon ──────────────────────────────────────────────────────────────── */
 
 :host(.skeleton--icon) {
+  flex-shrink: 0;
   width: var(--ds-skeleton-canvas-size);
   height: var(--ds-skeleton-canvas-size);
   padding: 0;
@@ -229,13 +230,13 @@
 }
 
 :host(.skeleton--preserve-layout.skeleton--text) .skeleton__shape {
-  /* Alpha mask only: each retained line uses the atomic text skeleton's inset. */
+  /* Geometry only: inherited text alpha must not dim the skeleton's own token. */
   mask-image: repeating-linear-gradient(
     to bottom,
     transparent 0,
     transparent calc(var(--ds-skeleton-canvas-size) * 0.125),
-    currentColor calc(var(--ds-skeleton-canvas-size) * 0.125),
-    currentColor calc(var(--ds-skeleton-canvas-size) * 0.875),
+    rgb(from currentColor r g b / 1) calc(var(--ds-skeleton-canvas-size) * 0.125),
+    rgb(from currentColor r g b / 1) calc(var(--ds-skeleton-canvas-size) * 0.875),
     transparent calc(var(--ds-skeleton-canvas-size) * 0.875),
     transparent var(--ds-skeleton-canvas-size)
   );

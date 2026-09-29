@@ -146,6 +146,9 @@ export const Loading: Story = {
       <ds-field is-loading label="Status">
         <ds-select .options=${STATUS_OPTIONS} value="active" width="fill"></ds-select>
       </ds-field>
+      <ds-field is-loading label="Image URL (optional)">
+        <ds-input placeholder="Leave empty for a standalone paper surface"></ds-input>
+      </ds-field>
     </div>
   `,
 };

@@ -55,7 +55,8 @@
   ],
   "responsiveBehavior": [
     "The owning layout changes placeholder count, width, visibility, and arrangement to match its real responsive content.",
-    "Skeleton does not infer breakpoints or rearrange sibling atoms."
+    "Set collapseLabel on a control skeleton when its real control opts into compact table-caption behavior. It follows the same table or standalone data-toolbar measurement, replacing icon-and-label anatomy with a centered icon while preserving the enclosing control footprint.",
+    "Other skeletons do not infer breakpoints or rearrange sibling atoms. Icon canvases retain their square geometry in flex layouts."
   ],
   "frameworkCaveats": {
     "customElements": [

@@ -4243,6 +4243,11 @@ export namespace Components {
          */
         "background": SkeletonBackground | undefined;
         /**
+          * Follow the owning table or data toolbar's compact icon-only control presentation.
+          * @default false
+         */
+        "collapseLabel": boolean;
+        /**
           * Filled controls replace the entire shape; other appearances retain the frame and mask its contents.
           * @default 'filled'
          */
@@ -11689,6 +11694,11 @@ declare namespace LocalJSX {
          */
         "background"?: SkeletonBackground | undefined;
         /**
+          * Follow the owning table or data toolbar's compact icon-only control presentation.
+          * @default false
+         */
+        "collapseLabel"?: boolean;
+        /**
           * Filled controls replace the entire shape; other appearances retain the frame and mask its contents.
           * @default 'filled'
          */
@@ -13673,6 +13683,7 @@ declare namespace LocalJSX {
         "controlSize": ControlSize;
         "controlAppearance": SkeletonControlAppearance;
         "controlContent": SkeletonControlContent;
+        "collapseLabel": boolean;
         "width": string;
         "rounded": boolean;
         "shimmer": boolean;
