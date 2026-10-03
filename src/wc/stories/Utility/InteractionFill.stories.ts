@@ -49,7 +49,7 @@ const SURFACE_CONTEXTS = [
     label: 'Translucent parent surface over a brand backdrop',
     className: 'translucent',
     helper: 'on-translucent',
-    backgroundToken: '--color-translucent-translucent',
+    backgroundToken: '--color-translucent-background',
   },
   {
     label: 'Inverted parent surface',

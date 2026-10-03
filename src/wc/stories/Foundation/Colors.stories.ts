@@ -105,8 +105,8 @@ function BackgroundColors(): TemplateResult {
         ${swatch('color-background-primary')} ${swatch('color-background-secondary')}
         ${swatch('color-background-shade')}
         ${swatch(
-          'color-translucent-translucent',
-          'translucent-translucent',
+          'color-translucent-background',
+          'translucent-background',
           'backdrop-filter: blur(16px);'
         )}
         ${swatch(
@@ -183,7 +183,7 @@ function ForegroundColors(): TemplateResult {
                 ? 'var(--color-background-strong-brand)'
                 : ctx === 'on-medium-background'
                   ? 'var(--color-background-medium-brand)'
-                  : 'var(--color-translucent-translucent)';
+                  : 'var(--color-translucent-background)';
           return html` <div style="margin-bottom: 16px;">
             <p style="${SUB} margin-bottom: 8px;">${ctx}</p>
             <div style="${GRID}">
@@ -238,7 +238,7 @@ function BorderColors(): TemplateResult {
               ? 'var(--color-background-strong-neutral)'
               : ctx === 'on-medium-background'
                 ? 'var(--color-background-medium-neutral)'
-                : 'var(--color-translucent-translucent)';
+                : 'var(--color-translucent-background)';
         return html` <div style="margin-bottom: 16px;">
           <p style="${SUB} margin-bottom: 8px;">${ctx}</p>
           <div style="${GRID}">
@@ -277,7 +277,7 @@ function BorderColors(): TemplateResult {
                 ? 'var(--color-background-strong-neutral)'
                 : ctx === 'on-medium-background'
                   ? 'var(--color-background-medium-neutral)'
-                  : 'var(--color-translucent-translucent)';
+                  : 'var(--color-translucent-background)';
           const labelColor =
             ctx.includes('bold') || ctx.includes('strong')
               ? 'var(--color-foreground-on-strong-background-secondary)'
@@ -323,7 +323,7 @@ function InteractionColors(): TemplateResult {
             ? 'var(--color-background-strong-brand)'
             : ctx === 'on-medium-background'
               ? 'var(--color-background-medium-brand)'
-              : 'var(--color-translucent-translucent)';
+              : 'var(--color-translucent-background)';
       return section(
         `Interaction — ${ctx}`,
         undefined,

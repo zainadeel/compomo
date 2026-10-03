@@ -58,7 +58,7 @@ const BACKGROUND_SURFACES = [
     value: 'translucent',
     label: 'translucent',
     background:
-      'linear-gradient(var(--color-translucent-translucent), var(--color-translucent-translucent)), var(--color-background-bold-brand)',
+      'linear-gradient(var(--color-translucent-background), var(--color-translucent-background)), var(--color-background-bold-brand)',
     labelColor: 'var(--color-translucent-foreground-secondary)',
   },
   {

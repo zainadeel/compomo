@@ -7,7 +7,7 @@
 :host {
   position: absolute;
   z-index: var(--dimension-z-index-tooltip);
-  background-color: var(--color-translucent-translucent);
+  background-color: var(--color-translucent-background);
   backdrop-filter: blur(var(--effect-blur-md));
   -webkit-backdrop-filter: blur(var(--effect-blur-md));
   border-radius: var(--ds-radius-tooltip-menu);

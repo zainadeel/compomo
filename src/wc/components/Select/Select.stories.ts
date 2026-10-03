@@ -40,7 +40,7 @@ const BACKGROUNDS = [
   { value: 'medium', label: 'medium', surface: 'var(--color-background-medium-neutral)' },
   { value: 'bold', label: 'bold', surface: 'var(--color-background-bold-neutral)' },
   { value: 'strong', label: 'strong', surface: 'var(--color-background-strong-neutral)' },
-  { value: 'translucent', label: 'translucent', surface: 'var(--color-translucent-translucent)' },
+  { value: 'translucent', label: 'translucent', surface: 'var(--color-translucent-background)' },
   { value: 'inverted', label: 'inverted', surface: 'var(--color-inverted-background)' },
   { value: 'media', label: 'media', surface: 'var(--color-media-background)' },
   { value: 'always-dark', label: 'always-dark', surface: 'var(--color-always-dark-background)' },

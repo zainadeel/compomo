@@ -250,8 +250,8 @@
       "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: tabs.",
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens ^8.0.1",
-          "@ds-mo/icons ^8.1.2"
+          "@ds-mo/tokens ^9.0.0",
+          "@ds-mo/icons ^8.2.1"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }

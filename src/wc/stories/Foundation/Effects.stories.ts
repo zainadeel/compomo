@@ -171,7 +171,7 @@ export const MotionAndBlur: Story = {
                     position:absolute;
                     inset:var(--dimension-space-150);
                     backdrop-filter:blur(var(--effect-blur-${size}));
-                    background:var(--color-translucent-translucent);
+                    background:var(--color-translucent-background);
                   "
                   ></div>
                 </div>

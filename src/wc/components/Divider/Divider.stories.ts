@@ -52,7 +52,7 @@ const BACKGROUND_CONTEXTS = [
     id: 'translucent',
     value: 'translucent',
     label: 'translucent',
-    background: 'var(--color-translucent-translucent)',
+    background: 'var(--color-translucent-background)',
     color: 'var(--color-translucent-foreground-primary)',
   },
   {

@@ -27,7 +27,7 @@ const STORY_SURFACE_BG: Record<(typeof SURFACES)[number], string> = {
   bold: 'var(--color-background-bold-neutral)',
   strong: 'var(--color-background-strong-neutral)',
   translucent:
-    'linear-gradient(var(--color-translucent-translucent), var(--color-translucent-translucent)), var(--color-background-bold-brand)',
+    'linear-gradient(var(--color-translucent-background), var(--color-translucent-background)), var(--color-background-bold-brand)',
   inverted: 'var(--color-inverted-background)',
   media: 'var(--color-media-background)',
   navigation: 'var(--color-navigation-background)',
