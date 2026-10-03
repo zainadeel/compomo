@@ -559,7 +559,7 @@ export const BorderSurfaceContexts: Story = {
         ></ds-button-filled>
       </div>
       <div
-        style="${SURFACE} background:linear-gradient(var(--color-translucent-translucent), var(--color-translucent-translucent)), var(--color-background-bold-brand);"
+        style="${SURFACE} background:linear-gradient(var(--color-translucent-background), var(--color-translucent-background)), var(--color-background-bold-brand);"
       >
         <span style="${LABEL};color:var(--color-translucent-foreground-secondary)"
           >translucent</span

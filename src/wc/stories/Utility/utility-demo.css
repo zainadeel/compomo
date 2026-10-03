@@ -126,7 +126,7 @@
 
 .util-demo-surface--translucent {
   background:
-    linear-gradient(var(--color-translucent-translucent), var(--color-translucent-translucent)),
+    linear-gradient(var(--color-translucent-background), var(--color-translucent-background)),
     var(--color-background-bold-brand);
 }
 

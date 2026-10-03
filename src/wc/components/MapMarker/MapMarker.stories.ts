@@ -11,7 +11,7 @@ const REVIEW_SURFACE = `
   padding: var(--dimension-space-400);
   border-radius: var(--dimension-radius-200);
   background:
-    linear-gradient(var(--color-translucent-translucent), var(--color-translucent-translucent)),
+    linear-gradient(var(--color-translucent-background), var(--color-translucent-background)),
     var(--color-background-faint-neutral);
 `;
 

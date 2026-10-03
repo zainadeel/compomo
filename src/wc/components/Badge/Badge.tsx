@@ -21,7 +21,7 @@ const SURFACE_RING: Record<BadgeSurface, string> = {
   medium: 'var(--color-background-medium-neutral)',
   bold: 'var(--color-background-bold-neutral)',
   strong: 'var(--color-background-strong-neutral)',
-  translucent: 'var(--color-translucent-translucent)',
+  translucent: 'var(--color-translucent-background)',
   inverted: 'var(--color-inverted-background)',
   media: 'var(--color-media-background)',
   navigation: 'var(--color-navigation-background)',

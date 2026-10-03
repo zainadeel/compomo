@@ -21,6 +21,94 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
 });
 
+test('button interaction fills and keyboard focus survive token upgrades @cross-browser', async ({
+  page,
+}) => {
+  for (const theme of ['light', 'dark']) {
+    await page.locator('html').evaluate((element, value) => {
+      element.setAttribute('data-theme', value);
+    }, theme);
+
+    for (const [id, family] of [
+      ['filled-label', '--color-interaction-on-bold-background'],
+      ['unfilled-label', '--color-interaction'],
+      ['unfilled-icon', '--color-translucent-interaction'],
+    ]) {
+      const host = page.locator(`#${id}`);
+      if (id === 'unfilled-icon') {
+        await host.evaluate(element => {
+          (element as HTMLElement & { background: string }).background = 'translucent';
+        });
+      }
+      const button = host.getByRole('button');
+      const tokens = await button.evaluate((element, prefix) => {
+        const probe = document.createElement('span');
+        element.append(probe);
+        const resolve = (name: string) => {
+          if (!getComputedStyle(element).getPropertyValue(name).trim()) {
+            throw new Error(`Missing token: ${name}`);
+          }
+          probe.style.color = `var(${name})`;
+          return getComputedStyle(probe).color;
+        };
+        const result = {
+          hover: resolve(`${prefix}-hover`),
+          pressed: resolve(`${prefix}-pressed`),
+          focus: resolve(`${prefix}-focus`),
+        };
+        probe.remove();
+        return result;
+      }, family);
+
+      await button.hover();
+      await expect
+        .poll(() =>
+          button.evaluate(element => getComputedStyle(element, '::after').backgroundColor)
+        )
+        .toBe(tokens.hover);
+      await page.mouse.down();
+      await expect
+        .poll(() =>
+          button.evaluate(element => getComputedStyle(element, '::after').backgroundColor)
+        )
+        .toBe(tokens.pressed);
+      await page.mouse.up();
+
+      if (id.startsWith('unfilled')) {
+        await host.evaluate(element => {
+          (element as HTMLElement & { isActive: boolean }).isActive = true;
+        });
+        const selected = await button.evaluate((element, token) => {
+          const probe = document.createElement('span');
+          probe.style.color = `var(${token})`;
+          element.append(probe);
+          const color = getComputedStyle(probe).color;
+          probe.remove();
+          return color;
+        }, `${family}-active-brand`);
+        await expect
+          .poll(() =>
+            button.evaluate(element => getComputedStyle(element, '::before').backgroundColor)
+          )
+          .toBe(selected);
+        await host.evaluate(element => {
+          (element as HTMLElement & { isActive: boolean }).isActive = false;
+        });
+      }
+
+      await page.keyboard.press('Tab');
+      await button.focus();
+      await expect(button).toBeFocused();
+      await expect
+        .poll(() => button.evaluate(element => getComputedStyle(element, '::after').outlineStyle))
+        .toBe('solid');
+      await expect
+        .poll(() => button.evaluate(element => getComputedStyle(element, '::after').outlineColor))
+        .toBe(tokens.focus);
+    }
+  }
+});
+
 test('filled and unfilled split modes preserve primary variants and separate menu intent @cross-browser', async ({
   page,
 }) => {

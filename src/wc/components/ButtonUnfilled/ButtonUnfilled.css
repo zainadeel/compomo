@@ -100,7 +100,7 @@
 .button-unfilled--background-translucent {
   --ds-button-unfilled-fg: var(--color-translucent-foreground-secondary);
   --ds-button-unfilled-fg-active: var(--color-translucent-foreground-primary);
-  --ds-button-unfilled-dot-ring: var(--color-translucent-translucent);
+  --ds-button-unfilled-dot-ring: var(--color-translucent-background);
   --ds-button-unfilled-border: var(--color-translucent-border-secondary);
 }
 

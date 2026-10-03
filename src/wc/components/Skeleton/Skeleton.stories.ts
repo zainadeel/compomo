@@ -58,7 +58,7 @@ const BACKGROUND_CONTEXTS = [
     id: 'translucent',
     value: 'translucent',
     label: 'translucent',
-    background: 'var(--color-translucent-translucent)',
+    background: 'var(--color-translucent-background)',
   },
   {
     id: 'inverted',
