@@ -1,5 +1,16 @@
 # Changelog
 
+## [16.0.0](https://github.com/zainadeel/compomo/compare/v15.12.1...v16.0.0) (2026-10-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* consumers must install `@ds-mo/tokens ^9.0.0` and `@ds-mo/icons ^8.2.1`.
+
+### Fixed
+
+* adopt tokomo 9 and update icomo ([#681](https://github.com/zainadeel/compomo/issues/681)) ([12b493e](https://github.com/zainadeel/compomo/commit/12b493e69f4e9e1fca5b2e7529559a1db9ceaa4b))
+
 ## [15.12.1](https://github.com/zainadeel/compomo/compare/v15.12.0...v15.12.1) (2026-09-29)
 
 
