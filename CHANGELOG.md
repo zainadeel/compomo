@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.1.2](https://github.com/zainadeel/compomo/compare/v16.1.1...v16.1.2) (2026-10-04)
+
+
+### Fixed
+
+* **a11y:** preserve text contrast with axe-core 4.13 ([#691](https://github.com/zainadeel/compomo/issues/691)) ([c54e2ab](https://github.com/zainadeel/compomo/commit/c54e2abd28548d4aac2cb447e3d010574bb5d0b8))
+
 ## [16.1.1](https://github.com/zainadeel/compomo/compare/v16.1.0...v16.1.1) (2026-10-04)
 
 
