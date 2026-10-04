@@ -44,6 +44,16 @@ export const Playground: Story = {
   `,
 };
 
+export const ExternalHighlight: Story = {
+  render: () => html`
+    <ds-chart-legend
+      .items=${MOCK_DATA}
+      active-label="Passed"
+      .highlightOnHover=${false}
+    ></ds-chart-legend>
+  `,
+};
+
 // Round-numbers through every compact-formatting bracket: 1000 -> 1k, 1500 -> 1.5k,
 // 10100 -> 10.1k, 110100 -> 110.1k, 1000000 -> 1m.
 const NUMBER_FORMAT_ITEMS: ChartLegendItem[] = [

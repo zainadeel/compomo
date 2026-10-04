@@ -31,8 +31,8 @@ export class ChartLegend {
   @Prop() highlightOnHover: boolean = true;
   /**
    * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling
-   * chart's `dsSliceHover` event to keep chart and legend hover in sync. Only dims the other
-   * rows' opacity (like a chart dimming its other slices) — it never shows the hover-fill,
+   * chart's `dsSliceHover` event to keep chart and legend hover in sync. Dims the other
+   * rows' swatches while keeping their text fully readable. It never shows the hover-fill,
    * since that's reserved for a real pointer/keyboard interaction on this row.
    */
   @Prop() activeLabel: string | null = null;

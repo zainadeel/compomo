@@ -63,7 +63,6 @@ const BADGE_TARGET = `
   height: var(--dimension-size-300);
   border-radius: var(--dimension-radius-100);
   background: currentColor;
-  opacity: 0.8;
 `;
 
 const BADGE_ANCHOR = `
