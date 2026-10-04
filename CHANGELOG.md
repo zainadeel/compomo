@@ -1,5 +1,13 @@
 # Changelog
 
+## [16.1.1](https://github.com/zainadeel/compomo/compare/v16.1.0...v16.1.1) (2026-10-04)
+
+
+### Fixed
+
+* harden core observer and toast lifecycles ([#684](https://github.com/zainadeel/compomo/issues/684)) ([2287c56](https://github.com/zainadeel/compomo/commit/2287c56ef9791ed82b0044a9bfabf9a026dfba30))
+* validate framework consumers and address open issues ([#683](https://github.com/zainadeel/compomo/issues/683)) ([bb4e9a8](https://github.com/zainadeel/compomo/commit/bb4e9a86160b78faa849f80a3ab441eba6d606db))
+
 ## [16.1.0](https://github.com/zainadeel/compomo/compare/v16.0.0...v16.1.0) (2026-10-04)
 
 
