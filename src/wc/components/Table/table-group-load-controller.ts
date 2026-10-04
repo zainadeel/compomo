@@ -4,6 +4,7 @@ import type {
   TableLoadMoreMode,
   TableLoadMoreReason,
 } from './table-types';
+import { TableLoadObserver } from './table-load-observer';
 
 export interface TableGroupLoadControllerState {
   enabled: boolean;
@@ -53,7 +54,7 @@ export class TableGroupLoadController {
   readonly intersectionSupported = typeof IntersectionObserver !== 'undefined';
 
   private connected = false;
-  private intersectionObserver: IntersectionObserver | null = null;
+  private readonly observer = new TableLoadObserver(groupId => this.request(groupId, 'auto'));
   private snapshots = new Map<string, GroupSnapshot>();
   private pending = new Map<string, { identity: string | number; count: number }>();
 
@@ -86,29 +87,18 @@ export class TableGroupLoadController {
       return;
     }
 
-    this.disconnectObserver();
-    const threshold = Number.isFinite(state.loadMoreThreshold)
-      ? Math.max(0, state.loadMoreThreshold)
-      : 0;
-    this.intersectionObserver = new IntersectionObserver(
-      entries => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          const groupId = (entry.target as HTMLElement).dataset.groupId;
-          if (groupId) this.request(groupId, 'auto');
-        }
-      },
-      {
-        root: state.containedScroll ? state.viewport : null,
-        rootMargin: `0px 0px ${threshold}px 0px`,
-      }
-    );
-
+    const groups = new Map(state.groups.map(group => [group.id, group]));
+    const targets = new Map<HTMLElement, string>();
     for (const [groupId, sentinel] of state.sentinels) {
-      const group = state.groups.find(item => item.id === groupId);
+      const group = groups.get(groupId);
       if (!group?.hasMore || group.loadingMore || group.loadMoreError?.trim()) continue;
-      this.intersectionObserver.observe(sentinel);
+      targets.set(sentinel, groupId);
     }
+    this.observer.refresh(
+      targets,
+      state.containedScroll ? state.viewport : null,
+      state.loadMoreThreshold
+    );
   }
 
   structureChanged(): void {
@@ -143,7 +133,14 @@ export class TableGroupLoadController {
           this.options.announce(formatGroupLabel(state.endOfResultsLabel, group));
         }
         if (pending && next.count > pending.count) this.pending.delete(group.id);
-        if (pending && previous.loading && !next.loading && next.count === pending.count) {
+        if (
+          state.loadMoreMode === 'manual' &&
+          pending &&
+          previous.loading &&
+          !next.loading &&
+          next.count === pending.count
+        ) {
+          // Empty automatic responses must not cause an endless request loop.
           this.pending.delete(group.id);
         }
       }
@@ -167,6 +164,7 @@ export class TableGroupLoadController {
     const group = state.groups.find(item => item.id === groupId);
     if (
       !state.enabled ||
+      (reason === 'auto' && (!this.connected || state.loadMoreMode !== 'auto')) ||
       !group?.hasMore ||
       group.loadingMore ||
       (reason !== 'retry' && !!group.loadMoreError?.trim()) ||
@@ -200,7 +198,6 @@ export class TableGroupLoadController {
   }
 
   private disconnectObserver(): void {
-    this.intersectionObserver?.disconnect();
-    this.intersectionObserver = null;
+    this.observer.disconnect();
   }
 }
