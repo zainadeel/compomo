@@ -70,6 +70,7 @@ cleanFileProviderCollisions();
 execFileSync(npx, ['tsc', '-p', 'tsconfig.react.json'], { stdio: 'inherit' });
 execFileSync(npx, ['tsc', '-p', 'tsconfig.react-runtime.json'], { stdio: 'inherit' });
 execFileSync(npx, ['tsc', '-p', 'tsconfig.vue.json'], { stdio: 'inherit' });
+execFileSync(npx, ['tsc', '-p', 'tsconfig.vue-runtime.json'], { stdio: 'inherit' });
 execFileSync(npx, ['ngc', '-p', 'tsconfig.angular.json'], { stdio: 'inherit' });
 
 rewriteRuntimeImports('dist/react', stencilReactRuntime, './react-runtime.js', 'React');

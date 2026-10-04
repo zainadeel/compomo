@@ -27,10 +27,12 @@ updates:
       angular:
         patterns:
           - '@angular/*'
-      vitest:
+      storybook-testing:
         patterns:
           - 'vitest'
           - '@vitest/*'
+          - 'storybook'
+          - '@storybook/*'
       react:
         patterns:
           - 'react'
@@ -42,10 +44,6 @@ updates:
           - 'vite'
           - '@vitejs/*'
           - 'vite-plugin-*'
-      storybook:
-        patterns:
-          - 'storybook'
-          - '@storybook/*'
       types:
         patterns:
           - '@types/*'

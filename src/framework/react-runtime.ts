@@ -42,8 +42,50 @@ export function createComponent<
 }): StencilReactComponent<I, E, C, R> {
   defineCustomElement?.();
   const resolvedTagName = transformTag ? transformTag(tagName) : tagName;
-  return createLitComponent<I, E>({
+  const events = Object.entries(options.events ?? {});
+  const Bridge = createLitComponent<I>({
     ...options,
+    // Own subscriptions so unmount releases application callbacks. Lit retains
+    // ownership of custom-element properties and native React props.
+    events: {},
     tagName: resolvedTagName,
-  }) as unknown as StencilReactComponent<I, E, C, R>;
+  });
+  if (events.length === 0) return Bridge as unknown as StencilReactComponent<I, E, C, R>;
+  const React = options.react;
+  const useBrowserLayoutEffect =
+    typeof window === 'undefined' ? React.useEffect : React.useLayoutEffect;
+  const Component = React.forwardRef<I, Record<string, unknown>>((props, ref) => {
+    const element = React.useRef<I | null>(null);
+    const elementProps = { ...props };
+    for (const [prop] of events) delete elementProps[prop];
+
+    useBrowserLayoutEffect(() => {
+      const node = element.current;
+      if (!node) return;
+      const subscriptions: [string, EventListener][] = [];
+      for (const [prop, name] of events) {
+        const handler = props[prop];
+        if (typeof handler !== 'function') continue;
+        const listener: EventListener = event => handler(event);
+        node.addEventListener(name, listener);
+        subscriptions.push([name, listener]);
+      }
+      return () => {
+        for (const [name, listener] of subscriptions) node.removeEventListener(name, listener);
+      };
+    });
+
+    const setRef = React.useCallback(
+      (node: I | null) => {
+        element.current = node;
+        if (typeof ref === 'function') ref(node);
+        else if (ref) ref.current = node;
+      },
+      [ref]
+    );
+    const bridgeProps = { ...elementProps, ref: setRef } as React.ComponentProps<typeof Bridge>;
+    return React.createElement(Bridge, bridgeProps);
+  });
+  Component.displayName = options.displayName ?? resolvedTagName;
+  return Component as unknown as StencilReactComponent<I, E, C, R>;
 }
