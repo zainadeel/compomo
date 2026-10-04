@@ -21,9 +21,24 @@ class ToastManagerImpl<Data = unknown> implements ToastManager<Data> {
   private records: ToastRecord<Data>[] = [];
   private listeners = new Set<ToastListener<Data>>();
   private nextId = 0;
+  private promiseOwners = new Map<string, symbol>();
+  private emitting = false;
+  private emissionPending = false;
 
   add(options: ToastOptions<Data>): string {
-    const id = options.id || `ds-toast-${++this.nextId}`;
+    return this.addRecord(options);
+  }
+
+  private addRecord(options: ToastOptions<Data>, promiseOwner?: symbol): string {
+    let id = options.id;
+    if (!id) {
+      do {
+        id = `ds-toast-${++this.nextId}`;
+      } while (this.records.some(record => record.id === id));
+    }
+    // Install ownership before notifying: a subscriber may replace or dismiss it.
+    if (promiseOwner) this.promiseOwners.set(id, promiseOwner);
+    else this.promiseOwners.delete(id);
     const existingIndex = this.records.findIndex(record => record.id === id);
 
     if (!options.title?.trim() && !options.description?.trim()) {
@@ -63,6 +78,7 @@ class ToastManagerImpl<Data = unknown> implements ToastManager<Data> {
   update(id: string, updates: Partial<ToastOptions<Data>>): void {
     const index = this.records.findIndex(record => record.id === id);
     if (index < 0) return;
+    this.promiseOwners.delete(id);
     const current = this.records[index];
     const restartsTimer =
       Object.prototype.hasOwnProperty.call(updates, 'timeout') ||
@@ -84,6 +100,7 @@ class ToastManagerImpl<Data = unknown> implements ToastManager<Data> {
   close(id: string, reason: ToastCloseReason = 'programmatic'): void {
     const index = this.records.findIndex(record => record.id === id);
     if (index < 0 || this.records[index].transitionStatus === 'ending') return;
+    this.promiseOwners.delete(id);
 
     const closing: ToastRecord<Data> = {
       ...this.records[index],
@@ -106,29 +123,42 @@ class ToastManagerImpl<Data = unknown> implements ToastManager<Data> {
     options: ToastPromiseOptions<Value, Data>
   ): Promise<Value> {
     const loading = resolvePromiseValue(options.loading, undefined as Value);
-    const id = this.add({
-      ...loading,
-      type: loading.type ?? 'loading',
-      timeout: 0,
-    });
+    const owner = Symbol();
+    const id = this.addRecord(
+      {
+        ...loading,
+        type: loading.type ?? 'loading',
+        timeout: 0,
+      },
+      owner
+    );
+    const current = () => this.promiseOwners.get(id) === owner;
 
     try {
       const value = await promiseValue;
-      const success = resolvePromiseValue(options.success, value);
-      this.update(id, {
-        ...success,
-        type: success.type ?? 'success',
-        timeout: success.timeout,
-      });
+      if (current()) {
+        const success = resolvePromiseValue(options.success, value);
+        if (current())
+          this.update(id, {
+            ...success,
+            type: success.type ?? 'success',
+            timeout: success.timeout,
+          });
+      }
       return value;
     } catch (error) {
-      const failure = resolvePromiseValue(options.error, error);
-      this.update(id, {
-        ...failure,
-        type: failure.type ?? 'error',
-        timeout: failure.timeout,
-      });
+      if (current()) {
+        const failure = resolvePromiseValue(options.error, error);
+        if (current())
+          this.update(id, {
+            ...failure,
+            type: failure.type ?? 'error',
+            timeout: failure.timeout,
+          });
+      }
       throw error;
+    } finally {
+      if (current()) this.promiseOwners.delete(id);
     }
   }
 
@@ -157,6 +187,7 @@ class ToastManagerImpl<Data = unknown> implements ToastManager<Data> {
     const record = this.records.find(candidate => candidate.id === id);
     if (!record || record.transitionStatus !== 'ending') return null;
     const reason = record.closeReason ?? 'programmatic';
+    this.promiseOwners.delete(id);
     this.records = this.records.filter(candidate => candidate.id !== id);
     this.emit();
     const context: ToastCloseContext<Data> = { id, reason, toast: record };
@@ -169,8 +200,20 @@ class ToastManagerImpl<Data = unknown> implements ToastManager<Data> {
   }
 
   private emit(): void {
-    const snapshot = this.getSnapshot();
-    for (const listener of this.listeners) listener(snapshot);
+    this.emissionPending = true;
+    if (this.emitting) return;
+    this.emitting = true;
+    try {
+      do {
+        this.emissionPending = false;
+        const snapshot = this.getSnapshot();
+        for (const listener of [...this.listeners]) {
+          if (this.listeners.has(listener)) listener(snapshot);
+        }
+      } while (this.emissionPending);
+    } finally {
+      this.emitting = false;
+    }
   }
 }
 

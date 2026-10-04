@@ -82,6 +82,7 @@ export class AnchoredPositionController {
   private readonly options: AnchoredPositionControllerOptions;
   private scrollResizeHandler: (() => void) | null = null;
   private resizeObserver: ResizeObserver | null = null;
+  private resizeTargets = new Set<HTMLElement>();
   private retryRaf: number | null = null;
   private liveRaf: number | null = null;
   private anchorMotionRaf: number | null = null;
@@ -166,11 +167,11 @@ export class AnchoredPositionController {
 
   /** Measure and commit once. @returns `false` when the popup is not measurable. */
   update(): boolean {
+    this.observeResizeTargets();
     const anchor = this.options.getAnchor();
     if (!anchor?.isConnected) return false;
     const popup = this.options.getPopup();
     if (!popup?.isConnected) return false;
-    this.observeResizeTargets();
 
     if (
       this.options.topLayer &&
@@ -292,6 +293,7 @@ export class AnchoredPositionController {
     }
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
+    this.resizeTargets.clear();
     this.ownerDocument?.removeEventListener('transitionrun', this.anchorMotionStartHandler, true);
     this.ownerDocument?.removeEventListener('transitionend', this.anchorMotionEndHandler, true);
     this.ownerDocument?.removeEventListener('transitioncancel', this.anchorMotionEndHandler, true);
@@ -330,14 +332,22 @@ export class AnchoredPositionController {
   }
 
   /**
-   * Re-attach the resize observer after the popup remounts. Safe to call
-   * repeatedly; `ResizeObserver.observe` ignores duplicate targets.
+   * Keep only the current connected anchor and popup observed. Replaced or
+   * detached elements must not remain retained until the overlay closes.
    */
   observeResizeTargets(): void {
     if (!this.resizeObserver) return;
-    const popup = this.options.getPopup();
-    if (popup) this.resizeObserver.observe(popup);
-    const anchor = this.options.getAnchor();
-    if (anchor) this.resizeObserver.observe(anchor);
+    const targets = new Set(
+      [this.options.getPopup(), this.options.getAnchor()].filter(
+        (element): element is HTMLElement => !!element?.isConnected
+      )
+    );
+    for (const target of this.resizeTargets) {
+      if (!targets.has(target)) this.resizeObserver.unobserve(target);
+    }
+    for (const target of targets) {
+      if (!this.resizeTargets.has(target)) this.resizeObserver.observe(target);
+    }
+    this.resizeTargets = targets;
   }
 }

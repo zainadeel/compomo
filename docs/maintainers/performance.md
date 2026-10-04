@@ -35,6 +35,14 @@ DOM cardinality checks do not prove the absence of every memory leak.
 
 ## Optimization boundaries
 
+For grouped-loading observer reconciliation, run
+`node --import tsx/esm scripts/measure-table-loading.mjs`. An optional source
+path runs the identical workload against another revision's controller. The
+report separates CPU timings from identity reads and observation counts, using
+a counting observer stub. It does not measure browser layout or claim an
+application-wide speedup. Compare both revisions with other builds and browser
+tests idle, following the environment-recording guidance above.
+
 Reuse derived data within the snapshot that owns it. Controlled arrays and
 objects change by reference; do not introduce a global cache of application
 records. Bound formatter caches, prune measurements when definitions change,

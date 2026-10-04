@@ -125,3 +125,131 @@ test('promise preserves rejection while updating the toast to error', async () =
   assert.equal(errorToast.title, 'Upload failed');
   assert.equal(errorToast.description, 'offline');
 });
+
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  let reject!: (error: unknown) => void;
+  const promise = new Promise<T>((yes, no) => {
+    resolve = yes;
+    reject = no;
+  });
+  return { promise, resolve, reject };
+}
+
+test('automatic ids never overwrite an explicitly named toast', () => {
+  const manager = createToastManager();
+  manager.add({ id: 'ds-toast-1', title: 'Application-owned' });
+  const id = manager.add({ title: 'Automatic' });
+  assert.notEqual(id, 'ds-toast-1');
+  assert.equal(manager.getSnapshot().length, 2);
+  assert.equal(
+    manager.getSnapshot().find(record => record.id === 'ds-toast-1')?.title,
+    'Application-owned'
+  );
+});
+
+test('only the current promise may settle a reused toast id', async () => {
+  const manager = createToastManager();
+  const first = deferred<string>();
+  const second = deferred<string>();
+  let obsoleteMappings = 0;
+  const oldResult = manager.promise(first.promise, {
+    loading: { id: 'upload', title: 'First' },
+    success: () => {
+      obsoleteMappings++;
+      return 'Obsolete';
+    },
+    error: 'Failed',
+  });
+  const currentResult = manager.promise(second.promise, {
+    loading: { id: 'upload', title: 'Second' },
+    success: { title: 'Current' },
+    error: 'Failed',
+  });
+  first.resolve('old value');
+  assert.equal(await oldResult, 'old value');
+  assert.equal(obsoleteMappings, 0);
+  assert.equal(manager.getSnapshot()[0].title, 'Second');
+  second.resolve('new value');
+  assert.equal(await currentResult, 'new value');
+  assert.equal(manager.getSnapshot()[0].title, 'Current');
+});
+
+test('explicit changes and dismissal revoke promise presentation without swallowing its outcome', async () => {
+  for (const change of ['update', 'replace', 'dismiss', 'remove'] as const) {
+    const manager = createToastManager();
+    const pending = deferred<string>();
+    const result = manager.promise(pending.promise, {
+      loading: { id: 'work', title: 'Loading' },
+      success: 'Done',
+      error: 'Failed',
+    });
+    if (change === 'update') manager.update('work', { title: 'User update' });
+    else if (change === 'replace') manager.add({ id: 'work', title: 'Replacement' });
+    else {
+      manager.close('work');
+      if (change === 'remove') manager.remove('work');
+    }
+    const snapshot = manager.getSnapshot();
+    const failure = new Error('original rejection');
+    pending.reject(failure);
+    await assert.rejects(result, failure);
+    assert.deepEqual(manager.getSnapshot(), snapshot);
+  }
+});
+
+test('promise ownership survives activation but yields to mutations during subscriber and mapper callbacks', async () => {
+  const manager = createToastManager();
+  const unsubscribe = manager.subscribe(records => {
+    if (records[0]?.type === 'loading') manager.close(records[0].id);
+  });
+  await manager.promise(Promise.resolve('done'), {
+    loading: 'Loading',
+    success: 'Done',
+    error: 'Failed',
+  });
+  assert.equal(manager.getSnapshot()[0].transitionStatus, 'ending');
+  assert.equal(manager.getSnapshot()[0].description, 'Loading');
+  unsubscribe();
+
+  const pending = deferred<string>();
+  const result = manager.promise(pending.promise, {
+    loading: { id: 'active', title: 'Loading' },
+    success: () => {
+      manager.add({ id: 'active', title: 'New work' });
+      return 'Obsolete result';
+    },
+    error: 'Failed',
+  });
+  manager.activate('active');
+  pending.resolve('done');
+  await result;
+  assert.equal(manager.getSnapshot()[0].title, 'New work');
+  assert.equal(manager.getSnapshot()[0].description, undefined);
+});
+
+test('reentrant mutations reach subscribers in order and new subscriptions are delivered once', () => {
+  const manager = createToastManager();
+  const seen: string[] = [];
+  let adjusted = false;
+  manager.subscribe(records => {
+    if (!records.length || adjusted) return;
+    adjusted = true;
+    manager.update('work', { title: 'Updated' });
+  });
+  manager.subscribe(records => {
+    if (records.length) seen.push(records[0].title!);
+  });
+  manager.add({ id: 'work', title: 'Original' });
+  assert.deepEqual(seen, ['Original', 'Updated']);
+
+  const added: string[] = [];
+  let subscribed = false;
+  manager.subscribe(records => {
+    if (subscribed || records[0]?.title !== 'Again') return;
+    subscribed = true;
+    manager.subscribe(next => added.push(next[0].title!));
+  });
+  manager.update('work', { title: 'Again' });
+  assert.deepEqual(added, ['Again']);
+});

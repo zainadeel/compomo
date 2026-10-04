@@ -74,6 +74,7 @@ export interface ToastManager<Data = unknown> {
   update(id: string, updates: Partial<ToastOptions<Data>>): void;
   close(id: string, reason?: ToastCloseReason): void;
   closeAll(reason?: ToastCloseReason): void;
+  /** A replaced, explicitly updated, or dismissed loading toast ignores its old promise's presentation result. */
   promise<Value>(
     promiseValue: PromiseLike<Value>,
     options: ToastPromiseOptions<Value, Data>
