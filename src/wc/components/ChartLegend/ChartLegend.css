@@ -62,17 +62,6 @@
   border-radius: var(--ds-control-radius, var(--dimension-radius-025));
   text-decoration: none;
   color: inherit;
-  transition: opacity var(--effect-motion-short-2);
-}
-
-.chart-legend__item--dimmed {
-  opacity: var(--effect-opacity-medium);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .chart-legend__item {
-    transition: none;
-  }
 }
 
 .chart-legend__item--interactive {
@@ -99,6 +88,18 @@
   height: var(--dimension-space-150);
   border-radius: var(--dimension-radius-025);
   flex-shrink: 0;
+  transition: opacity var(--effect-motion-short-2);
+}
+
+/* Highlight the swatches without reducing contrast for labels and numeric details. */
+.chart-legend__item--dimmed .chart-legend__swatch {
+  opacity: var(--effect-opacity-medium);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chart-legend__swatch {
+    transition: none;
+  }
 }
 
 .chart-legend__label {

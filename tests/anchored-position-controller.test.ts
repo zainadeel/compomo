@@ -18,6 +18,53 @@ class TestResizeObserver {
   }
 }
 
+test('releases replaced and disconnected positioning targets without closing the overlay', () => {
+  const originalWindow = globalThis.window;
+  const originalResizeObserver = globalThis.ResizeObserver;
+  const retained = new Set<Element>();
+  let observations = 0;
+  Object.assign(globalThis, {
+    window: { addEventListener() {}, removeEventListener() {} },
+    ResizeObserver: class {
+      observe(target: Element) {
+        retained.add(target);
+        observations++;
+      }
+      unobserve(target: Element) {
+        retained.delete(target);
+      }
+      disconnect() {
+        retained.clear();
+      }
+    },
+  });
+  try {
+    let anchor = { isConnected: true } as HTMLElement;
+    let popup = { isConnected: true } as HTMLElement;
+    const controller = new AnchoredPositionController({
+      getAnchor: () => anchor,
+      getPopup: () => popup,
+      measure: () => null,
+      apply() {},
+      observeResize: true,
+    });
+    controller.observe();
+    controller.observeResizeTargets();
+    assert.equal(observations, 2);
+    anchor = { isConnected: true } as HTMLElement;
+    popup = { isConnected: true } as HTMLElement;
+    controller.update();
+    assert.deepEqual(retained, new Set([anchor, popup]));
+    Object.assign(anchor, { isConnected: false });
+    controller.update();
+    assert.deepEqual(retained, new Set([popup]));
+    controller.unobserve();
+    assert.equal(retained.size, 0);
+  } finally {
+    Object.assign(globalThis, { window: originalWindow, ResizeObserver: originalResizeObserver });
+  }
+});
+
 test('defers observer-driven popup positioning through the configured live scheduler', () => {
   const originalWindow = globalThis.window;
   const originalResizeObserver = globalThis.ResizeObserver;

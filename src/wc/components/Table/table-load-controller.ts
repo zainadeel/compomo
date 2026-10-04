@@ -1,4 +1,5 @@
 import type { TableLoadMoreDetail, TableLoadMoreMode, TableLoadMoreReason } from './table-types';
+import { TableLoadObserver } from './table-load-observer';
 
 export interface TableLoadControllerState {
   lazyLoading: boolean;
@@ -28,8 +29,7 @@ export class TableLoadController {
   readonly intersectionSupported = typeof IntersectionObserver !== 'undefined';
 
   private connected = false;
-  private intersectionObserver: IntersectionObserver | null = null;
-  private observedSentinel: HTMLElement | null = null;
+  private readonly observer = new TableLoadObserver(() => this.request('auto'));
   private requestPending = false;
   private requestedRowCount = 0;
   private previousLoadedRowCount = 0;
@@ -66,22 +66,11 @@ export class TableLoadController {
       return;
     }
 
-    if (this.intersectionObserver && this.observedSentinel === state.sentinel) return;
-    this.disconnectObserver();
-    const threshold = Number.isFinite(state.loadMoreThreshold)
-      ? Math.max(0, state.loadMoreThreshold)
-      : 0;
-    this.intersectionObserver = new IntersectionObserver(
-      entries => {
-        if (entries.some(entry => entry.isIntersecting)) this.request('auto');
-      },
-      {
-        root: state.containedScroll ? state.viewport : null,
-        rootMargin: `0px 0px ${threshold}px 0px`,
-      }
+    this.observer.refresh(
+      new Map([[state.sentinel, 'rows']]),
+      state.containedScroll ? state.viewport : null,
+      state.loadMoreThreshold
     );
-    this.observedSentinel = state.sentinel;
-    this.intersectionObserver.observe(state.sentinel);
   }
 
   structureChanged(): void {
@@ -162,6 +151,7 @@ export class TableLoadController {
     const state = this.options.state();
     if (
       !state.lazyLoading ||
+      (reason === 'auto' && (!this.connected || state.loadMoreMode !== 'auto')) ||
       !state.hasMore ||
       state.loadingMore ||
       (reason !== 'retry' && !!state.loadMoreError?.trim()) ||
@@ -186,8 +176,6 @@ export class TableLoadController {
   }
 
   private disconnectObserver(): void {
-    this.intersectionObserver?.disconnect();
-    this.intersectionObserver = null;
-    this.observedSentinel = null;
+    this.observer.disconnect();
   }
 }
