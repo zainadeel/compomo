@@ -5,6 +5,7 @@ import {
   type TableLoadControllerState,
 } from '../src/wc/components/Table/table-load-controller';
 import type { TableLoadMoreDetail } from '../src/wc/components/Table/table-types';
+import { installIntersectionObserver } from './helpers/intersection-observer';
 
 function state(): TableLoadControllerState {
   return {
@@ -92,4 +93,35 @@ test('does not announce global transitions while global loading is disabled', ()
   controller.hasMoreChanged(false, true);
 
   assert.deepEqual(announcements, []);
+});
+
+test('rebinds replaced viewports and rejects observer deliveries from a previous connection', context => {
+  const observers = installIntersectionObserver(context);
+  const current = {
+    ...state(),
+    loadMoreMode: 'auto' as const,
+    containedScroll: true,
+    viewport: {} as HTMLElement,
+    sentinel: {} as HTMLElement,
+  };
+  const requests: TableLoadMoreDetail[] = [];
+  const controller = new TableLoadController({
+    state: () => current,
+    announce() {},
+    request: detail => requests.push(detail),
+  });
+  controller.initialize();
+  controller.connect();
+  controller.refresh();
+  assert.equal(observers.length, 1);
+  current.viewport = {} as HTMLElement;
+  controller.refresh();
+  observers[0].deliver(current.sentinel);
+  assert.equal(requests.length, 0);
+  controller.disconnect();
+  controller.connect();
+  observers[1].deliver(current.sentinel);
+  assert.equal(requests.length, 0);
+  observers[2].deliver(current.sentinel);
+  assert.equal(requests.length, 1);
 });
