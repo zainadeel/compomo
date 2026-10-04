@@ -338,7 +338,12 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          "",
+          "actions",
+          "footer",
+          "metadata-actions"
+        ],
         "exports": {
           "customElement": "ds-agent-response",
           "react": "DsAgentResponse",
@@ -550,7 +555,11 @@
             "detail": "{ open: boolean }"
           }
         ],
-        "slots": [],
+        "slots": [
+          "details",
+          "result",
+          "summary"
+        ],
         "exports": {
           "customElement": "ds-agent-tool-call",
           "react": "DsAgentToolCall",
@@ -1071,7 +1080,9 @@
             "detail": "MouseEvent"
           }
         ],
-        "slots": [],
+        "slots": [
+          "actions"
+        ],
         "exports": {
           "customElement": "ds-banner",
           "react": "DsBanner",
@@ -1221,7 +1232,9 @@
             "detail": "MouseEvent"
           }
         ],
-        "slots": [],
+        "slots": [
+          "actions"
+        ],
         "exports": {
           "customElement": "ds-bar-action",
           "react": "DsBarAction",
@@ -3547,7 +3560,12 @@
             "detail": "void"
           }
         ],
-        "slots": [],
+        "slots": [
+          "",
+          "actions",
+          "chart",
+          "legend"
+        ],
         "exports": {
           "customElement": "ds-card-chart",
           "react": "DsCardChart",
@@ -3719,7 +3737,9 @@
             "detail": "CardNavigationDetail"
           }
         ],
-        "slots": [],
+        "slots": [
+          ""
+        ],
         "exports": {
           "customElement": "ds-card-navigation",
           "react": "DsCardNavigation",
@@ -3919,7 +3939,11 @@
             "detail": "OverviewMetric"
           }
         ],
-        "slots": [],
+        "slots": [
+          "filter",
+          "footer",
+          "period"
+        ],
         "exports": {
           "customElement": "ds-card-overview",
           "react": "DsCardOverview",
@@ -4127,7 +4151,10 @@
             "detail": "CardSettingActionDetail"
           }
         ],
-        "slots": [],
+        "slots": [
+          "",
+          "banner"
+        ],
         "exports": {
           "customElement": "ds-card-setting",
           "react": "DsCardSetting",
@@ -4889,7 +4916,9 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          ""
+        ],
         "exports": {
           "customElement": "ds-checkbox-group",
           "react": "DsCheckboxGroup",
@@ -5266,7 +5295,11 @@
         },
         "props": {},
         "events": [],
-        "slots": [],
+        "slots": [
+          "",
+          "actions",
+          "empty"
+        ],
         "exports": {
           "customElement": "ds-conversation-list",
           "react": "DsConversationList",
@@ -5401,7 +5434,11 @@
             "detail": "{ id: string }"
           }
         ],
-        "slots": [],
+        "slots": [
+          "actions",
+          "leading",
+          "trailing"
+        ],
         "exports": {
           "customElement": "ds-conversation-list-item",
           "react": "DsConversationListItem",
@@ -5484,7 +5521,9 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          ""
+        ],
         "exports": {
           "customElement": "ds-conversation-list-section",
           "react": "DsConversationListSection",
@@ -6918,7 +6957,12 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          "leading",
+          "search",
+          "start",
+          "trailing"
+        ],
         "exports": {
           "customElement": "ds-data-toolbar",
           "react": "DsDataToolbar",
@@ -7310,7 +7354,9 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          ""
+        ],
         "exports": {
           "customElement": "ds-field",
           "react": "DsField",
@@ -8313,7 +8359,10 @@
             "detail": "string[]"
           }
         ],
-        "slots": [],
+        "slots": [
+          "prefix",
+          "suffix"
+        ],
         "exports": {
           "customElement": "ds-input",
           "react": "DsInput",
@@ -9898,7 +9947,13 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          "",
+          "actions",
+          "footer",
+          "header",
+          "metadata-actions"
+        ],
         "exports": {
           "customElement": "ds-message",
           "react": "DsMessage",
@@ -10090,7 +10145,9 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          ""
+        ],
         "exports": {
           "customElement": "ds-message-bubble",
           "react": "DsMessageBubble",
@@ -10229,7 +10286,12 @@
             "detail": "{ text: string }"
           }
         ],
-        "slots": [],
+        "slots": [
+          "actions",
+          "attachments",
+          "error-actions",
+          "tools"
+        ],
         "exports": {
           "customElement": "ds-message-composer",
           "react": "DsMessageComposer",
@@ -10342,7 +10404,11 @@
             "detail": "void"
           }
         ],
-        "slots": [],
+        "slots": [
+          "",
+          "interaction",
+          "overlay"
+        ],
         "exports": {
           "customElement": "ds-message-scroller",
           "react": "DsMessageScroller",
@@ -10676,7 +10742,10 @@
             "detail": "string"
           }
         ],
-        "slots": [],
+        "slots": [
+          "leading",
+          "trailing"
+        ],
         "exports": {
           "customElement": "ds-mobile-header",
           "react": "DsMobileHeader",
@@ -11164,7 +11233,10 @@
             "detail": "ModalCloseDetail"
           }
         ],
-        "slots": [],
+        "slots": [
+          "",
+          "footer"
+        ],
         "exports": {
           "customElement": "ds-modal",
           "react": "DsModal",
@@ -13244,7 +13316,10 @@
             "detail": "ScrollOverlayScrollDetail"
           }
         ],
-        "slots": [],
+        "slots": [
+          "",
+          "overlay"
+        ],
         "exports": {
           "customElement": "ds-scroll-overlay",
           "react": "DsScrollOverlay",
@@ -13932,7 +14007,9 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          ""
+        ],
         "exports": {
           "customElement": "ds-setting-row-checkbox",
           "react": "DsSettingRowCheckbox",
@@ -14035,7 +14112,9 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          ""
+        ],
         "exports": {
           "customElement": "ds-setting-row-radio",
           "react": "DsSettingRowRadio",
@@ -14451,7 +14530,17 @@
             "detail": "{ id: PanelToolsToolId; selected: boolean }"
           }
         ],
-        "slots": [],
+        "slots": [
+          "",
+          "banner",
+          "bar",
+          "mobile-bar-nav",
+          "mobile-sheet-nav",
+          "page-header-leading",
+          "page-header-trailing",
+          "panel",
+          "tools"
+        ],
         "exports": {
           "customElement": "ds-shell-app",
           "react": "DsShellApp",
@@ -14643,7 +14732,11 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          "",
+          "header",
+          "mobile-header"
+        ],
         "exports": {
           "customElement": "ds-shell-page",
           "react": "DsShellPage",
@@ -16490,7 +16583,11 @@
           }
         ],
         "slots": [
-          "error-actions"
+          "alternate-view",
+          "error-actions",
+          "footer",
+          "footer-leading",
+          "footer-trailing"
         ],
         "exports": {
           "customElement": "ds-table",
@@ -16921,7 +17018,9 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          ""
+        ],
         "exports": {
           "customElement": "ds-text",
           "react": "DsText",
@@ -17700,7 +17799,9 @@
           }
         },
         "events": [],
-        "slots": [],
+        "slots": [
+          ""
+        ],
         "exports": {
           "customElement": "ds-tooltip",
           "react": "DsTooltip",

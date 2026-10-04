@@ -113,7 +113,20 @@
       },
       "events": [],
       "methods": [],
-      "slots": []
+      "slots": [
+        {
+          "name": "leading"
+        },
+        {
+          "name": "search"
+        },
+        {
+          "name": "start"
+        },
+        {
+          "name": "trailing"
+        }
+      ]
     },
     "props": {
       "borderless": {
@@ -137,7 +150,20 @@
     },
     "events": [],
     "methods": [],
-    "slots": [],
+    "slots": [
+      {
+        "name": "leading"
+      },
+      {
+        "name": "search"
+      },
+      {
+        "name": "start"
+      },
+      {
+        "name": "trailing"
+      }
+    ],
     "exports": {
       "customElement": "ds-data-toolbar",
       "react": "DsDataToolbar",

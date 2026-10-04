@@ -944,8 +944,20 @@
       ],
       "slots": [
         {
+          "name": "alternate-view"
+        },
+        {
           "name": "error-actions",
           "description": "Application-owned recovery controls below the initial error message."
+        },
+        {
+          "name": "footer"
+        },
+        {
+          "name": "footer-leading"
+        },
+        {
+          "name": "footer-trailing"
         }
       ]
     },
@@ -1653,8 +1665,20 @@
     ],
     "slots": [
       {
+        "name": "alternate-view"
+      },
+      {
         "name": "error-actions",
         "description": "Application-owned recovery controls below the initial error message."
+      },
+      {
+        "name": "footer"
+      },
+      {
+        "name": "footer-leading"
+      },
+      {
+        "name": "footer-trailing"
       }
     ],
     "exports": {

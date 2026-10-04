@@ -141,7 +141,12 @@
       },
       "events": [],
       "methods": [],
-      "slots": []
+      "slots": [
+        {
+          "name": "",
+          "description": "The default slot"
+        }
+      ]
     },
     "props": {
       "ariaDescribedby": {
@@ -189,7 +194,12 @@
     },
     "events": [],
     "methods": [],
-    "slots": [],
+    "slots": [
+      {
+        "name": "",
+        "description": "The default slot"
+      }
+    ],
     "exports": {
       "customElement": "ds-checkbox-group",
       "react": "DsCheckboxGroup",

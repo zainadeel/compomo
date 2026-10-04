@@ -101,7 +101,12 @@
       },
       "events": [],
       "methods": [],
-      "slots": []
+      "slots": [
+        {
+          "name": "",
+          "description": "The default slot"
+        }
+      ]
     },
     "props": {
       "description": {
@@ -140,7 +145,12 @@
     },
     "events": [],
     "methods": [],
-    "slots": [],
+    "slots": [
+      {
+        "name": "",
+        "description": "The default slot"
+      }
+    ],
     "exports": {
       "customElement": "ds-setting-row-checkbox",
       "react": "DsSettingRowCheckbox",
