@@ -125,7 +125,18 @@
           "signature": "scrollToStart() => Promise<void>"
         }
       ],
-      "slots": []
+      "slots": [
+        {
+          "name": "",
+          "description": "The default slot"
+        },
+        {
+          "name": "interaction"
+        },
+        {
+          "name": "overlay"
+        }
+      ]
     },
     "props": {
       "autoFollow": {
@@ -184,7 +195,18 @@
         "signature": "scrollToStart() => Promise<void>"
       }
     ],
-    "slots": [],
+    "slots": [
+      {
+        "name": "",
+        "description": "The default slot"
+      },
+      {
+        "name": "interaction"
+      },
+      {
+        "name": "overlay"
+      }
+    ],
     "exports": {
       "customElement": "ds-message-scroller",
       "react": "DsMessageScroller",

@@ -143,7 +143,24 @@
       },
       "events": [],
       "methods": [],
-      "slots": []
+      "slots": [
+        {
+          "name": "",
+          "description": "The default slot"
+        },
+        {
+          "name": "actions"
+        },
+        {
+          "name": "footer"
+        },
+        {
+          "name": "header"
+        },
+        {
+          "name": "metadata-actions"
+        }
+      ]
     },
     "props": {
       "author": {
@@ -231,7 +248,24 @@
     },
     "events": [],
     "methods": [],
-    "slots": [],
+    "slots": [
+      {
+        "name": "",
+        "description": "The default slot"
+      },
+      {
+        "name": "actions"
+      },
+      {
+        "name": "footer"
+      },
+      {
+        "name": "header"
+      },
+      {
+        "name": "metadata-actions"
+      }
+    ],
     "exports": {
       "customElement": "ds-message",
       "react": "DsMessage",
