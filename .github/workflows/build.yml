@@ -39,6 +39,9 @@ jobs:
       - name: Check formatting
         run: npm run format:check
 
+      - name: Check Storybook test-runner peers
+        run: npm run verify:storybook-compatibility
+
       - name: Type-check
         run: npm run typecheck
 
@@ -120,6 +123,11 @@ jobs:
 
       - name: Rendered browser contracts
         run: npm run test:e2e:pr
+
+      - name: Packed framework consumer contracts
+        env:
+          FRAMEWORK_BROWSERS: chromium,firefox,webkit
+        run: npm run test:framework-consumers
 
       - name: Upload rendered contract failure artifacts
         if: failure()

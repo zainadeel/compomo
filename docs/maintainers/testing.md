@@ -120,3 +120,7 @@ rather than masquerading as a component regression.
 
 Do not report a suite as passing unless it ran to completion. Record existing
 warnings separately from failures.
+
+The full local gate also runs the [packed framework consumers](framework-consumers.md).
+Use the [accessibility journey and visual review process](accessibility-review.md)
+for manual assistive-technology checks and focused screenshot baselines.

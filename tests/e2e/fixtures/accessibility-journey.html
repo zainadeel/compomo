@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Accessible settings journey</title>
+    <link rel="stylesheet" href="/tokens/index.css" />
+    <style>
+      @font-face { font-family: ReviewInter; src: url('/review-font.woff2') format('woff2'); font-style: normal; font-weight: 100 900; font-display: block; }
+      :root { --typography-font-family-ui: ReviewInter, sans-serif; }
+      body { margin: 0; font-family: var(--typography-font-family-ui); background: var(--color-background-primary); color: var(--color-foreground-primary); }
+      main { box-sizing: border-box; max-width: 100%; width: 32rem; padding: var(--dimension-space-200); }
+      form { display: flex; flex-direction: column; gap: var(--dimension-space-200); }
+      ds-input, ds-select { min-width: 0; }
+      .actions { display: flex; flex-wrap: wrap; gap: var(--dimension-space-100); }
+    </style>
+  </head>
+  <body>
+    <main aria-label="Notification settings">
+      <ds-text variant="title-medium">Notification settings</ds-text>
+      <form id="settings">
+        <label for="name-control"><ds-text>Display name</ds-text></label>
+        <ds-input id="name" input-id="name-control" aria-label="Display name" name="name" required value="Operations" aria-describedby="name-help"></ds-input>
+        <ds-text id="name-help">Use the name your team recognizes.</ds-text>
+        <ds-select id="delivery" aria-label="Delivery" name="delivery" value="daily"></ds-select>
+        <div class="actions">
+          <ds-button-filled id="review" type="submit" label="Review changes"></ds-button-filled>
+          <ds-button-unfilled id="reset" type="reset" label="Reset"></ds-button-unfilled>
+        </div>
+      </form>
+      <p id="status" role="status"></p>
+      <ds-modal id="review-dialog" heading="Review notification settings" description="Check your choices before saving.">
+        <ds-text id="summary"></ds-text>
+        <ds-button-filled slot="footer" id="save" label="Save changes"></ds-button-filled>
+        <ds-button-unfilled slot="footer" id="cancel" label="Keep editing"></ds-button-unfilled>
+      </ds-modal>
+    </main>
+    <script type="module" src="/accessibility-journey-setup.mjs"></script>
+  </body>
+</html>

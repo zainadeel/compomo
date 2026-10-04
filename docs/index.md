@@ -41,6 +41,9 @@ from Storybook and `public/r/`.
 
 ## Research
 
+- [Optional sound architecture](research/sound-system.md): CueLume evaluation,
+  ownership, opt-in policy and bounded prototype criteria.
+
 | Topic                                                          | Read                                                                                   |
 | -------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | Phoenix production baseline, reference policy, and audit scope | [Phoenix baseline research](research/phoenix/README.md)                                |

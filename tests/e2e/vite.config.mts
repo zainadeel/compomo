@@ -15,6 +15,10 @@ export default defineConfig({
     alias: {
       '/dist': path.join(repoRoot, 'dist'),
       '/tokens': path.join(repoRoot, 'node_modules/@ds-mo/tokens/dist'),
+      '/review-font.woff2': path.join(
+        repoRoot,
+        'node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2'
+      ),
     },
   },
 });

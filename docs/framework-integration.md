@@ -1,5 +1,8 @@
 # Framework integration
 
+Executable packed-artifact examples and their verification matrix are described
+in [packed framework consumer contracts](maintainers/framework-consumers.md).
+
 CompoMo (`@ds-mo/ui`) is a **Stencil web component library**. `npm run build` emits:
 
 - **`dist/components/`** — `<ds-*>` custom elements (canonical; auto-define on import)
@@ -21,10 +24,21 @@ retains the existing `dist/angular`, `dist/react`, `dist/vue`, and package
 import paths.
 The generated React wrappers use CompoMo's private runtime adapter, backed by
 the same `@lit/react` bridge selected by Stencil's React output target.
+The adapter releases custom-event subscriptions on unmount, including React
+StrictMode cleanup, so detached elements cannot call an old application handler.
 The generated Vue wrappers use CompoMo's private runtime adapter, backed by
 Stencil's Vue output-target runtime bundled into the published package.
+Omitted ARIA bindings remain undefined rather than forwarding the upstream
+runtime's empty-prop sentinel into accessible names and references.
 Consumers install only the documented React or Vue peers; Stencil's output-target
 packages remain build dependencies and are not required at application runtime.
+
+In React and Vue, keep an application-owned container mounted inside a scoped slot and
+render conditional content inside it, for example
+`<DsShellApp><main>{showForm && <Form />}</main></DsShellApp>`. Stencil relocates
+the slotted container; the framework still owns the parent of each conditional child.
+Directly removing or replacing a relocated slot child can fail the framework's DOM
+parent checks.
 
 There is no published `@ds-mo/ui/loader` or global component bundle such as `@ds-mo/ui/css`. Import TokoMo via `@ds-mo/tokens` (or `@ds-mo/tokens/css`). Component CSS is scoped inside each custom-element bundle. Deliberate renderer-neutral exports include `@ds-mo/ui/prose.css` for safe semantic document trees and `@ds-mo/ui/control-elevation.css` for elevated wrappers around controls.
 
@@ -278,7 +292,7 @@ app-root {
 }
 
 app-root > ds-shell-app {
-  display: block;
+  display: flex;
   width: 100%;
   height: 100%;
   min-height: 0;
