@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.1.0](https://github.com/zainadeel/compomo/compare/v16.0.0...v16.1.0) (2026-10-04)
+
+
+### Added
+
+* **table:** expose initial error recovery actions ([#685](https://github.com/zainadeel/compomo/issues/685)) ([e0f1740](https://github.com/zainadeel/compomo/commit/e0f1740988ff3923a64435c42e302dd4c764efe9))
+
 ## [16.0.0](https://github.com/zainadeel/compomo/compare/v15.12.1...v16.0.0) (2026-10-03)
 
 
