@@ -78,8 +78,10 @@ class ToastManagerImpl<Data = unknown> implements ToastManager<Data> {
   update(id: string, updates: Partial<ToastOptions<Data>>): void {
     const index = this.records.findIndex(record => record.id === id);
     if (index < 0) return;
-    this.promiseOwners.delete(id);
     const current = this.records[index];
+    // Progress copy can change while the same operation is pending. A type
+    // transition explicitly takes ownership of its presentation instead.
+    if (updates.type !== undefined && updates.type !== current.type) this.promiseOwners.delete(id);
     const restartsTimer =
       Object.prototype.hasOwnProperty.call(updates, 'timeout') ||
       (current.type === 'loading' && updates.type !== undefined && updates.type !== 'loading');

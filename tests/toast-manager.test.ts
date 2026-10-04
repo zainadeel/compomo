@@ -184,7 +184,7 @@ test('explicit changes and dismissal revoke promise presentation without swallow
       success: 'Done',
       error: 'Failed',
     });
-    if (change === 'update') manager.update('work', { title: 'User update' });
+    if (change === 'update') manager.update('work', { title: 'User update', type: 'success' });
     else if (change === 'replace') manager.add({ id: 'work', title: 'Replacement' });
     else {
       manager.close('work');
@@ -196,6 +196,22 @@ test('explicit changes and dismissal revoke promise presentation without swallow
     await assert.rejects(result, failure);
     assert.deepEqual(manager.getSnapshot(), snapshot);
   }
+});
+
+test('progress updates preserve the pending promise completion', async () => {
+  const manager = createToastManager();
+  const pending = deferred<string>();
+  const result = manager.promise(pending.promise, {
+    loading: { id: 'work', title: 'Uploading' },
+    success: { title: 'Uploaded' },
+    error: 'Failed',
+  });
+  manager.update('work', { description: '50% uploaded' });
+  manager.update('work', { type: 'loading', description: '90% uploaded' });
+  pending.resolve('file.csv');
+  assert.equal(await result, 'file.csv');
+  assert.equal(manager.getSnapshot()[0].type, 'success');
+  assert.equal(manager.getSnapshot()[0].title, 'Uploaded');
 });
 
 test('promise ownership survives activation but yields to mutations during subscriber and mapper callbacks', async () => {
