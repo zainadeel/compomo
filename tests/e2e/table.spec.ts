@@ -4087,3 +4087,72 @@ test(
     );
   }
 );
+
+test('projects initial-error recovery actions below the message without exposing them in other states @cross-browser', async ({
+  page,
+}) => {
+  const table = page.locator('#error');
+  await table.evaluate(element => {
+    const button = document.createElement('ds-button-unfilled');
+    button.slot = 'error-actions';
+    button.label = 'Retry loading data';
+    button.hasBorder = true;
+    button.addEventListener('dsClick', () => element.setAttribute('data-retried', 'true'));
+    element.append(button);
+  });
+  const button = table.getByRole('button', { name: 'Retry loading data', exact: true });
+  await expect(button).toBeVisible();
+  await expect(
+    table.locator('ds-empty-state').getByRole('button', { name: 'Retry loading data', exact: true })
+  ).toBeVisible();
+  const body = table.locator('.empty-state__body');
+  const [bodyBox, buttonBox] = await Promise.all([body.boundingBox(), button.boundingBox()]);
+  expectGeometryClose(buttonBox!.y - bodyBox!.y - bodyBox!.height, 16, 'error action spacing');
+  await button.focus();
+  await page.keyboard.press('Enter');
+  await expect(table).toHaveAttribute('data-retried', 'true');
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.error = false;
+  });
+  await expect(button).toBeHidden();
+  await expect(table.locator('[slot="error-actions"]')).toHaveCount(1);
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.error = true;
+    element.loading = true;
+  });
+  await expect(button).toBeHidden();
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.loading = false;
+  });
+  await expect(button).toBeVisible();
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.columns = [{ id: 'name', label: 'Name' }];
+    element.rows = [{ id: 'one', cells: { name: 'Loaded driver' } }];
+  });
+  await expect(table.getByRole('cell', { name: 'Loaded driver', exact: true })).toBeVisible();
+  await expect(button).toBeHidden();
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.rows = [];
+  });
+  await expect(button).toBeVisible();
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.alternateView = true;
+  });
+  await expect(button).toBeHidden();
+  await table.evaluate((element: HTMLDsTableElement) => {
+    element.alternateView = false;
+  });
+  await expect(button).toBeVisible();
+  await table.evaluate(element => {
+    const parent = element.parentElement!;
+    element.remove();
+    parent.append(element);
+  });
+  await expect(button).toBeVisible();
+  await table.evaluate(element => element.removeAttribute('data-retried'));
+  await button.focus();
+  await page.keyboard.press('Enter');
+  await expect(table).toHaveAttribute('data-retried', 'true');
+  await table.locator('[slot="error-actions"]').evaluate(element => element.remove());
+  await expect(table.locator('.empty-state__actions')).toBeHidden();
+});

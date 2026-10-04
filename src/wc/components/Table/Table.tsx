@@ -107,6 +107,9 @@ const TABLE_FOOTER_SLOT_COPY = 2;
 const TABLE_FOOTER_SLOT_TRAILING = 4;
 const TABLE_NON_VIRTUAL_WINDOW_THRESHOLD = 50;
 
+/**
+ * @slot error-actions - Application-owned recovery controls below the initial error message.
+ */
 @Component({
   tag: 'ds-table',
   styleUrls: ['../../utils/focus-ring.css', '../../utils/interaction-fill.css', 'Table.css'],
@@ -281,6 +284,7 @@ export class Table {
   @State() private headerUsesToolbar = false;
   @State() private captionTrailingPresent = false;
   @State() private footerSlotPresence = 0;
+  @State() private errorActionsPresent = false;
   @State() private fitPageSize: number | undefined;
   @State() private actionMenu: { rowId: string; columnId: string } | null = null;
   @State() private actionMenuInitialFocusVisible = false;
@@ -414,7 +418,7 @@ export class Table {
   private renderedModel: TableRenderModel | null = null;
   private stickyGroupConnected = false;
   private headerSlotObserver: MutationObserver | null = null;
-  private footerSlotObserver: MutationObserver | null = null;
+  private contentSlotObserver: MutationObserver | null = null;
   private captionCompactDisconnect: (() => void) | undefined;
   private fitResizeObserver: ResizeObserver | null = null;
   private fitObservedViewport: HTMLElement | null = null;
@@ -589,7 +593,7 @@ export class Table {
     this.viewportFitController.connect();
     this.incrementalWindowActive = this.hasIncrementalState;
     this.syncHeaderSlotPresence();
-    this.syncFooterSlotPresence();
+    this.syncContentSlotPresence();
     this.loadController.initialize();
     this.groupLoadController.initialize();
   }
@@ -603,7 +607,7 @@ export class Table {
     this.viewportFitController.connect();
     this.syncStickyGroupConnection();
     this.connectHeaderSlotObserver();
-    this.connectFooterSlotObserver();
+    this.connectContentSlotObserver();
     this.connectFitObserver();
     this.connectCaptionCompactObserver();
     this.syncFitPageSize();
@@ -612,6 +616,21 @@ export class Table {
   }
 
   componentWillRender(): void {
+    if (
+      this.errorActionsPresent &&
+      (this.alternateView || this.loading || !this.error || this.createRenderModel().hasData)
+    ) {
+      // EmptyState relocates this wrapper into its own rendered tree. Return
+      // authored controls before removing the wrapper so scoped-slot teardown
+      // cannot discard them during an error-to-loading or results transition.
+      const actions = this.el.querySelector('.ds-table__error-actions');
+      const parked = this.el.querySelector('.ds-table__parked-actions');
+      if (parked && actions?.closest('ds-table') === this.el) {
+        for (const action of actions.querySelectorAll(':scope > [slot="error-actions"]')) {
+          parked.appendChild(action);
+        }
+      }
+    }
     const root = this.el.getRootNode() as Document | ShadowRoot;
     const active = root.activeElement;
     this.virtualRenderFocus =
@@ -705,7 +724,7 @@ export class Table {
     this.viewportFitController.connect();
     this.syncStickyGroupConnection();
     this.connectHeaderSlotObserver();
-    this.connectFooterSlotObserver();
+    this.connectContentSlotObserver();
     this.connectFitObserver();
     this.connectCaptionCompactObserver();
     this.connectTruncateTooltip();
@@ -722,8 +741,8 @@ export class Table {
     this.disconnectStickyGroup();
     this.headerSlotObserver?.disconnect();
     this.headerSlotObserver = null;
-    this.footerSlotObserver?.disconnect();
-    this.footerSlotObserver = null;
+    this.contentSlotObserver?.disconnect();
+    this.contentSlotObserver = null;
     this.disconnectFitObserver();
     this.disconnectCaptionCompactObserver();
     this.disconnectTruncateTooltip();
@@ -779,16 +798,42 @@ export class Table {
     if (presence !== this.footerSlotPresence) this.footerSlotPresence = presence;
   };
 
-  private connectFooterSlotObserver(): void {
-    if (this.footerSlotObserver || typeof MutationObserver === 'undefined') return;
-    this.footerSlotObserver = new MutationObserver(this.syncFooterSlotPresence);
-    this.footerSlotObserver.observe(this.el, {
+  private syncContentSlotPresence = () => {
+    this.syncFooterSlotPresence();
+    const actions = [...this.el.querySelectorAll('[slot="error-actions"]')].filter(node => {
+      const parent = node.parentElement;
+      return (
+        parent === this.el ||
+        ((parent?.classList.contains('ds-table__error-actions') ||
+          parent?.classList.contains('ds-table__parked-actions')) &&
+          parent.closest('ds-table') === this.el)
+      );
+    });
+    const present = actions.length > 0;
+    if (present !== this.errorActionsPresent) this.errorActionsPresent = present;
+    // Scoped slot relocation does not revisit nodes forwarded through a child
+    // component after that outlet is removed. Reconcile only our authored
+    // controls into the current outlet, retaining their identity and listeners.
+    const outlet =
+      this.el.querySelector('.ds-table__error-actions') ??
+      this.el.querySelector('.ds-table__parked-actions');
+    if (outlet?.closest('ds-table') === this.el) {
+      for (const action of actions) {
+        if (action.parentElement !== outlet) outlet.appendChild(action);
+      }
+    }
+  };
+
+  private connectContentSlotObserver(): void {
+    if (this.contentSlotObserver || typeof MutationObserver === 'undefined') return;
+    this.contentSlotObserver = new MutationObserver(this.syncContentSlotPresence);
+    this.contentSlotObserver.observe(this.el, {
       childList: true,
       subtree: true,
       attributes: true,
       attributeFilter: ['slot'],
     });
-    this.syncFooterSlotPresence();
+    this.syncContentSlotPresence();
   }
 
   private connectStickyGroup(): void {
@@ -2506,7 +2551,13 @@ export class Table {
                 icon={error ? 'ExclamationTriangle' : 'Inbox'}
                 heading={heading}
                 body={body}
-              />
+              >
+                {kind === 'error' && this.errorActionsPresent && (
+                  <div class="ds-table__error-actions" slot="actions">
+                    <slot name="error-actions" />
+                  </div>
+                )}
+              </ds-empty-state>
             </div>
           </td>
         </tr>
@@ -2844,6 +2895,7 @@ export class Table {
             {this.announcement}
           </div>
         </div>
+        <div class="ds-table__parked-actions" />
       </Host>
     );
   }

@@ -50,6 +50,15 @@
   min-block-size: 0;
 }
 
+/* Retain consumer controls outside the active error view without exposing them. */
+.ds-table__parked-actions {
+  display: none;
+}
+
+.ds-table__error-actions {
+  display: contents;
+}
+
 /*
  * The public table recipe stays at zero specificity for product-owned native
  * markup. Inside the component, these classes sit on ds-text hosts whose reset
