@@ -2090,8 +2090,14 @@ export const InitialAndOutcomeStates: Story = {
         caption-visibility="visible"
         height="var(--dimension-card-height-sm)"
         error-heading="Drivers unavailable"
-        error-body="Check the connection and try again."
-      ></ds-table>
+        error-body="The drivers could not be loaded."
+      >
+        <ds-button-unfilled
+          slot="error-actions"
+          label="Retry loading data"
+          has-border
+        ></ds-button-unfilled>
+      </ds-table>
     </div>
   `,
 };
