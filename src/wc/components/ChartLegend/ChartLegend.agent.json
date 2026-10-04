@@ -33,12 +33,12 @@
   "commonlyComposedWith": ["component:ds-chart", "component:ds-card-chart"],
   "accessibility": [
     "Rows remain non-interactive unless the item supplies an actual link destination.",
-    "Optional highlight changes opacity only and never moves focus or announces selection.",
+    "Optional highlighting dims peer swatches while preserving text contrast; it never moves focus or announces selection.",
     "Keep full labels available when visible text truncates, and retain stable tabular numeric columns.",
     "Do not rely on swatch color alone; every entry requires a meaningful visible label."
   ],
   "states": [
-    "Local pointer or focus interaction and external chart highlight remain separate; both may dim peers, but only a real link row receives navigation affordances.",
+    "Local pointer or focus interaction and external chart highlight remain separate; both may dim peer swatches, but only a real link row receives navigation affordances.",
     "Disable local hover highlighting for static keys such as a line-chart legend; externally controlled activeLabel highlighting and genuine link affordances remain available.",
     "Hover synchronization is temporary emphasis, never filtering, toggling, or selected state.",
     "Percentage values use one consistent precision across the complete legend.",

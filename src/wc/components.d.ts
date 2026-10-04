@@ -1327,7 +1327,7 @@ export namespace Components {
      */
     interface DsChartLegend {
         /**
-          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling chart's `dsSliceHover` event to keep chart and legend hover in sync. Only dims the other rows' opacity (like a chart dimming its other slices) — it never shows the hover-fill, since that's reserved for a real pointer/keyboard interaction on this row.
+          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling chart's `dsSliceHover` event to keep chart and legend hover in sync. Dims the other rows' swatches while keeping their text fully readable. It never shows the hover-fill, since that's reserved for a real pointer/keyboard interaction on this row.
           * @default null
          */
         "activeLabel": string | null;
@@ -8483,7 +8483,7 @@ declare namespace LocalJSX {
      */
     interface DsChartLegend {
         /**
-          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling chart's `dsSliceHover` event to keep chart and legend hover in sync. Only dims the other rows' opacity (like a chart dimming its other slices) — it never shows the hover-fill, since that's reserved for a real pointer/keyboard interaction on this row.
+          * Externally controlled highlight, matched by `label` — e.g. drive this from a sibling chart's `dsSliceHover` event to keep chart and legend hover in sync. Dims the other rows' swatches while keeping their text fully readable. It never shows the hover-fill, since that's reserved for a real pointer/keyboard interaction on this row.
           * @default null
          */
         "activeLabel"?: string | null;

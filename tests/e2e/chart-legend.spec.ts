@@ -48,13 +48,24 @@ test('keeps right-aligned percentages inside the hover row', async ({ page }) =>
   expect(new Set(geometry.map(row => row.percentageRight)).size).toBe(1);
 });
 
-test('dims non-highlighted legend rows to half opacity', async ({ page }) => {
+test('dims peer swatches while keeping legend text fully opaque', async ({ page }) => {
   const rows = page.locator('#legend-one .chart-legend__item');
+  const swatches = rows.locator('.chart-legend__swatch');
   await rows.first().hover();
 
   await expect
-    .poll(() => rows.evaluateAll(elements => elements.map(row => getComputedStyle(row).opacity)))
+    .poll(() =>
+      swatches.evaluateAll(elements => elements.map(swatch => getComputedStyle(swatch).opacity))
+    )
     .toEqual(['1', '0.5', '0.5', '0.5', '0.5']);
+  await expect
+    .poll(() => rows.evaluateAll(elements => elements.map(row => getComputedStyle(row).opacity)))
+    .toEqual(['1', '1', '1', '1', '1']);
+  expect(
+    await rows
+      .locator('ds-text, ds-text span')
+      .evaluateAll(elements => elements.every(element => getComputedStyle(element).opacity === '1'))
+  ).toBe(true);
 });
 
 test('can render as a static key without local hover highlighting', async ({ page }) => {
@@ -67,6 +78,13 @@ test('can render as a static key without local hover highlighting', async ({ pag
 
   await expect
     .poll(() => rows.evaluateAll(elements => elements.map(row => getComputedStyle(row).opacity)))
+    .toEqual(['1', '1', '1', '1', '1']);
+  await expect
+    .poll(() =>
+      rows
+        .locator('.chart-legend__swatch')
+        .evaluateAll(elements => elements.map(swatch => getComputedStyle(swatch).opacity))
+    )
     .toEqual(['1', '1', '1', '1', '1']);
   await expect.poll(() => page.evaluate(() => (window as any).staticLegendHoverCount)).toBe(0);
 });
