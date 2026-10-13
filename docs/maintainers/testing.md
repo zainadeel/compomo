@@ -55,6 +55,15 @@ virtualization, and motion lifecycle. The unit guard in
 `tests/browser-tier.test.ts` keeps every engine-sensitive behavior family in
 that set.
 
+CI shards these contracts by browser while reusing the library build. Each
+engine also runs the packed framework consumers once. The `Rendered browser
+contracts` check succeeds only when every shard passes. Per-test timings are
+available in the browser job logs and the short-lived timing report artifacts;
+use those to investigate slow tests before changing coverage or worker counts.
+The matrix and shard count live in `.github/workflows/build.yml`. To reproduce a
+particular shard, pass its `--project` and `--shard` arguments to
+`npm run test:e2e:pr --`.
+
 The full rendered Chromium suite is the local preflight and remains available
 as `npm run test:e2e:chromium`. A reviewed assertion may use
 `chromiumOnly(owner, reason)` from `tests/e2e/browser-tier.ts` when Chromium is

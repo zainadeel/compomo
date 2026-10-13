@@ -184,7 +184,9 @@ export class SelectController<T extends ChoiceOption> {
   closePopup(restoreFocus = false) {
     if (!this.state.open) return;
     this.state.open = false;
-    if (restoreFocus) this.tasks.frame(() => this.triggerEl?.focus());
+    // The trigger remains mounted. Deferring restoration can steal focus back
+    // from the next control when the user presses Tab before the next frame.
+    if (restoreFocus && this.state.host.isConnected) this.triggerEl?.focus();
   }
 
   focusSearchOrTrigger() {
