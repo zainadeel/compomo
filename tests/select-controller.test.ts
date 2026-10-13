@@ -91,6 +91,36 @@ test('disconnect clears buffered typeahead before the next connection', () => {
 });
 
 for (const searchable of [false, true]) {
+  test(`closing ${searchable ? 'searchable' : 'ordinary'} Select does not steal focus after Tab`, () => {
+    const originalFrame = globalThis.requestAnimationFrame;
+    const originalCancel = globalThis.cancelAnimationFrame;
+    const frames: FrameRequestCallback[] = [];
+    globalThis.requestAnimationFrame = callback => frames.push(callback);
+    globalThis.cancelAnimationFrame = () => {};
+    const { controller, state } = setup();
+    Object.assign(state, { searchable });
+    let focused = searchable ? 'search' : 'trigger';
+    controller.setTriggerElement({
+      focus: () => {
+        focused = 'trigger';
+      },
+    } as HTMLButtonElement);
+    try {
+      controller.openPopup(true);
+      controller.closePopup(true);
+      assert.equal(focused, 'trigger');
+
+      // A keyboard user can Tab away before the next animation frame.
+      focused = 'next-control';
+      frames.splice(0).forEach(callback => callback(0));
+      assert.equal(focused, 'next-control');
+    } finally {
+      controller.disconnect();
+      globalThis.requestAnimationFrame = originalFrame;
+      globalThis.cancelAnimationFrame = originalCancel;
+    }
+  });
+
   test(`disconnect invalidates queued focus and permits new ${searchable ? 'search' : 'trigger'} focus`, () => {
     const originalFrame = globalThis.requestAnimationFrame;
     const originalCancel = globalThis.cancelAnimationFrame;
@@ -108,7 +138,7 @@ for (const searchable of [false, true]) {
     } as HTMLDsInputElement);
     try {
       controller.openPopup(true);
-      controller.closePopup(true);
+      controller.closePopup();
       controller.focusSearchOrTrigger();
       Object.assign(state.host, { isConnected: false });
       controller.disconnect();
