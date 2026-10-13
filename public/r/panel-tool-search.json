@@ -404,7 +404,7 @@
       "peerDependencies": {
         "required": [
           "@ds-mo/tokens ^9.0.0",
-          "@ds-mo/icons ^8.2.1"
+          "@ds-mo/icons ^8.2.2"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
       }
