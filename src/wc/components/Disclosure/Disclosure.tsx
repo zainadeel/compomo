@@ -23,6 +23,8 @@ export class Disclosure {
   /** `flush` separates stacked sections with a divider; `contained` sits on its own card surface. */
   @Prop() variant: DisclosureVariant = 'flush';
   @Prop() isInactive: boolean = false;
+  /** Count shown before the chevron, as in Table group rows. Part of the toggle hit area. */
+  @Prop() count: number | string | undefined;
 
   @State() private hasTrailing: boolean = false;
 
@@ -32,6 +34,7 @@ export class Disclosure {
   private readonly baseId = `ds-disclosure-${++disclosureIdCounter}`;
   private readonly panelId = `${this.baseId}-panel`;
   private readonly triggerId = `${this.baseId}-trigger`;
+  private readonly countId = `${this.baseId}-count`;
 
   componentWillLoad() {
     this.hasTrailing = this.el.querySelector('[slot="trailing"]') !== null;
@@ -53,6 +56,7 @@ export class Disclosure {
 
   render() {
     const HeadingTag = `h${this.headingLevel}` as 'h3';
+    const hasCount = this.count !== undefined && this.count !== null && `${this.count}` !== '';
     return (
       <Host
         class={{
@@ -72,6 +76,7 @@ export class Disclosure {
               aria-expanded={this.open ? 'true' : 'false'}
               aria-controls={this.panelId}
               aria-disabled={this.isInactive ? 'true' : undefined}
+              aria-describedby={hasCount ? this.countId : undefined}
               onClick={this.toggle}
             >
               <span class="disclosure-copy ds-interaction-fill__content">
@@ -109,6 +114,18 @@ export class Disclosure {
               }
             />
           </div>
+          {hasCount ? (
+            <ds-text
+              id={this.countId}
+              class="disclosure-count ds-interaction-fill__content"
+              as="span"
+              variant="text-body-medium"
+              color="secondary"
+              aria-hidden="true"
+            >
+              {this.count}
+            </ds-text>
+          ) : null}
           <ds-icon
             class="disclosure-chevron ds-interaction-fill__content"
             name="ChevronDown"

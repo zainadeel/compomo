@@ -119,12 +119,17 @@
   border-radius: var(--ds-radius-card);
 }
 
+/* The count and chevron let clicks and hover through to the trigger's hit area. */
+.disclosure-count,
 .disclosure-chevron {
   position: relative;
   z-index: 2;
   flex: 0 0 auto;
-  color: var(--color-foreground-secondary);
   pointer-events: none;
+}
+
+.disclosure-chevron {
+  color: var(--color-foreground-secondary);
 }
 
 /* ChevronDown while collapsed, turning to ChevronUp when open. */

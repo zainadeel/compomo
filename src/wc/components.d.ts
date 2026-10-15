@@ -1957,6 +1957,10 @@ export namespace Components {
     }
     interface DsDisclosure {
         /**
+          * Count shown before the chevron, as in Table group rows. Part of the toggle hit area.
+         */
+        "count": number | string | undefined;
+        /**
           * Optional supporting copy shown below the heading inside the trigger.
           * @default ''
          */
@@ -9418,6 +9422,10 @@ declare namespace LocalJSX {
     }
     interface DsDisclosure {
         /**
+          * Count shown before the chevron, as in Table group rows. Part of the toggle hit area.
+         */
+        "count"?: number | string | undefined;
+        /**
           * Optional supporting copy shown below the heading inside the trigger.
           * @default ''
          */
@@ -13532,6 +13540,7 @@ declare namespace LocalJSX {
         "headingLevel": DisclosureHeadingLevel;
         "variant": DisclosureVariant;
         "isInactive": boolean;
+        "count": string;
     }
     interface DsDividerAttributes {
         "orientation": DividerOrientation;

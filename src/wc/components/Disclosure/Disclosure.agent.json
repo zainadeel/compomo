@@ -47,7 +47,8 @@
     "The trigger is a native button inside a heading element; choose headingLevel to fit the surrounding outline.",
     "The trigger exposes aria-expanded and controls a labelled region containing the content.",
     "Collapsed content is inert and hidden so it is never focusable or announced.",
-    "The trigger's hit area spans the row, including the trailing chevron. Trailing slot content sits outside the trigger button and above its hit area so interactive content keeps its own semantics.",
+    "The trigger's hit area spans the row, including count and the chevron. count is announced as the trigger's description.",
+    "Trailing slot content sits outside the trigger button and above its hit area so status tags and controls keep their own semantics. Use count, not the slot, for group counts.",
     "Inactive sections expose aria-disabled and cannot be toggled."
   ],
   "states": [

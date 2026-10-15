@@ -15,6 +15,7 @@ const meta: Meta = {
     variant: { control: 'inline-radio', options: ['flush', 'contained'] },
     open: { control: 'boolean' },
     isInactive: { control: 'boolean' },
+    count: { control: 'text' },
   },
   args: {
     heading: 'Engine diagnostics',
@@ -22,6 +23,7 @@ const meta: Meta = {
     variant: 'flush',
     open: true,
     isInactive: false,
+    count: '',
   },
 };
 
@@ -59,6 +61,7 @@ export const Playground: Story = {
           variant=${args['variant'] ?? 'flush'}
           ?open=${args['open']}
           ?is-inactive=${args['isInactive']}
+          count=${args['count'] ?? ''}
         >
           ${body(
             'Fault codes reported by the vehicle gateway in the last 24 hours, with the most recent reading first.'
@@ -69,23 +72,19 @@ export const Playground: Story = {
     ),
 };
 
-const count = (value: number) => html`
-  <ds-text slot="trailing" as="span" variant="text-body-medium" color="secondary">${value}</ds-text>
-`;
-
 /**
  * Stacked flush sections separated by dividers, as in a detail panel or settings column.
- * A trailing count sits before the chevron, as in Table and Live Map group rows.
+ * count sits before the chevron, as in Table and Live Map group rows.
  */
 export const FlushStack: Story = {
   render: () =>
     panel(html`
-      <ds-disclosure heading="Alerts" open>
-        ${count(3)} ${switchRow('Harsh braking', true)} ${switchRow('Speeding', true)}
+      <ds-disclosure heading="Alerts" count="3" open>
+        ${switchRow('Harsh braking', true)} ${switchRow('Speeding', true)}
         ${switchRow('Unassigned driving')}
       </ds-disclosure>
-      <ds-disclosure heading="Reports" description="Weekly summaries sent every Monday">
-        ${count(2)} ${switchRow('Fuel efficiency', true)} ${switchRow('IFTA mileage')}
+      <ds-disclosure heading="Reports" description="Weekly summaries sent every Monday" count="2">
+        ${switchRow('Fuel efficiency', true)} ${switchRow('IFTA mileage')}
       </ds-disclosure>
       <ds-disclosure heading="Maintenance">
         ${switchRow('Upcoming service')} ${switchRow('Open defects', true)}
@@ -116,7 +115,7 @@ export const Contained: Story = {
   `,
 };
 
-/** Trailing slot for status or counts that stays outside the toggle button. */
+/** Trailing slot for status tags or controls that keep their own activation. */
 export const WithTrailing: Story = {
   render: () =>
     panel(html`
