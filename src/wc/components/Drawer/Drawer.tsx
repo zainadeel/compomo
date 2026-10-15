@@ -125,8 +125,6 @@ export class Drawer {
   @State() private shown: boolean = false;
   @State() private hasFooterActions: boolean = false;
   @State() private hasHeaderActions: boolean = false;
-  /** Bumped when framework-inserted slotted content needs relocating into its slot. */
-  @State() private slotRevision: number = 0;
 
   /** Emitted when the drawer requests to close; open is already false. */
   @Event() dsClose!: EventEmitter<DrawerCloseDetail>;
@@ -149,6 +147,9 @@ export class Drawer {
   private documentListening: Document | null = null;
   private readonly tasks = new ConnectionTasks(() => this.el.isConnected);
   private slotObserver?: MutationObserver;
+  private bodyEl: HTMLElement | null = null;
+  private headerActionsEl: HTMLElement | null = null;
+  private footerActionsEl: HTMLElement | null = null;
 
   connectedCallback() {
     if (!this.loaded) return;
@@ -159,6 +160,7 @@ export class Drawer {
 
   componentDidLoad() {
     this.loaded = true;
+    this.placeSlottedContent();
     this.updateSlotPresence();
     this.observeSlottedContent();
     if (this.open) this.onOpenChange(true);
@@ -355,40 +357,56 @@ export class Drawer {
     if (this.nextAvailable) this.dsNext.emit();
   }
 
-  private hasAssignedContent(slotName: string, slot?: HTMLSlotElement): boolean {
-    const assignedNodes = slot?.assignedNodes() ?? [];
-    return (
-      assignedNodes.some(node => node.nodeType !== Node.TEXT_NODE || !!node.textContent?.trim()) ||
-      this.el.querySelector(`[slot="${slotName}"]`) !== null
+  private hasAssignedContent(container: HTMLElement | null): boolean {
+    if (!container) return false;
+    return Array.from(container.childNodes).some(
+      node =>
+        node.nodeType === Node.ELEMENT_NODE ||
+        (node.nodeType === Node.TEXT_NODE && !!node.textContent?.trim())
     );
   }
 
   private updateSlotPresence() {
-    this.hasFooterActions = this.hasAssignedContent('footer');
-    this.hasHeaderActions = this.hasAssignedContent('header-actions');
+    this.hasFooterActions = this.hasAssignedContent(this.footerActionsEl);
+    this.hasHeaderActions = this.hasAssignedContent(this.headerActionsEl);
+  }
+
+  private namedSlotContainer(slotName: string | null): HTMLElement | null {
+    if (slotName === 'header-actions') return this.headerActionsEl;
+    if (slotName === 'footer') return this.footerActionsEl;
+    return null;
   }
 
   /**
+   * Scoped slots only place direct host children, and only during render.
    * Frameworks insert conditional content after first render, for example an
-   * Angular @if around footer actions. Scoped slots only place host children
-   * during render, so re-render when named-slot content arrives or leaves.
+   * Angular @if around footer actions, next to an anchor that Stencil already
+   * moved into the body. Move named-slot elements that arrive on the host or
+   * directly in the body into their slot container. Deeper elements belong to
+   * nested components and are left alone.
    */
+  private placeSlottedContent() {
+    const candidates = [
+      ...Array.from(this.el.children),
+      ...(this.bodyEl ? Array.from(this.bodyEl.children) : []),
+    ];
+    for (const child of candidates) {
+      const container = this.namedSlotContainer(child.getAttribute('slot'));
+      if (container && child.parentElement !== container) container.appendChild(child);
+    }
+  }
+
   private observeSlottedContent() {
     if (this.slotObserver || typeof MutationObserver === 'undefined') return;
     this.slotObserver = new MutationObserver(records => {
-      let slottedChange = false;
-      let needsRelocation = false;
-      for (const record of records) {
-        for (const node of [...record.addedNodes, ...record.removedNodes]) {
-          if (node.nodeType !== Node.ELEMENT_NODE) continue;
-          if (!(node as HTMLElement).hasAttribute('slot')) continue;
-          slottedChange = true;
-          if (node.parentNode === this.el) needsRelocation = true;
-        }
-      }
+      const slottedChange = records.some(record =>
+        [...Array.from(record.addedNodes), ...Array.from(record.removedNodes)].some(
+          node => node.nodeType === Node.ELEMENT_NODE && (node as HTMLElement).hasAttribute('slot')
+        )
+      );
       if (!slottedChange) return;
+      this.placeSlottedContent();
       this.updateSlotPresence();
-      if (needsRelocation) this.slotRevision++;
     });
     this.slotObserver.observe(this.el, { childList: true, subtree: true });
   }
@@ -541,16 +559,9 @@ export class Drawer {
                   'drawer-header__actions': true,
                   'drawer-header__actions--empty': !this.hasHeaderActions,
                 }}
+                ref={element => (this.headerActionsEl = element ?? null)}
               >
-                <slot
-                  name="header-actions"
-                  onSlotchange={(event: globalThis.Event) => {
-                    this.hasHeaderActions = this.hasAssignedContent(
-                      'header-actions',
-                      event.currentTarget as HTMLSlotElement
-                    );
-                  }}
-                />
+                <slot name="header-actions" />
               </div>
               {this.hasHeaderActions ? (
                 <ds-divider
@@ -568,7 +579,10 @@ export class Drawer {
               )}
             </div>
           </div>
-          <div class={{ 'drawer-body': true, 'drawer-body--flush': this.bodyInset === 'none' }}>
+          <div
+            class={{ 'drawer-body': true, 'drawer-body--flush': this.bodyInset === 'none' }}
+            ref={element => (this.bodyEl = element ?? null)}
+          >
             <slot />
           </div>
           <div class={{ 'drawer-footer': true, 'drawer-footer--empty': !showFooter }}>
@@ -577,16 +591,9 @@ export class Drawer {
                 'drawer-footer__actions': true,
                 'drawer-footer__actions--empty': !this.hasFooterActions,
               }}
+              ref={element => (this.footerActionsEl = element ?? null)}
             >
-              <slot
-                name="footer"
-                onSlotchange={(event: globalThis.Event) => {
-                  this.hasFooterActions = this.hasAssignedContent(
-                    'footer',
-                    event.currentTarget as HTMLSlotElement
-                  );
-                }}
-              />
+              <slot name="footer" />
             </div>
             {this.navigation ? (
               <div
