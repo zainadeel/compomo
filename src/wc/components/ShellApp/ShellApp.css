@@ -135,7 +135,12 @@
   display: block;
 }
 
-.shell-app__content {
+/*
+ * Non-scrolling frame for the page column. It owns the size container and
+ * layout containment, so page-owned fixed surfaces such as a non-modal
+ * ds-drawer cover exactly this lane and stay put while the page scrolls.
+ */
+.shell-app__content-frame {
   grid-area: content;
   /* Full-height pages use this lane, including banner and mobile navigation reflow. */
   container-type: size;
@@ -143,10 +148,19 @@
   flex: 1 1 auto;
   min-width: 0;
   min-height: 0;
-  overflow: auto;
-  overscroll-behavior: none;
+  position: relative;
+  z-index: 1;
+  overflow: clip;
   /* Limit reflow to the page column — not on __main (breaks tools flex shrink). */
   contain: layout;
+}
+
+.shell-app__content {
+  block-size: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: none;
 }
 
 /* Layout scroller, not a control: keep it keyboard-focusable without a page-sized ring. */
@@ -230,7 +244,7 @@
 
 :host(.shell-app--tools-fullscreen) .shell-app__panel,
 :host(.shell-app--tools-fullscreen) .shell-app__bar,
-:host(.shell-app--tools-fullscreen) .shell-app__content {
+:host(.shell-app--tools-fullscreen) .shell-app__content-frame {
   visibility: hidden;
   /* Descendants can override visibility, but must not paint through tools. */
   content-visibility: hidden;
@@ -268,7 +282,7 @@
   background: var(--color-background-primary);
 }
 
-:host(.shell-app--mobile) .shell-app__content,
+:host(.shell-app--mobile) .shell-app__content-frame,
 :host(.shell-app--mobile) .shell-app__tools,
 :host(.shell-app--mobile) .shell-app__mobile-sheet-nav {
   grid-area: stage;
@@ -278,9 +292,8 @@
   position: relative;
 }
 
-:host(.shell-app--mobile) .shell-app__content {
+:host(.shell-app--mobile) .shell-app__content-frame {
   z-index: 1;
-  overflow: auto;
 }
 
 :host(.shell-app--mobile) .shell-app__tools {
@@ -311,8 +324,8 @@
   display: none;
 }
 
-:host(.shell-app--mobile-tool-active) .shell-app__content,
-:host(.shell-app--mobile-sheet-nav-open) .shell-app__content,
+:host(.shell-app--mobile-tool-active) .shell-app__content-frame,
+:host(.shell-app--mobile-sheet-nav-open) .shell-app__content-frame,
 :host(.shell-app--mobile-sheet-nav-open) .shell-app__tools {
   visibility: hidden;
 }

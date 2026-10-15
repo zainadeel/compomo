@@ -1,0 +1,88 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-disclosure",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-disclosure",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Show-and-hide control for optional in-flow detail: a borderless ButtonUnfilled trigger with a leading chevron that reveals content below it. It owns the trigger and the reveal, not a container; the surrounding card or section supplies surface, dividers, and inset.",
+  "useWhen": [
+    "A card, page section, or tool panel has optional detail, such as a raw snapshot or advanced options, that should stay out of the way until requested.",
+    "The reveal belongs inside a container the owner already styles."
+  ],
+  "avoidWhen": [
+    "Sections are peers the user switches between, with one visible at a time; use TabGroup.",
+    "The hidden content is critical to completing the task.",
+    "The content is a navigation tree or a filter list with its own selection semantics.",
+    "The trigger needs to open a floating surface rather than expand in place.",
+    "Rows of grouped data need collapsible group headers; use Table grouping."
+  ],
+  "alternatives": [
+    {
+      "when": "The user switches between peer views of the same area.",
+      "component": "component:ds-tab-group",
+      "reason": "TabGroup shows one panel at a time with tab semantics."
+    },
+    {
+      "when": "A trigger reveals content that should float over the page.",
+      "component": "component:ds-popover",
+      "reason": "Popover anchors content to its trigger without reflowing the page."
+    },
+    {
+      "when": "The section is an editable settings group with view and edit modes.",
+      "component": "component:ds-card-setting",
+      "reason": "CardSetting owns the view, edit, save, and cancel workflow."
+    },
+    {
+      "when": "Grouped data rows need collapsible group headers.",
+      "component": "component:ds-table",
+      "reason": "Table group rows own counts, sticky headers, and collapse state for grouped data."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-text",
+    "component:ds-switch",
+    "component:ds-button-unfilled"
+  ],
+  "accessibility": [
+    "The trigger is a borderless ButtonUnfilled exposing aria-expanded and aria-controls for the revealed region, which is named by label.",
+    "headingLevel wraps the trigger in a heading when the label titles a document section; omit it for inline detail.",
+    "Collapsed content is inert and hidden so it is never focusable or announced.",
+    "Inactive disclosures cannot be toggled."
+  ],
+  "states": [
+    "open is reflected and mutable: the component toggles it on activation and emits dsToggle with the new state. Owners may also set it directly.",
+    "The chevron points right while collapsed and down while open.",
+    "Height and content opacity animate on toggle and are removed under reduced motion."
+  ],
+  "responsiveBehavior": [
+    "The trigger hugs its label; the revealed content fills the container width.",
+    "Content starts 8px below the trigger with no inline inset, so it aligns with the owner's content edge."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Set open as a property or attribute; listen for dsToggle for user changes."
+    ],
+    "react": ["Pass open to DsDisclosure and update it in onDsToggle when controlling it."],
+    "angular": ["Bind [open] and update it from (dsToggle) when controlling it."]
+  },
+  "references": [
+    {
+      "label": "Storybook playground, in-card, section heading, and inactive examples",
+      "path": "src/wc/components/Disclosure/Disclosure.stories.ts"
+    }
+  ],
+  "styling": {
+    "rationale": "The component owns the trigger, which follows the ButtonUnfilled recipe, and the expand motion. Containers own surface, dividers, and content inset.",
+    "protected": [
+      {
+        "properties": ["padding", "border-radius", "background"],
+        "reason": "Trigger hover, press, focus, and padding follow ButtonUnfilled; choose size instead.",
+        "props": ["size"]
+      }
+    ],
+    "customProperties": []
+  }
+}

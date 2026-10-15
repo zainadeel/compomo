@@ -20,6 +20,9 @@ three typed data objects and persistent content:
   complete navigation, workspace, and tools row.
 - Named `*-view` slots hold the product-owned tool views, and the default slot
   holds the router-owned page content.
+- Page-owned non-modal panels such as a details `ds-drawer` can render anywhere
+  in page content; the content lane contains them so they cover only that lane
+  and do not scroll with the page.
 
 ShellApp assembles PanelNav, BarNav, BarPageTitle, ShellTools/PanelTools, MobileSheetNav,
 MobileBarNav, MobileHeader, BarTitle, and ShellPage. It owns presentation state,

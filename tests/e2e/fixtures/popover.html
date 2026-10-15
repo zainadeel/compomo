@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <title>Popover e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+  </head>
+  <body>
+    <main style="padding: 24px">
+      <button id="share-trigger" aria-haspopup="dialog">Share</button>
+      <ds-popover id="share" anchor-id="share-trigger" popover-label="Share view" popover-width="sm">
+        <p id="share-copy">Anyone with the link can view this fleet.</p>
+        <button id="copy-link">Copy link</button>
+      </ds-popover>
+      <button id="next-control">Next control</button>
+
+      <button id="list-trigger" aria-haspopup="dialog">Columns</button>
+      <ds-popover id="list" anchor-id="list-trigger" popover-label="Columns">
+        <div id="list-content">Driver</div>
+      </ds-popover>
+      <button id="outside">Outside</button>
+    </main>
+    <script type="module" src="/popover-setup.mjs"></script>
+  </body>
+</html>

@@ -1463,14 +1463,16 @@ export class ShellApp {
             >
               <slot name="tools" />
             </div>
-            <div
-              class="shell-app__content"
-              data-ds-overlay-boundary
-              aria-hidden={fullscreen || mobileStageBlocked ? 'true' : undefined}
-              inert={fullscreen || mobileStageBlocked ? true : undefined}
-              tabIndex={0}
-            >
-              <slot />
+            <div class="shell-app__content-frame">
+              <div
+                class="shell-app__content"
+                data-ds-overlay-boundary
+                aria-hidden={fullscreen || mobileStageBlocked ? 'true' : undefined}
+                inert={fullscreen || mobileStageBlocked ? true : undefined}
+                tabIndex={0}
+              >
+                <slot />
+              </div>
             </div>
             <div
               class="shell-app__mobile-sheet-nav"
@@ -1564,14 +1566,16 @@ export class ShellApp {
             >
               {this.renderManagedTools()}
             </div>
-            <div
-              class="shell-app__content"
-              data-ds-overlay-boundary
-              aria-hidden={fullscreen || mobileStageBlocked ? 'true' : undefined}
-              inert={fullscreen || mobileStageBlocked ? true : undefined}
-              tabIndex={0}
-            >
-              {this.renderManagedPage()}
+            <div class="shell-app__content-frame">
+              <div
+                class="shell-app__content"
+                data-ds-overlay-boundary
+                aria-hidden={fullscreen || mobileStageBlocked ? 'true' : undefined}
+                inert={fullscreen || mobileStageBlocked ? true : undefined}
+                tabIndex={0}
+              >
+                {this.renderManagedPage()}
+              </div>
             </div>
             <div
               class="shell-app__mobile-sheet-nav"

@@ -1,0 +1,64 @@
+/*
+ * Disclosure owns the trigger and the reveal, not a container: no background,
+ * border, divider, or content inset. The surrounding card or section supplies
+ * those. The trigger is a borderless ButtonUnfilled, so hover, press, focus,
+ * and padding follow the button recipe.
+ */
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.disclosure-heading {
+  margin: 0;
+  font: inherit;
+}
+
+/* Height animates through grid rows so content never needs measuring. */
+.disclosure-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  align-self: stretch;
+  transition:
+    grid-template-rows var(--effect-animation-duration-short-3)
+      var(--effect-animation-easing-ease-in-out),
+    visibility 0s linear var(--effect-animation-duration-short-3);
+  visibility: hidden;
+}
+
+.disclosure-panel--open {
+  grid-template-rows: 1fr;
+  transition:
+    grid-template-rows var(--effect-animation-duration-short-3)
+      var(--effect-animation-easing-ease-in-out),
+    visibility 0s linear 0s;
+  /* inherit, not visible, so a hiding ancestor such as a skeleton still wins. */
+  visibility: inherit;
+}
+
+.disclosure-panel__clip {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Content starts below the trigger; its own inset belongs to the owner. */
+.disclosure-content {
+  padding-block-start: var(--dimension-space-100);
+  opacity: 0;
+  transition: opacity var(--effect-animation-duration-short-3)
+    var(--effect-animation-easing-ease-out);
+}
+
+.disclosure-panel--open .disclosure-content {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .disclosure-panel,
+  .disclosure-panel--open,
+  .disclosure-content {
+    transition: none;
+  }
+}

@@ -1,0 +1,282 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "disclosure",
+  "title": "Disclosure",
+  "description": "Show-and-hide control for optional in-flow detail: a borderless ButtonUnfilled trigger with a leading chevron that reveals content below it. It owns the trigger and the reveal, not a container; the surrounding card or section supplies surface, dividers, and inset.",
+  "type": "registry:ui",
+  "meta": {
+    "library": "@ds-mo/ui",
+    "distribution": "npm",
+    "storybook": "https://zainadeel.github.io/compomo/?path=/story/disclosure",
+    "source": "src/wc/components/Disclosure/Disclosure.tsx",
+    "intentStatus": "complete",
+    "intent": {
+      "audience": "general",
+      "status": "experimental",
+      "summary": "Show-and-hide control for optional in-flow detail: a borderless ButtonUnfilled trigger with a leading chevron that reveals content below it. It owns the trigger and the reveal, not a container; the surrounding card or section supplies surface, dividers, and inset.",
+      "useWhen": [
+        "A card, page section, or tool panel has optional detail, such as a raw snapshot or advanced options, that should stay out of the way until requested.",
+        "The reveal belongs inside a container the owner already styles."
+      ],
+      "avoidWhen": [
+        "Sections are peers the user switches between, with one visible at a time; use TabGroup.",
+        "The hidden content is critical to completing the task.",
+        "The content is a navigation tree or a filter list with its own selection semantics.",
+        "The trigger needs to open a floating surface rather than expand in place.",
+        "Rows of grouped data need collapsible group headers; use Table grouping."
+      ],
+      "alternatives": [
+        {
+          "when": "The user switches between peer views of the same area.",
+          "component": "component:ds-tab-group",
+          "reason": "TabGroup shows one panel at a time with tab semantics."
+        },
+        {
+          "when": "A trigger reveals content that should float over the page.",
+          "component": "component:ds-popover",
+          "reason": "Popover anchors content to its trigger without reflowing the page."
+        },
+        {
+          "when": "The section is an editable settings group with view and edit modes.",
+          "component": "component:ds-card-setting",
+          "reason": "CardSetting owns the view, edit, save, and cancel workflow."
+        },
+        {
+          "when": "Grouped data rows need collapsible group headers.",
+          "component": "component:ds-table",
+          "reason": "Table group rows own counts, sticky headers, and collapse state for grouped data."
+        }
+      ],
+      "commonlyComposedWith": [
+        "component:ds-text",
+        "component:ds-switch",
+        "component:ds-button-unfilled"
+      ],
+      "accessibility": [
+        "The trigger is a borderless ButtonUnfilled exposing aria-expanded and aria-controls for the revealed region, which is named by label.",
+        "headingLevel wraps the trigger in a heading when the label titles a document section; omit it for inline detail.",
+        "Collapsed content is inert and hidden so it is never focusable or announced.",
+        "Inactive disclosures cannot be toggled."
+      ],
+      "states": [
+        "open is reflected and mutable: the component toggles it on activation and emits dsToggle with the new state. Owners may also set it directly.",
+        "The chevron points right while collapsed and down while open.",
+        "Height and content opacity animate on toggle and are removed under reduced motion."
+      ],
+      "responsiveBehavior": [
+        "The trigger hugs its label; the revealed content fills the container width.",
+        "Content starts 8px below the trigger with no inline inset, so it aligns with the owner's content edge."
+      ],
+      "frameworkCaveats": {
+        "customElements": [
+          "Set open as a property or attribute; listen for dsToggle for user changes."
+        ],
+        "react": [
+          "Pass open to DsDisclosure and update it in onDsToggle when controlling it."
+        ],
+        "angular": [
+          "Bind [open] and update it from (dsToggle) when controlling it."
+        ]
+      },
+      "references": [
+        {
+          "label": "Storybook playground, in-card, section heading, and inactive examples",
+          "path": "src/wc/components/Disclosure/Disclosure.stories.ts"
+        }
+      ],
+      "styling": {
+        "rationale": "The component owns the trigger, which follows the ButtonUnfilled recipe, and the expand motion. Containers own surface, dividers, and content inset.",
+        "protected": [
+          {
+            "properties": [
+              "padding",
+              "border-radius",
+              "background"
+            ],
+            "reason": "Trigger hover, press, focus, and padding follow ButtonUnfilled; choose size instead.",
+            "props": [
+              "size"
+            ]
+          }
+        ],
+        "customProperties": []
+      }
+    },
+    "api": {
+      "props": {
+        "headingLevel": {
+          "type": "DisclosureHeadingLevel | undefined",
+          "resolvedType": "2 | 3 | 4 | 5 | 6 | undefined",
+          "attribute": "heading-level",
+          "required": false,
+          "mutable": false,
+          "description": "Wraps the trigger in a heading when the label titles a document section."
+        },
+        "isInactive": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "is-inactive",
+          "default": "false",
+          "required": false,
+          "mutable": false
+        },
+        "label": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "label",
+          "required": true,
+          "mutable": false,
+          "description": "Visible trigger label."
+        },
+        "open": {
+          "type": "boolean",
+          "resolvedType": "boolean",
+          "attribute": "open",
+          "default": "false",
+          "required": false,
+          "mutable": true,
+          "description": "Whether the content is shown. The component mutates this when the trigger is activated."
+        },
+        "size": {
+          "type": "DisclosureSize",
+          "resolvedType": "\"md\" | \"sm\"",
+          "attribute": "size",
+          "default": "'md'",
+          "required": false,
+          "mutable": false,
+          "description": "Trigger density, matching ButtonUnfilled."
+        }
+      },
+      "events": [
+        {
+          "name": "dsToggle",
+          "detail": "boolean",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "description": "Emitted after the user toggles the content; detail is the new open state."
+        }
+      ],
+      "methods": [],
+      "slots": [
+        {
+          "name": "",
+          "description": "The default slot"
+        }
+      ]
+    },
+    "props": {
+      "headingLevel": {
+        "type": "DisclosureHeadingLevel | undefined",
+        "resolvedType": "2 | 3 | 4 | 5 | 6 | undefined",
+        "attribute": "heading-level",
+        "required": false,
+        "mutable": false,
+        "description": "Wraps the trigger in a heading when the label titles a document section."
+      },
+      "isInactive": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "is-inactive",
+        "default": "false",
+        "required": false,
+        "mutable": false
+      },
+      "label": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "label",
+        "required": true,
+        "mutable": false,
+        "description": "Visible trigger label."
+      },
+      "open": {
+        "type": "boolean",
+        "resolvedType": "boolean",
+        "attribute": "open",
+        "default": "false",
+        "required": false,
+        "mutable": true,
+        "description": "Whether the content is shown. The component mutates this when the trigger is activated."
+      },
+      "size": {
+        "type": "DisclosureSize",
+        "resolvedType": "\"md\" | \"sm\"",
+        "attribute": "size",
+        "default": "'md'",
+        "required": false,
+        "mutable": false,
+        "description": "Trigger density, matching ButtonUnfilled."
+      }
+    },
+    "events": [
+      {
+        "name": "dsToggle",
+        "detail": "boolean",
+        "bubbles": true,
+        "cancelable": true,
+        "composed": true,
+        "description": "Emitted after the user toggles the content; detail is the new open state."
+      }
+    ],
+    "methods": [],
+    "slots": [
+      {
+        "name": "",
+        "description": "The default slot"
+      }
+    ],
+    "exports": {
+      "customElement": "ds-disclosure",
+      "react": "DsDisclosure",
+      "vue": "DsDisclosure",
+      "angular": "DsDisclosure"
+    },
+    "consumption": {
+      "install": "npm install @ds-mo/ui @ds-mo/tokens @ds-mo/icons",
+      "cssSetup": "import '@ds-mo/tokens';\nimport '@ds-mo/tokens/reset';\nimport '@ds-mo/tokens/globals';",
+      "customElements": {
+        "import": "import '@ds-mo/ui/dist/components/ds-disclosure.js';",
+        "example": "<ds-disclosure></ds-disclosure>"
+      },
+      "react": {
+        "import": "import { DsDisclosure } from '@ds-mo/ui/react';",
+        "example": "<DsDisclosure />"
+      },
+      "vue": {
+        "import": "import { DsDisclosure } from '@ds-mo/ui/vue';",
+        "example": "<DsDisclosure />"
+      },
+      "angular": {
+        "import": "import { DsDisclosure } from '@ds-mo/ui/angular/ds-disclosure';",
+        "example": "<ds-disclosure></ds-disclosure>"
+      },
+      "peerDependencies": {
+        "required": [
+          "@ds-mo/tokens ^9.0.0",
+          "@ds-mo/icons ^8.2.2"
+        ],
+        "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
+      }
+    }
+  },
+  "dependencies": [
+    "@ds-mo/ui",
+    "@ds-mo/tokens"
+  ],
+  "registryDependencies": [
+    "button-unfilled"
+  ],
+  "files": [
+    {
+      "path": "src/wc/components/Disclosure/Disclosure.css",
+      "content": "/*\n * Disclosure owns the trigger and the reveal, not a container: no background,\n * border, divider, or content inset. The surrounding card or section supplies\n * those. The trigger is a borderless ButtonUnfilled, so hover, press, focus,\n * and padding follow the button recipe.\n */\n:host {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  min-width: 0;\n}\n\n.disclosure-heading {\n  margin: 0;\n  font: inherit;\n}\n\n/* Height animates through grid rows so content never needs measuring. */\n.disclosure-panel {\n  display: grid;\n  grid-template-rows: 0fr;\n  align-self: stretch;\n  transition:\n    grid-template-rows var(--effect-animation-duration-short-3)\n      var(--effect-animation-easing-ease-in-out),\n    visibility 0s linear var(--effect-animation-duration-short-3);\n  visibility: hidden;\n}\n\n.disclosure-panel--open {\n  grid-template-rows: 1fr;\n  transition:\n    grid-template-rows var(--effect-animation-duration-short-3)\n      var(--effect-animation-easing-ease-in-out),\n    visibility 0s linear 0s;\n  /* inherit, not visible, so a hiding ancestor such as a skeleton still wins. */\n  visibility: inherit;\n}\n\n.disclosure-panel__clip {\n  min-height: 0;\n  overflow: hidden;\n}\n\n/* Content starts below the trigger; its own inset belongs to the owner. */\n.disclosure-content {\n  padding-block-start: var(--dimension-space-100);\n  opacity: 0;\n  transition: opacity var(--effect-animation-duration-short-3)\n    var(--effect-animation-easing-ease-out);\n}\n\n.disclosure-panel--open .disclosure-content {\n  opacity: 1;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .disclosure-panel,\n  .disclosure-panel--open,\n  .disclosure-content {\n    transition: none;\n  }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "src/wc/components/Disclosure/Disclosure.tsx",
+      "content": "import { Component, Prop, Event, EventEmitter, Element, h, Host } from '@stencil/core';\nimport type { ButtonSize } from '../../utils/button-types';\n\nexport type DisclosureHeadingLevel = 2 | 3 | 4 | 5 | 6;\nexport type DisclosureSize = Extract<ButtonSize, 'sm' | 'md'>;\n\nlet disclosureIdCounter = 0;\n\n@Component({\n  tag: 'ds-disclosure',\n  styleUrl: 'Disclosure.css',\n  scoped: true,\n})\nexport class Disclosure {\n  @Element() el!: HTMLElement;\n\n  /** Whether the content is shown. The component mutates this when the trigger is activated. */\n  @Prop({ mutable: true, reflect: true }) open: boolean = false;\n  /** Visible trigger label. */\n  @Prop() label!: string;\n  /** Trigger density, matching ButtonUnfilled. */\n  @Prop() size: DisclosureSize = 'md';\n  /** Wraps the trigger in a heading when the label titles a document section. */\n  @Prop() headingLevel: DisclosureHeadingLevel | undefined;\n  @Prop() isInactive: boolean = false;\n\n  /** Emitted after the user toggles the content; detail is the new open state. */\n  @Event() dsToggle!: EventEmitter<boolean>;\n\n  private readonly panelId = `ds-disclosure-${++disclosureIdCounter}-panel`;\n\n  private handleTriggerClick = (event: CustomEvent<MouseEvent>) => {\n    // The trigger's own dsClick is an implementation detail; owners listen for dsToggle.\n    event.stopPropagation();\n    if (this.isInactive) return;\n    this.open = !this.open;\n    this.dsToggle.emit(this.open);\n  };\n\n  render() {\n    const trigger = (\n      <ds-button-unfilled\n        class=\"disclosure-trigger\"\n        variant=\"icon-label\"\n        size={this.size}\n        icon={this.open ? 'ChevronDown' : 'ChevronRight'}\n        label={this.label}\n        hasBorder={false}\n        pressScale={false}\n        expanded={this.open}\n        surfaceOpen={false}\n        controls={this.panelId}\n        isInactive={this.isInactive}\n        onDsClick={this.handleTriggerClick}\n      />\n    );\n    const HeadingTag = this.headingLevel ? (`h${this.headingLevel}` as 'h3') : null;\n\n    return (\n      <Host class={{ 'disclosure--open': this.open }}>\n        {HeadingTag ? <HeadingTag class=\"disclosure-heading\">{trigger}</HeadingTag> : trigger}\n        <div\n          id={this.panelId}\n          class={{ 'disclosure-panel': true, 'disclosure-panel--open': this.open }}\n          role=\"region\"\n          aria-label={this.label}\n          inert={!this.open}\n        >\n          <div class=\"disclosure-panel__clip\">\n            <div class=\"disclosure-content\">\n              <slot />\n            </div>\n          </div>\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

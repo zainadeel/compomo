@@ -1,0 +1,243 @@
+@import '../../utils/forced-colors.css';
+
+:host {
+  display: contents;
+}
+
+/*
+ * Edge-attached details panel. Non-modal by default: it sits beside the page,
+ * which stays interactive. Inside ShellApp page content, the shell's content
+ * frame contains fixed descendants, so the panel covers only the content lane
+ * and stays put while the page scrolls; elsewhere it attaches to the viewport.
+ * Modal drawers present in the top layer against the viewport edge.
+ */
+.drawer-dialog {
+  --_drawer-enter-from: translateX(100%);
+  position: fixed;
+  z-index: var(--dimension-z-index-overlay);
+  inset-block: 0;
+  inset-inline: auto 0;
+  display: none;
+  flex-direction: column;
+  width: min(100%, var(--_drawer-width));
+  min-width: 0;
+  max-width: none;
+  height: auto;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  color: var(--color-foreground-primary);
+  background-color: var(--color-background-primary);
+  border: 0;
+  border-radius: 0;
+  box-shadow: var(--effect-elevation-elevated-panel-right);
+  outline: none;
+  box-sizing: border-box;
+  pointer-events: auto;
+  animation: drawerIn var(--effect-animation-duration-medium-1)
+    var(--effect-animation-easing-ease-out) forwards;
+}
+
+.drawer-dialog--start {
+  --_drawer-enter-from: translateX(-100%);
+  inset-inline: 0 auto;
+  box-shadow: var(--effect-elevation-elevated-panel-left);
+}
+
+.drawer-dialog[open],
+.drawer-dialog--shown {
+  display: flex;
+}
+
+.drawer-dialog::backdrop {
+  background-color: var(--color-background-shade);
+  animation: drawerBackdropIn var(--effect-animation-duration-medium-1) forwards;
+}
+
+.drawer-dialog--closing {
+  animation: drawerOut var(--effect-animation-duration-medium-1)
+    var(--effect-animation-easing-ease-in) forwards;
+}
+
+.drawer-dialog--closing::backdrop {
+  animation: drawerBackdropOut var(--effect-animation-duration-medium-1) forwards;
+}
+
+@keyframes drawerIn {
+  from {
+    transform: var(--_drawer-enter-from);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes drawerOut {
+  from {
+    transform: none;
+  }
+  to {
+    transform: var(--_drawer-enter-from);
+  }
+}
+
+@keyframes drawerBackdropIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes drawerBackdropOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Narrow viewports, matching the shell breakpoint, give the panel the full width. */
+@media (width < 768px) {
+  .drawer-dialog {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer-dialog,
+  .drawer-dialog--closing {
+    animation: none;
+    transform: none;
+  }
+
+  .drawer-dialog::backdrop {
+    animation: none;
+    opacity: 1;
+  }
+
+  .drawer-dialog--closing,
+  .drawer-dialog--closing::backdrop {
+    opacity: 0;
+  }
+}
+
+/*
+ * Header: a generic label for what the drawer shows, never record data.
+ * Title glyphs sit 16px from the edge; a leading Back action sits 4px before
+ * the title's own 8px inset.
+ */
+.drawer-header {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--dimension-space-050);
+  min-width: 0;
+  block-size: var(--dimension-size-600);
+  padding: var(--dimension-space-100);
+  box-sizing: border-box;
+  border-block-end: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+ds-text.drawer-heading {
+  display: block;
+  flex: 1 1 0;
+  min-width: 0;
+  padding-inline: var(--dimension-space-100);
+  text-align: start;
+}
+
+.drawer-back-tooltip,
+.drawer-close-tooltip,
+.drawer-previous-tooltip,
+.drawer-next-tooltip {
+  flex: 0 0 auto;
+}
+
+.drawer-header__trailing {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--dimension-space-100);
+  padding-inline-start: var(--dimension-space-050);
+}
+
+.drawer-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--dimension-space-100);
+}
+
+.drawer-header__actions--empty {
+  display: none;
+}
+
+.drawer-header__actions slot,
+.drawer-footer__actions slot {
+  display: contents;
+}
+
+/* The body is a composable slot; the drawer owns only its inset and scrolling. */
+.drawer-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: var(--dimension-space-200);
+  overflow: auto;
+  overscroll-behavior: contain;
+  box-sizing: border-box;
+}
+
+.drawer-body--flush {
+  padding: 0;
+}
+
+/* Footer: actions at the start, record navigation at the end. */
+.drawer-footer {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--dimension-space-100);
+  min-block-size: var(--dimension-size-600);
+  padding: var(--dimension-space-200);
+  box-sizing: border-box;
+  border-block-start: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+}
+
+.drawer-footer--empty {
+  display: none;
+}
+
+.drawer-footer__actions {
+  display: flex;
+  flex: 1 1 0;
+  align-items: center;
+  gap: var(--dimension-space-100);
+  min-width: min-content;
+}
+
+.drawer-footer__actions--empty {
+  display: none;
+}
+
+.drawer-footer__navigation {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--dimension-space-100);
+  margin-inline-start: auto;
+}
+
+@media (forced-colors: active) {
+  .drawer-dialog {
+    box-shadow: none;
+    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-012));
+  }
+}

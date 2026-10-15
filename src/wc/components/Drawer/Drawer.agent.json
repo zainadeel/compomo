@@ -1,0 +1,111 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-drawer",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-drawer",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Edge-attached details panel beside the current page with a generic header, a composable content slot, and a footer for record actions and previous/next paging; non-modal by default with an optional modal presentation and a Back action for multi-depth content.",
+  "useWhen": [
+    "The user inspects the details of an item selected from a list, table, or map while the page stays visible and interactive.",
+    "The user steps through records in order from the details view; enable navigation for previous and next paging.",
+    "Details drill into a related record, such as vehicle to driver; set backLabel and swap content in place.",
+    "A contained task such as a multi-field edit needs more room than a Modal but not a new page; set modal."
+  ],
+  "avoidWhen": [
+    "The user must confirm a single focused decision; Modal is more direct.",
+    "The content is a short contextual control anchored to a trigger.",
+    "The panel is persistent application navigation or a shell tool panel.",
+    "The workflow is long enough to need its own URL, history, or deep links; offer an open-full-page header action instead.",
+    "A second drawer would be stacked over an existing one; only one non-modal drawer is open per document, so swap content in place and use backLabel."
+  ],
+  "alternatives": [
+    {
+      "when": "The user confirms or cancels one focused decision.",
+      "component": "component:ds-modal",
+      "reason": "Modal centers a short blocking decision without moving the user's attention to a page edge."
+    },
+    {
+      "when": "A trigger reveals short interactive content anchored to it.",
+      "component": "component:ds-popover",
+      "reason": "Popover keeps the content beside its trigger and dismisses on outside activation."
+    },
+    {
+      "when": "Supplementary tools such as search, inbox, or agents live beside every page.",
+      "component": "component:ds-shell-tools",
+      "reason": "ShellTools owns the persistent application tool panel and its responsive layout."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-shell-app",
+    "component:ds-button-filled",
+    "component:ds-button-unfilled",
+    "component:ds-tooltip",
+    "component:ds-text",
+    "component:ds-divider"
+  ],
+  "accessibility": [
+    "The heading is the dialog's accessible name. Keep it a generic label for what the panel shows, such as Event details or Vehicle details; record identity belongs in the content.",
+    "Connect explanatory content through aria-describedby when the task needs context beyond the heading.",
+    "Opening moves focus to the leading header action: Back when backLabel is set, otherwise Close. Changing backLabel while focus is in the drawer moves focus to the new leading action.",
+    "A modal drawer makes the page inert, traps Tab, and shows a shade. A non-modal drawer leaves the page interactive, lets Tab leave the panel, and ignores outside clicks.",
+    "Close, Escape, and shade activation emit dsClose with close-button, escape, or backdrop before dismissal. A non-modal drawer handles Escape at the document unless another handler prevented it or a modal dialog is open.",
+    "With navigation enabled, ArrowLeft and ArrowRight page records from anywhere in the document, respecting writing direction, except inside text fields, selects, sliders, menus, listboxes, tablists, comboboxes, and editable content. Set navigationShortcutsBlocked while the page needs those keys.",
+    "Focus return after close follows the presentation. A modal drawer returns focus to its trigger and reports restoreFocus false. A non-modal drawer moves no focus itself; dsAfterClose reports restoreFocus true unless another drawer replaced it, and the owner then focuses the record now shown, such as the current row or map marker, since paging may have moved past the original trigger.",
+    "Header actions and footer navigation are icon buttons with tooltips; give header-actions their own accessible names and keep them to one or two."
+  ],
+  "states": [
+    "The owner controls open, heading, content, and paging availability; the component mutates open to false on dismissal and emits dsAfterClose after exit motion.",
+    "Only one non-modal drawer is open per document. Opening another closes the previous one with reason replaced and restoreFocus false.",
+    "The header holds optional Back, the heading, optional header-actions such as open full page, a divider when actions exist, and Close. Back and Close appear together at depth.",
+    "The default slot is composable content with a 16px inset; bodyInset none removes it for content that owns its edges.",
+    "The footer holds slot footer actions at the start and, with navigation, previous and next at the end. It is hidden when both are empty.",
+    "previousAvailable and nextAvailable make the paging actions inactive at list edges; the owner advances the selection on dsPrevious and dsNext.",
+    "modal is read on open; changing it while open re-presents the same surface in the new mode.",
+    "dsClose, dsAfterClose, dsBack, dsPrevious, and dsNext from slotted components, such as a footer ds-menu, stop at the drawer boundary, so owner listeners on the drawer only receive the drawer's own events; listen on the nested component directly."
+  ],
+  "responsiveBehavior": [
+    "Rendered anywhere inside ShellApp page content, a non-modal drawer covers the page content lane only, below the shell bar and beside the navigation and tool panels, and stays in place while the page scrolls; outside a shell it attaches to the viewport edge.",
+    "Modal drawers always present in the top layer against the viewport edge.",
+    "Width comes from drawerWidth, defaulting to the small panel width, and is clamped to the available lane.",
+    "Below 768px the panel spans the full width of its lane; header and footer stay fixed while content scrolls."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Set open, modal, previousAvailable, and nextAvailable as JavaScript properties when controlling the drawer.",
+      "Render a page details drawer in the page's own markup next to the list it describes; assign footer actions with slot=\"footer\" and icon actions with slot=\"header-actions\"."
+    ],
+    "react": [
+      "Pass open, modal, previousAvailable, and nextAvailable to DsDrawer; handle onDsClose, onDsPrevious, onDsNext, onDsBack, and onDsAfterClose.",
+      "Render the drawer inside the routed page component; assign footer and header-actions slots on its children."
+    ],
+    "angular": [
+      "Bind [open], [modal], [previousAvailable], and [nextAvailable]; handle (dsClose), (dsPrevious), (dsNext), (dsBack), and (dsAfterClose) with $event.detail.",
+      "Render the drawer in the routed page template; assign footer and header-actions slots on its children."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook event details, standalone, multi-depth, modal, and flush examples",
+      "path": "src/wc/components/Drawer/Drawer.stories.ts"
+    }
+  ],
+  "styling": {
+    "rationale": "The component owns its panel surface, edge elevation, motion, and fixed header and footer chrome so every details drawer shares one rhythm; the content slot is application-owned.",
+    "protected": [
+      {
+        "properties": ["background", "border", "box-shadow", "color"],
+        "reason": "The component owns its surface and edge elevation; compose an application-owned surface inside the content slot when needed.",
+        "props": []
+      },
+      {
+        "properties": ["width"],
+        "reason": "Width comes from panel-width tokens through drawerWidth and is clamped to the lane.",
+        "props": ["drawerWidth"]
+      }
+    ],
+    "customProperties": []
+  }
+}

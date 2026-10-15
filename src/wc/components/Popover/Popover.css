@@ -1,0 +1,32 @@
+@import '../../utils/radius.css';
+@import '../../utils/choice-popup.css';
+@import '../../utils/forced-colors.css';
+
+:host {
+  display: contents;
+}
+
+/*
+ * The anchored choice-popup surface shared with Menu, Select, and InputDate:
+ * menu radius, floating shadow and highlight, and the same 4px frame. Width
+ * follows content between the choice-popup bounds unless popoverWidth fixes it.
+ */
+.popover-surface.ds-choice-popup {
+  width: var(--_popover-width, max-content);
+  padding: var(--dimension-space-050);
+  color: var(--color-foreground-primary);
+  outline: none;
+}
+
+.popover-surface--hidden {
+  display: none;
+}
+
+/* Default inset puts content on the same 12px edge as Menu item labels. */
+.popover-content {
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: var(--dimension-space-100);
+  overflow-y: auto;
+}

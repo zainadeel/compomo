@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <title>Drawer e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+  </head>
+  <body>
+    <main>
+      <ul id="rows">
+        <li><button class="row" data-index="0">Event 1</button></li>
+        <li><button class="row" data-index="1">Event 2</button></li>
+        <li><button class="row" data-index="2">Event 3</button></li>
+      </ul>
+      <button id="modal-trigger">Edit settings</button>
+    </main>
+    <ds-drawer id="details" heading="Event details" navigation>
+      <p id="details-text"></p>
+      <ds-button-filled slot="footer" id="details-primary" label="Review"></ds-button-filled>
+    </ds-drawer>
+    <ds-drawer id="settings" heading="Settings" modal>
+      <button id="settings-first">First setting</button>
+    </ds-drawer>
+    <script type="module" src="/drawer-setup.mjs"></script>
+  </body>
+</html>
