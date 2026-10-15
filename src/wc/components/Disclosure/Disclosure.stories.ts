@@ -69,16 +69,23 @@ export const Playground: Story = {
     ),
 };
 
-/** Stacked flush sections separated by dividers, as in a detail panel or settings column. */
+const count = (value: number) => html`
+  <ds-text slot="trailing" as="span" variant="text-body-medium" color="secondary">${value}</ds-text>
+`;
+
+/**
+ * Stacked flush sections separated by dividers, as in a detail panel or settings column.
+ * A trailing count sits before the chevron, as in Table and Live Map group rows.
+ */
 export const FlushStack: Story = {
   render: () =>
     panel(html`
       <ds-disclosure heading="Alerts" open>
-        ${switchRow('Harsh braking', true)} ${switchRow('Speeding', true)}
+        ${count(3)} ${switchRow('Harsh braking', true)} ${switchRow('Speeding', true)}
         ${switchRow('Unassigned driving')}
       </ds-disclosure>
       <ds-disclosure heading="Reports" description="Weekly summaries sent every Monday">
-        ${switchRow('Fuel efficiency', true)} ${switchRow('IFTA mileage')}
+        ${count(2)} ${switchRow('Fuel efficiency', true)} ${switchRow('IFTA mileage')}
       </ds-disclosure>
       <ds-disclosure heading="Maintenance">
         ${switchRow('Upcoming service')} ${switchRow('Open defects', true)}

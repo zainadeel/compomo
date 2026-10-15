@@ -6,7 +6,7 @@
 
 :host {
   --_disclosure-inset-inline: var(--dimension-space-200);
-  --_disclosure-chevron-gap: var(--dimension-space-100);
+  --_disclosure-trailing-gap: var(--dimension-space-100);
   --_disclosure-duration: var(--effect-animation-duration-short-3);
   position: relative;
   display: block;
@@ -35,11 +35,18 @@
   pointer-events: none;
 }
 
+/*
+ * Heading, trailing status, then the chevron, matching Table and Live Map group
+ * rows. The trigger's hit area covers the whole row; the trailing slot sits
+ * above it so its own controls keep their semantics.
+ */
 .disclosure-header {
   display: flex;
   cursor: default;
   align-items: center;
+  gap: var(--_disclosure-trailing-gap);
   min-width: 0;
+  padding-inline-end: var(--_disclosure-inset-inline);
 }
 
 .disclosure-heading-level {
@@ -51,13 +58,13 @@
 
 .disclosure-trigger {
   display: flex;
-  align-items: flex-start;
-  gap: var(--_disclosure-chevron-gap);
+  align-items: center;
   box-sizing: border-box;
   width: 100%;
   min-block-size: var(--dimension-size-600);
   margin: 0;
-  padding: var(--dimension-space-150) var(--_disclosure-inset-inline);
+  padding-block: var(--dimension-space-150);
+  padding-inline: var(--_disclosure-inset-inline) 0;
   border: 0;
   background: transparent;
   color: inherit;
@@ -88,6 +95,13 @@
   transition: none;
 }
 
+.disclosure-trigger::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
 .disclosure-trigger:focus-visible {
   outline: none;
 }
@@ -110,11 +124,12 @@
   z-index: 2;
   flex: 0 0 auto;
   color: var(--color-foreground-secondary);
-  transform: rotate(-90deg);
+  pointer-events: none;
 }
 
+/* ChevronDown while collapsed, turning to ChevronUp when open. */
 :host(.disclosure--open) .disclosure-chevron {
-  transform: none;
+  transform: rotate(180deg);
 }
 
 .disclosure-copy {
@@ -127,11 +142,12 @@
 }
 
 .disclosure-trailing {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   flex: 0 0 auto;
   gap: var(--dimension-space-050);
-  padding-inline-end: var(--_disclosure-inset-inline);
 }
 
 .disclosure-trailing--empty {
@@ -165,13 +181,9 @@
   overflow: hidden;
 }
 
-/* Content aligns with the heading text, not the chevron. */
+/* Content shares the heading's inline inset on both edges. */
 .disclosure-content {
-  padding: 0 var(--_disclosure-inset-inline) var(--dimension-space-200)
-    calc(
-      var(--_disclosure-inset-inline) + var(--dimension-iconography-md) +
-        var(--_disclosure-chevron-gap)
-    );
+  padding: 0 var(--_disclosure-inset-inline) var(--dimension-space-200);
   opacity: 0;
   transition: opacity var(--_disclosure-duration) var(--effect-animation-easing-ease-out);
 }

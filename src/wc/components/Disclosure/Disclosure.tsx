@@ -74,12 +74,6 @@ export class Disclosure {
               aria-disabled={this.isInactive ? 'true' : undefined}
               onClick={this.toggle}
             >
-              <ds-icon
-                class="disclosure-chevron ds-interaction-fill__content"
-                name="ChevronDown"
-                size="md"
-                color="inherit"
-              />
               <span class="disclosure-copy ds-interaction-fill__content">
                 <ds-text
                   class="disclosure-title"
@@ -115,6 +109,13 @@ export class Disclosure {
               }
             />
           </div>
+          <ds-icon
+            class="disclosure-chevron ds-interaction-fill__content"
+            name="ChevronDown"
+            size="md"
+            color="inherit"
+            aria-hidden="true"
+          />
         </div>
         <div
           id={this.panelId}

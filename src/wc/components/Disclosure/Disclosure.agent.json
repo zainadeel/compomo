@@ -47,7 +47,7 @@
     "The trigger is a native button inside a heading element; choose headingLevel to fit the surrounding outline.",
     "The trigger exposes aria-expanded and controls a labelled region containing the content.",
     "Collapsed content is inert and hidden so it is never focusable or announced.",
-    "Interactive trailing content sits outside the trigger button so it keeps its own semantics.",
+    "The trigger's hit area spans the row, including the trailing chevron. Trailing slot content sits outside the trigger button and above its hit area so interactive content keeps its own semantics.",
     "Inactive sections expose aria-disabled and cannot be toggled."
   ],
   "states": [
@@ -57,7 +57,7 @@
   ],
   "responsiveBehavior": [
     "The section fills its container width; heading and description wrap rather than truncate.",
-    "Content aligns with the heading text, not the chevron, at every width."
+    "Content shares the heading's inline inset, so it aligns with the heading text at every width."
   ],
   "frameworkCaveats": {
     "customElements": [

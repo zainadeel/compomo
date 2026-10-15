@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <title>Disclosure e2e</title>
+    <link rel="stylesheet" href="/tokens/index.css">
+  </head>
+  <body>
+    <main style="width: 400px; padding: 24px">
+      <ds-disclosure id="alerts" heading="Alerts">
+        <span id="alerts-count" slot="trailing">3</span>
+        <button id="alerts-action" slot="trailing" type="button">Edit</button>
+        <button id="alerts-content" type="button">Harsh braking</button>
+      </ds-disclosure>
+    </main>
+    <script type="module" src="/disclosure-setup.mjs"></script>
+  </body>
+</html>
