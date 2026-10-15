@@ -63,7 +63,8 @@
     "The default slot is composable content with a 16px inset; bodyInset none removes it for content that owns its edges.",
     "The footer holds slot footer actions at the start and, with navigation, previous and next at the end. It is hidden when both are empty.",
     "previousAvailable and nextAvailable make the paging actions inactive at list edges; the owner advances the selection on dsPrevious and dsNext.",
-    "modal is read on open; changing it while open re-presents the same surface in the new mode."
+    "modal is read on open; changing it while open re-presents the same surface in the new mode.",
+    "dsClose, dsAfterClose, dsBack, dsPrevious, and dsNext from slotted components, such as a footer ds-menu, stop at the drawer boundary, so owner listeners on the drawer only receive the drawer's own events; listen on the nested component directly."
   ],
   "responsiveBehavior": [
     "Rendered anywhere inside ShellApp page content, a non-modal drawer covers the page content lane only, below the shell bar and beside the navigation and tool panels, and stays in place while the page scrolls; outside a shell it attaches to the viewport edge.",

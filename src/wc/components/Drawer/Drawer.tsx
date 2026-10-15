@@ -50,6 +50,15 @@ const FOCUSABLE_SEL = [
 ].join(',');
 
 /** Targets that own Left/Right themselves, so record paging must not steal the keys. */
+/**
+ * Drawer event names. Slotted components such as ds-menu emit some of the same
+ * names; those stop at the drawer boundary so owner listeners on the drawer only
+ * hear the drawer itself.
+ */
+const DRAWER_EVENT_NAMES = ['dsClose', 'dsAfterClose', 'dsBack', 'dsPrevious', 'dsNext'];
+
+const stopDescendantDrawerEvent = (event: globalThis.Event) => event.stopPropagation();
+
 const DIRECTIONAL_CONTROL_TAGS = new Set([
   'DS-SELECT',
   'DS-MENU',
@@ -453,6 +462,11 @@ export class Drawer {
       <Host>
         <dialog
           ref={(element?: HTMLDialogElement) => {
+            if (element && element !== this.dialogEl) {
+              for (const name of DRAWER_EVENT_NAMES) {
+                element.addEventListener(name, stopDescendantDrawerEvent);
+              }
+            }
             this.dialogEl = element ?? null;
           }}
           class={{
