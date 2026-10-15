@@ -458,7 +458,6 @@ export class Drawer {
           class={{
             'drawer-dialog': true,
             [`drawer-dialog--${this.side === 'start' ? 'start' : 'end'}`]: true,
-            'drawer-dialog--modal': this.modal,
             'drawer-dialog--shown': this.shown,
             'drawer-dialog--closing': this.closing,
           }}

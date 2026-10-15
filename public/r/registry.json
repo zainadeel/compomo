@@ -7325,7 +7325,7 @@
             "modal is read on open; changing it while open re-presents the same surface in the new mode."
           ],
           "responsiveBehavior": [
-            "Inside ShellApp's page-overlay slot the drawer covers the page content lane only, below the shell bar and beside the navigation and tool panels; elsewhere it attaches to the viewport edge.",
+            "Rendered anywhere inside ShellApp page content, a non-modal drawer covers the page content lane only, below the shell bar and beside the navigation and tool panels, and stays in place while the page scrolls; outside a shell it attaches to the viewport edge.",
             "Modal drawers always present in the top layer against the viewport edge.",
             "Width comes from drawerWidth, defaulting to the small panel width, and is clamped to the available lane.",
             "Below 768px the panel spans the full width of its lane; header and footer stay fixed while content scrolls."
@@ -7333,15 +7333,15 @@
           "frameworkCaveats": {
             "customElements": [
               "Set open, modal, previousAvailable, and nextAvailable as JavaScript properties when controlling the drawer.",
-              "Place a page details drawer in ds-shell-app with slot=\"page-overlay\"; assign footer actions with slot=\"footer\" and icon actions with slot=\"header-actions\"."
+              "Render a page details drawer in the page's own markup next to the list it describes; assign footer actions with slot=\"footer\" and icon actions with slot=\"header-actions\"."
             ],
             "react": [
               "Pass open, modal, previousAvailable, and nextAvailable to DsDrawer; handle onDsClose, onDsPrevious, onDsNext, onDsBack, and onDsAfterClose.",
-              "Render the drawer as a ShellApp child with slot=\"page-overlay\"; assign footer and header-actions slots on its children."
+              "Render the drawer inside the routed page component; assign footer and header-actions slots on its children."
             ],
             "angular": [
               "Bind [open], [modal], [previousAvailable], and [nextAvailable]; handle (dsClose), (dsPrevious), (dsNext), (dsBack), and (dsAfterClose) with $event.detail.",
-              "Project the drawer into ShellApp with slot=\"page-overlay\"; assign footer and header-actions slots on its children."
+              "Render the drawer in the routed page template; assign footer and header-actions slots on its children."
             ]
           },
           "references": [
@@ -14909,7 +14909,7 @@
             "The application filters unauthorized destinations, sections, and tools before passing them into shell components.",
             "Application-owned header actions and the account trigger retain surface ownership across shell presentations. Supply surfaceOpen on header actions and accountMenuSurfaceOpen on navigation for rendered surface lifetimes; keep disclosure and selected-route state separate.",
             "Managed page chrome can explicitly choose page-local title presentation for pages that must remain compact rather than following capacity and scrolling.",
-            "The page-overlay slot holds one non-modal page panel, such as a details ds-drawer, that covers the page content lane below the shell bar without covering navigation or tools; it is hidden with the content lane in fullscreen tools and mobile stages that hide content."
+            "The page content lane is a non-scrolling frame around the page scroller that contains fixed descendants, so page-owned non-modal surfaces such as a details ds-drawer cover only the content lane, stay put while the page scrolls, and hide with the content in fullscreen tools and blocked mobile stages."
           ],
           "responsiveBehavior": [
             "ShellApp owns the fixed system breakpoints and resolves desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
@@ -15122,7 +15122,6 @@
           "mobile-sheet-nav",
           "page-header-leading",
           "page-header-trailing",
-          "page-overlay",
           "panel",
           "tools"
         ],

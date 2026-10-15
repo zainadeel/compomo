@@ -39,7 +39,7 @@ interface SafetyEvent {
   speed: string;
 }
 
-const EVENTS: SafetyEvent[] = [
+const BASE_EVENTS: SafetyEvent[] = [
   {
     id: 'evt-1',
     behavior: 'Close following',
@@ -96,6 +96,11 @@ const EVENTS: SafetyEvent[] = [
     speed: '55 mph',
   },
 ];
+
+/** Enough rows that the page scrolls under the pinned drawer. */
+const EVENTS: SafetyEvent[] = Array.from({ length: 4 }, (_, round) =>
+  BASE_EVENTS.map(event => ({ ...event, id: `${event.id}-${round}` }))
+).flat();
 
 const SHELL_NAVIGATION: ShellNavigationConfig = {
   groups: [
@@ -264,8 +269,7 @@ const eventRows = (selected: number | null, onSelect: (index: number) => void) =
 /** Owner state for a list with a details drawer: selection, paging, and focus return. */
 function eventDetailsView(
   state: { selected: number | null; open: boolean },
-  set: (patch: Partial<{ selected: number | null; open: boolean }>) => void,
-  inShell: boolean
+  set: (patch: Partial<{ selected: number | null; open: boolean }>) => void
 ) {
   const event = state.selected === null ? null : EVENTS[state.selected];
   const restoreRowFocus = (restore: boolean) => {
@@ -277,7 +281,6 @@ function eventDetailsView(
   return html`
     ${eventRows(state.open ? state.selected : null, index => set({ selected: index, open: true }))}
     <ds-drawer
-      slot=${inShell ? 'page-overlay' : nothing}
       heading="Event details"
       close-aria-label="Close event details"
       navigation
@@ -299,14 +302,15 @@ function eventDetailsView(
 }
 
 /**
- * Canonical details drawer inside ShellApp's page-overlay lane: it covers the
- * content area only, the list stays interactive, and the footer pages records
- * (also with Left and Right while focus is outside text and choice controls).
+ * Canonical details drawer rendered by the page inside ShellApp: it covers the
+ * content lane only and stays put while the page scrolls, the list stays
+ * interactive, and the footer pages records (also with Left and Right while
+ * focus is outside text and choice controls).
  */
 export const EventDetails: Story = {
   render: () =>
     statefulStory({ selected: 0 as number | null, open: true }, (state, set) => {
-      const page = eventDetailsView(state, set, true);
+      const page = eventDetailsView(state, set);
       return html`
         <div style="height:100vh;">
           <ds-shell-app
@@ -332,7 +336,7 @@ export const Standalone: Story = {
         <div
           style="min-height:100vh;box-sizing:border-box;background:var(--color-background-primary);"
         >
-          ${eventDetailsView(state, set, false)}
+          ${eventDetailsView(state, set)}
         </div>
       `
     ),

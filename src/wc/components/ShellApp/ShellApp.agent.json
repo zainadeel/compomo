@@ -74,7 +74,7 @@
     "The application filters unauthorized destinations, sections, and tools before passing them into shell components.",
     "Application-owned header actions and the account trigger retain surface ownership across shell presentations. Supply surfaceOpen on header actions and accountMenuSurfaceOpen on navigation for rendered surface lifetimes; keep disclosure and selected-route state separate.",
     "Managed page chrome can explicitly choose page-local title presentation for pages that must remain compact rather than following capacity and scrolling.",
-    "The page-overlay slot holds one non-modal page panel, such as a details ds-drawer, that covers the page content lane below the shell bar without covering navigation or tools; it is hidden with the content lane in fullscreen tools and mobile stages that hide content."
+    "The page content lane is a non-scrolling frame around the page scroller that contains fixed descendants, so page-owned non-modal surfaces such as a details ds-drawer cover only the content lane, stay put while the page scrolls, and hide with the content in fullscreen tools and blocked mobile stages."
   ],
   "responsiveBehavior": [
     "ShellApp owns the fixed system breakpoints and resolves desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",

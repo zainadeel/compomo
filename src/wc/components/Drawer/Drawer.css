@@ -6,13 +6,14 @@
 
 /*
  * Edge-attached details panel. Non-modal by default: it sits beside the page,
- * which stays interactive. Inside ShellApp's page-overlay lane it covers only
- * the content area (the lane supplies an absolute position); elsewhere it
- * attaches to the viewport edge.
+ * which stays interactive. Inside ShellApp page content, the shell's content
+ * frame contains fixed descendants, so the panel covers only the content lane
+ * and stays put while the page scrolls; elsewhere it attaches to the viewport.
+ * Modal drawers present in the top layer against the viewport edge.
  */
 .drawer-dialog {
   --_drawer-enter-from: translateX(100%);
-  position: var(--ds-shell-page-overlay-position, fixed);
+  position: fixed;
   z-index: var(--dimension-z-index-overlay);
   inset-block: 0;
   inset-inline: auto 0;
@@ -42,11 +43,6 @@
   --_drawer-enter-from: translateX(-100%);
   inset-inline: 0 auto;
   box-shadow: var(--effect-elevation-elevated-panel-left);
-}
-
-/* Modal drawers live in the top layer and always span the viewport edge. */
-.drawer-dialog--modal {
-  position: fixed;
 }
 
 .drawer-dialog[open],

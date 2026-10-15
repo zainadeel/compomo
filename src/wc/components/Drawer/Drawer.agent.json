@@ -66,7 +66,7 @@
     "modal is read on open; changing it while open re-presents the same surface in the new mode."
   ],
   "responsiveBehavior": [
-    "Inside ShellApp's page-overlay slot the drawer covers the page content lane only, below the shell bar and beside the navigation and tool panels; elsewhere it attaches to the viewport edge.",
+    "Rendered anywhere inside ShellApp page content, a non-modal drawer covers the page content lane only, below the shell bar and beside the navigation and tool panels, and stays in place while the page scrolls; outside a shell it attaches to the viewport edge.",
     "Modal drawers always present in the top layer against the viewport edge.",
     "Width comes from drawerWidth, defaulting to the small panel width, and is clamped to the available lane.",
     "Below 768px the panel spans the full width of its lane; header and footer stay fixed while content scrolls."
@@ -74,15 +74,15 @@
   "frameworkCaveats": {
     "customElements": [
       "Set open, modal, previousAvailable, and nextAvailable as JavaScript properties when controlling the drawer.",
-      "Place a page details drawer in ds-shell-app with slot=\"page-overlay\"; assign footer actions with slot=\"footer\" and icon actions with slot=\"header-actions\"."
+      "Render a page details drawer in the page's own markup next to the list it describes; assign footer actions with slot=\"footer\" and icon actions with slot=\"header-actions\"."
     ],
     "react": [
       "Pass open, modal, previousAvailable, and nextAvailable to DsDrawer; handle onDsClose, onDsPrevious, onDsNext, onDsBack, and onDsAfterClose.",
-      "Render the drawer as a ShellApp child with slot=\"page-overlay\"; assign footer and header-actions slots on its children."
+      "Render the drawer inside the routed page component; assign footer and header-actions slots on its children."
     ],
     "angular": [
       "Bind [open], [modal], [previousAvailable], and [nextAvailable]; handle (dsClose), (dsPrevious), (dsNext), (dsBack), and (dsAfterClose) with $event.detail.",
-      "Project the drawer into ShellApp with slot=\"page-overlay\"; assign footer and header-actions slots on its children."
+      "Render the drawer in the routed page template; assign footer and header-actions slots on its children."
     ]
   },
   "references": [
