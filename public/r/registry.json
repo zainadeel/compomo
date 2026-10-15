@@ -6981,7 +6981,7 @@
     {
       "name": "disclosure",
       "title": "Disclosure",
-      "description": "In-flow section whose heading-level trigger shows or hides its content, in a flush divided style for stacked sections or a contained card style.",
+      "description": "Show-and-hide control for optional in-flow detail: a borderless ButtonUnfilled trigger with a leading chevron that reveals content below it. It owns the trigger and the reveal, not a container; the surrounding card or section supplies surface, dividers, and inset.",
       "type": "registry:ui",
       "meta": {
         "library": "@ds-mo/ui",
@@ -6992,17 +6992,17 @@
         "intent": {
           "audience": "general",
           "status": "experimental",
-          "summary": "In-flow section whose heading-level trigger shows or hides its content, in a flush divided style for stacked sections or a contained card style.",
+          "summary": "Show-and-hide control for optional in-flow detail: a borderless ButtonUnfilled trigger with a leading chevron that reveals content below it. It owns the trigger and the reveal, not a container; the surrounding card or section supplies surface, dividers, and inset.",
           "useWhen": [
-            "A page, drawer, or settings column has secondary sections that users scan by heading and open on demand.",
-            "Several related sections stack vertically and some can start collapsed to reduce length.",
-            "A single section of optional detail, such as diagnostics or advanced options, should stay out of the way until requested."
+            "A card, page section, or tool panel has optional detail, such as a raw snapshot or advanced options, that should stay out of the way until requested.",
+            "The reveal belongs inside a container the owner already styles."
           ],
           "avoidWhen": [
             "Sections are peers the user switches between, with one visible at a time; use TabGroup.",
             "The hidden content is critical to completing the task.",
             "The content is a navigation tree or a filter list with its own selection semantics.",
-            "The trigger needs to open a floating surface rather than expand in place."
+            "The trigger needs to open a floating surface rather than expand in place.",
+            "Rows of grouped data need collapsible group headers; use Table grouping."
           ],
           "alternatives": [
             {
@@ -7019,31 +7019,32 @@
               "when": "The section is an editable settings group with view and edit modes.",
               "component": "component:ds-card-setting",
               "reason": "CardSetting owns the view, edit, save, and cancel workflow."
+            },
+            {
+              "when": "Grouped data rows need collapsible group headers.",
+              "component": "component:ds-table",
+              "reason": "Table group rows own counts, sticky headers, and collapse state for grouped data."
             }
           ],
           "commonlyComposedWith": [
-            "component:ds-drawer",
+            "component:ds-text",
             "component:ds-switch",
-            "component:ds-checkbox",
-            "component:ds-tag",
-            "component:ds-text"
+            "component:ds-button-unfilled"
           ],
           "accessibility": [
-            "The trigger is a native button inside a heading element; choose headingLevel to fit the surrounding outline.",
-            "The trigger exposes aria-expanded and controls a labelled region containing the content.",
+            "The trigger is a borderless ButtonUnfilled exposing aria-expanded and aria-controls for the revealed region, which is named by label.",
+            "headingLevel wraps the trigger in a heading when the label titles a document section; omit it for inline detail.",
             "Collapsed content is inert and hidden so it is never focusable or announced.",
-            "The trigger's hit area spans the row, including count and the chevron. count is announced as the trigger's description.",
-            "Trailing slot content sits outside the trigger button and above its hit area so status tags and controls keep their own semantics. Use count, not the slot, for group counts.",
-            "Inactive sections expose aria-disabled and cannot be toggled."
+            "Inactive disclosures cannot be toggled."
           ],
           "states": [
-            "open is reflected and mutable: the component toggles it on activation and emits dsToggle with the new state. Owners may also set it directly, for example to make sections mutually exclusive.",
-            "flush sections show a bottom divider so stacked sections read as one list; contained sections sit on their own card surface.",
+            "open is reflected and mutable: the component toggles it on activation and emits dsToggle with the new state. Owners may also set it directly.",
+            "The chevron points right while collapsed and down while open.",
             "Height and content opacity animate on toggle and are removed under reduced motion."
           ],
           "responsiveBehavior": [
-            "The section fills its container width; heading and description wrap rather than truncate.",
-            "Content shares the heading's inline inset, so it aligns with the heading text at every width."
+            "The trigger hugs its label; the revealed content fills the container width.",
+            "Content starts 8px below the trigger with no inline inset, so it aligns with the owner's content edge."
           ],
           "frameworkCaveats": {
             "customElements": [
@@ -7058,23 +7059,22 @@
           },
           "references": [
             {
-              "label": "Storybook flush, contained, trailing, and inactive examples",
+              "label": "Storybook playground, in-card, section heading, and inactive examples",
               "path": "src/wc/components/Disclosure/Disclosure.stories.ts"
             }
           ],
           "styling": {
-            "rationale": "The component owns the trigger row, divider, card surface, and expand motion; applications own the content and the space between contained sections.",
+            "rationale": "The component owns the trigger, which follows the ButtonUnfilled recipe, and the expand motion. Containers own surface, dividers, and content inset.",
             "protected": [
               {
                 "properties": [
-                  "background",
-                  "border",
+                  "padding",
                   "border-radius",
-                  "box-shadow"
+                  "background"
                 ],
-                "reason": "Divider and card surfaces follow the shared border and elevation recipes; choose a variant instead.",
+                "reason": "Trigger hover, press, focus, and padding follow ButtonUnfilled; choose size instead.",
                 "props": [
-                  "variant"
+                  "size"
                 ]
               }
             ],
@@ -7082,32 +7082,24 @@
           }
         },
         "props": {
-          "count": {
-            "type": "number | string | undefined",
-            "required": false
-          },
-          "description": {
-            "type": "string",
-            "required": false
-          },
-          "heading": {
-            "type": "string",
-            "required": true
-          },
           "headingLevel": {
-            "type": "DisclosureHeadingLevel",
+            "type": "DisclosureHeadingLevel | undefined",
             "required": false
           },
           "isInactive": {
             "type": "boolean",
             "required": false
           },
+          "label": {
+            "type": "string",
+            "required": true
+          },
           "open": {
             "type": "boolean",
             "required": false
           },
-          "variant": {
-            "type": "DisclosureVariant",
+          "size": {
+            "type": "DisclosureSize",
             "required": false
           }
         },
@@ -7118,8 +7110,7 @@
           }
         ],
         "slots": [
-          "",
-          "trailing"
+          ""
         ],
         "exports": {
           "customElement": "ds-disclosure",
@@ -7130,12 +7121,10 @@
       },
       "dependencies": [
         "@ds-mo/ui",
-        "@ds-mo/tokens",
-        "@ds-mo/icons"
+        "@ds-mo/tokens"
       ],
       "registryDependencies": [
-        "icon",
-        "text"
+        "button-unfilled"
       ]
     },
     {

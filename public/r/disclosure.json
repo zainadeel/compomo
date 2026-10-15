@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "disclosure",
   "title": "Disclosure",
-  "description": "In-flow section whose heading-level trigger shows or hides its content, in a flush divided style for stacked sections or a contained card style.",
+  "description": "Show-and-hide control for optional in-flow detail: a borderless ButtonUnfilled trigger with a leading chevron that reveals content below it. It owns the trigger and the reveal, not a container; the surrounding card or section supplies surface, dividers, and inset.",
   "type": "registry:ui",
   "meta": {
     "library": "@ds-mo/ui",
@@ -13,17 +13,17 @@
     "intent": {
       "audience": "general",
       "status": "experimental",
-      "summary": "In-flow section whose heading-level trigger shows or hides its content, in a flush divided style for stacked sections or a contained card style.",
+      "summary": "Show-and-hide control for optional in-flow detail: a borderless ButtonUnfilled trigger with a leading chevron that reveals content below it. It owns the trigger and the reveal, not a container; the surrounding card or section supplies surface, dividers, and inset.",
       "useWhen": [
-        "A page, drawer, or settings column has secondary sections that users scan by heading and open on demand.",
-        "Several related sections stack vertically and some can start collapsed to reduce length.",
-        "A single section of optional detail, such as diagnostics or advanced options, should stay out of the way until requested."
+        "A card, page section, or tool panel has optional detail, such as a raw snapshot or advanced options, that should stay out of the way until requested.",
+        "The reveal belongs inside a container the owner already styles."
       ],
       "avoidWhen": [
         "Sections are peers the user switches between, with one visible at a time; use TabGroup.",
         "The hidden content is critical to completing the task.",
         "The content is a navigation tree or a filter list with its own selection semantics.",
-        "The trigger needs to open a floating surface rather than expand in place."
+        "The trigger needs to open a floating surface rather than expand in place.",
+        "Rows of grouped data need collapsible group headers; use Table grouping."
       ],
       "alternatives": [
         {
@@ -40,31 +40,32 @@
           "when": "The section is an editable settings group with view and edit modes.",
           "component": "component:ds-card-setting",
           "reason": "CardSetting owns the view, edit, save, and cancel workflow."
+        },
+        {
+          "when": "Grouped data rows need collapsible group headers.",
+          "component": "component:ds-table",
+          "reason": "Table group rows own counts, sticky headers, and collapse state for grouped data."
         }
       ],
       "commonlyComposedWith": [
-        "component:ds-drawer",
+        "component:ds-text",
         "component:ds-switch",
-        "component:ds-checkbox",
-        "component:ds-tag",
-        "component:ds-text"
+        "component:ds-button-unfilled"
       ],
       "accessibility": [
-        "The trigger is a native button inside a heading element; choose headingLevel to fit the surrounding outline.",
-        "The trigger exposes aria-expanded and controls a labelled region containing the content.",
+        "The trigger is a borderless ButtonUnfilled exposing aria-expanded and aria-controls for the revealed region, which is named by label.",
+        "headingLevel wraps the trigger in a heading when the label titles a document section; omit it for inline detail.",
         "Collapsed content is inert and hidden so it is never focusable or announced.",
-        "The trigger's hit area spans the row, including count and the chevron. count is announced as the trigger's description.",
-        "Trailing slot content sits outside the trigger button and above its hit area so status tags and controls keep their own semantics. Use count, not the slot, for group counts.",
-        "Inactive sections expose aria-disabled and cannot be toggled."
+        "Inactive disclosures cannot be toggled."
       ],
       "states": [
-        "open is reflected and mutable: the component toggles it on activation and emits dsToggle with the new state. Owners may also set it directly, for example to make sections mutually exclusive.",
-        "flush sections show a bottom divider so stacked sections read as one list; contained sections sit on their own card surface.",
+        "open is reflected and mutable: the component toggles it on activation and emits dsToggle with the new state. Owners may also set it directly.",
+        "The chevron points right while collapsed and down while open.",
         "Height and content opacity animate on toggle and are removed under reduced motion."
       ],
       "responsiveBehavior": [
-        "The section fills its container width; heading and description wrap rather than truncate.",
-        "Content shares the heading's inline inset, so it aligns with the heading text at every width."
+        "The trigger hugs its label; the revealed content fills the container width.",
+        "Content starts 8px below the trigger with no inline inset, so it aligns with the owner's content edge."
       ],
       "frameworkCaveats": {
         "customElements": [
@@ -79,23 +80,22 @@
       },
       "references": [
         {
-          "label": "Storybook flush, contained, trailing, and inactive examples",
+          "label": "Storybook playground, in-card, section heading, and inactive examples",
           "path": "src/wc/components/Disclosure/Disclosure.stories.ts"
         }
       ],
       "styling": {
-        "rationale": "The component owns the trigger row, divider, card surface, and expand motion; applications own the content and the space between contained sections.",
+        "rationale": "The component owns the trigger, which follows the ButtonUnfilled recipe, and the expand motion. Containers own surface, dividers, and content inset.",
         "protected": [
           {
             "properties": [
-              "background",
-              "border",
+              "padding",
               "border-radius",
-              "box-shadow"
+              "background"
             ],
-            "reason": "Divider and card surfaces follow the shared border and elevation recipes; choose a variant instead.",
+            "reason": "Trigger hover, press, focus, and padding follow ButtonUnfilled; choose size instead.",
             "props": [
-              "variant"
+              "size"
             ]
           }
         ],
@@ -104,38 +104,13 @@
     },
     "api": {
       "props": {
-        "count": {
-          "type": "number | string | undefined",
-          "resolvedType": "number | string | undefined",
-          "attribute": "count",
-          "required": false,
-          "mutable": false,
-          "description": "Count shown before the chevron, as in Table group rows. Part of the toggle hit area."
-        },
-        "description": {
-          "type": "string",
-          "resolvedType": "string",
-          "attribute": "description",
-          "default": "''",
-          "required": false,
-          "mutable": false,
-          "description": "Optional supporting copy shown below the heading inside the trigger."
-        },
-        "heading": {
-          "type": "string",
-          "resolvedType": "string",
-          "attribute": "heading",
-          "required": true,
-          "mutable": false
-        },
         "headingLevel": {
-          "type": "DisclosureHeadingLevel",
-          "resolvedType": "2 | 3 | 4 | 5 | 6",
+          "type": "DisclosureHeadingLevel | undefined",
+          "resolvedType": "2 | 3 | 4 | 5 | 6 | undefined",
           "attribute": "heading-level",
-          "default": "3",
           "required": false,
           "mutable": false,
-          "description": "Heading level that wraps the trigger, matching the surrounding document outline."
+          "description": "Wraps the trigger in a heading when the label titles a document section."
         },
         "isInactive": {
           "type": "boolean",
@@ -144,6 +119,14 @@
           "default": "false",
           "required": false,
           "mutable": false
+        },
+        "label": {
+          "type": "string",
+          "resolvedType": "string",
+          "attribute": "label",
+          "required": true,
+          "mutable": false,
+          "description": "Visible trigger label."
         },
         "open": {
           "type": "boolean",
@@ -154,14 +137,14 @@
           "mutable": true,
           "description": "Whether the content is shown. The component mutates this when the trigger is activated."
         },
-        "variant": {
-          "type": "DisclosureVariant",
-          "resolvedType": "\"contained\" | \"flush\"",
-          "attribute": "variant",
-          "default": "'flush'",
+        "size": {
+          "type": "DisclosureSize",
+          "resolvedType": "\"md\" | \"sm\"",
+          "attribute": "size",
+          "default": "'md'",
           "required": false,
           "mutable": false,
-          "description": "`flush` separates stacked sections with a divider; `contained` sits on its own card surface."
+          "description": "Trigger density, matching ButtonUnfilled."
         }
       },
       "events": [
@@ -171,7 +154,7 @@
           "bubbles": true,
           "cancelable": true,
           "composed": true,
-          "description": "Emitted after the user toggles the section; detail is the new open state."
+          "description": "Emitted after the user toggles the content; detail is the new open state."
         }
       ],
       "methods": [],
@@ -179,45 +162,17 @@
         {
           "name": "",
           "description": "The default slot"
-        },
-        {
-          "name": "trailing"
         }
       ]
     },
     "props": {
-      "count": {
-        "type": "number | string | undefined",
-        "resolvedType": "number | string | undefined",
-        "attribute": "count",
-        "required": false,
-        "mutable": false,
-        "description": "Count shown before the chevron, as in Table group rows. Part of the toggle hit area."
-      },
-      "description": {
-        "type": "string",
-        "resolvedType": "string",
-        "attribute": "description",
-        "default": "''",
-        "required": false,
-        "mutable": false,
-        "description": "Optional supporting copy shown below the heading inside the trigger."
-      },
-      "heading": {
-        "type": "string",
-        "resolvedType": "string",
-        "attribute": "heading",
-        "required": true,
-        "mutable": false
-      },
       "headingLevel": {
-        "type": "DisclosureHeadingLevel",
-        "resolvedType": "2 | 3 | 4 | 5 | 6",
+        "type": "DisclosureHeadingLevel | undefined",
+        "resolvedType": "2 | 3 | 4 | 5 | 6 | undefined",
         "attribute": "heading-level",
-        "default": "3",
         "required": false,
         "mutable": false,
-        "description": "Heading level that wraps the trigger, matching the surrounding document outline."
+        "description": "Wraps the trigger in a heading when the label titles a document section."
       },
       "isInactive": {
         "type": "boolean",
@@ -226,6 +181,14 @@
         "default": "false",
         "required": false,
         "mutable": false
+      },
+      "label": {
+        "type": "string",
+        "resolvedType": "string",
+        "attribute": "label",
+        "required": true,
+        "mutable": false,
+        "description": "Visible trigger label."
       },
       "open": {
         "type": "boolean",
@@ -236,14 +199,14 @@
         "mutable": true,
         "description": "Whether the content is shown. The component mutates this when the trigger is activated."
       },
-      "variant": {
-        "type": "DisclosureVariant",
-        "resolvedType": "\"contained\" | \"flush\"",
-        "attribute": "variant",
-        "default": "'flush'",
+      "size": {
+        "type": "DisclosureSize",
+        "resolvedType": "\"md\" | \"sm\"",
+        "attribute": "size",
+        "default": "'md'",
         "required": false,
         "mutable": false,
-        "description": "`flush` separates stacked sections with a divider; `contained` sits on its own card surface."
+        "description": "Trigger density, matching ButtonUnfilled."
       }
     },
     "events": [
@@ -253,7 +216,7 @@
         "bubbles": true,
         "cancelable": true,
         "composed": true,
-        "description": "Emitted after the user toggles the section; detail is the new open state."
+        "description": "Emitted after the user toggles the content; detail is the new open state."
       }
     ],
     "methods": [],
@@ -261,9 +224,6 @@
       {
         "name": "",
         "description": "The default slot"
-      },
-      {
-        "name": "trailing"
       }
     ],
     "exports": {
@@ -302,22 +262,20 @@
   },
   "dependencies": [
     "@ds-mo/ui",
-    "@ds-mo/tokens",
-    "@ds-mo/icons"
+    "@ds-mo/tokens"
   ],
   "registryDependencies": [
-    "icon",
-    "text"
+    "button-unfilled"
   ],
   "files": [
     {
       "path": "src/wc/components/Disclosure/Disclosure.css",
-      "content": "@import '../../utils/radius.css';\n@import '../../utils/interaction-fill.css';\n@import '../../utils/focus-ring.css';\n@import '../../utils/control-inactive.css';\n@import '../../utils/forced-colors.css';\n\n:host {\n  --_disclosure-inset-inline: var(--dimension-space-200);\n  --_disclosure-trailing-gap: var(--dimension-space-100);\n  --_disclosure-duration: var(--effect-animation-duration-short-3);\n  position: relative;\n  display: block;\n  box-sizing: border-box;\n  min-width: 0;\n  color: var(--color-foreground-primary);\n  border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);\n}\n\n/* Card surface, matching CardSetting's split shadow + highlight recipe. */\n:host(.disclosure--contained) {\n  overflow: hidden;\n  border-bottom: 0;\n  border-radius: var(--ds-radius-card);\n  background-color: var(--color-background-primary);\n  box-shadow: var(--effect-shadow-elevated-sm);\n}\n\n:host(.disclosure--contained)::after {\n  content: '';\n  position: absolute;\n  inset: 0;\n  z-index: 4;\n  border-radius: inherit;\n  box-shadow: var(--effect-highlight-elevated-sm);\n  pointer-events: none;\n}\n\n/*\n * Heading, trailing status, then the chevron, matching Table and Live Map group\n * rows. The trigger's hit area covers the whole row; the trailing slot sits\n * above it so its own controls keep their semantics.\n */\n.disclosure-header {\n  display: flex;\n  cursor: default;\n  align-items: center;\n  gap: var(--_disclosure-trailing-gap);\n  min-width: 0;\n  padding-inline-end: var(--_disclosure-inset-inline);\n}\n\n.disclosure-heading-level {\n  flex: 1 1 auto;\n  min-width: 0;\n  margin: 0;\n  font: inherit;\n}\n\n.disclosure-trigger {\n  display: flex;\n  align-items: center;\n  box-sizing: border-box;\n  width: 100%;\n  min-block-size: var(--dimension-size-600);\n  margin: 0;\n  padding-block: var(--dimension-space-150);\n  padding-inline: var(--_disclosure-inset-inline) 0;\n  border: 0;\n  background: transparent;\n  color: inherit;\n  font: inherit;\n  text-align: start;\n  -webkit-user-select: none;\n  user-select: none;\n}\n\n/*\n * The wash and focus ring paint on the whole header row so a trailing slot is\n * covered too; only the trigger button drives them. Instant on enter, eased\n * fade on leave (shared nav/tab timing).\n */\n.disclosure-header::after {\n  transition: background var(--effect-motion-short-3);\n}\n\n@media (hover: hover) and (pointer: fine) {\n  .disclosure-header:has(.disclosure-trigger:hover)::after {\n    background: var(--ds-interaction-hover);\n    transition: none;\n  }\n}\n\n.disclosure-header:has(.disclosure-trigger:active)::after {\n  background: var(--ds-interaction-pressed);\n  transition: none;\n}\n\n.disclosure-trigger::before {\n  content: '';\n  position: absolute;\n  inset: 0;\n  z-index: 1;\n}\n\n.disclosure-trigger:focus-visible {\n  outline: none;\n}\n\n.disclosure-header:has(.disclosure-trigger:focus-visible)::after {\n  outline: var(--ds-focus-ring-width) solid var(--ds-focus-ring-color);\n  outline-offset: calc(-1 * var(--ds-focus-ring-width));\n}\n\n:host(.disclosure--contained) .disclosure-header::after {\n  border-radius: var(--ds-radius-card) var(--ds-radius-card) 0 0;\n}\n\n:host(.disclosure--contained:not(.disclosure--open)) .disclosure-header::after {\n  border-radius: var(--ds-radius-card);\n}\n\n/* The count and chevron let clicks and hover through to the trigger's hit area. */\n.disclosure-count,\n.disclosure-chevron {\n  position: relative;\n  z-index: 2;\n  flex: 0 0 auto;\n  pointer-events: none;\n}\n\n.disclosure-chevron {\n  color: var(--color-foreground-secondary);\n}\n\n/* ChevronDown while collapsed, turning to ChevronUp when open. */\n:host(.disclosure--open) .disclosure-chevron {\n  transform: rotate(180deg);\n}\n\n.disclosure-copy {\n  position: relative;\n  z-index: 2;\n  display: flex;\n  flex-direction: column;\n  gap: var(--dimension-space-025);\n  min-width: 0;\n}\n\n.disclosure-trailing {\n  position: relative;\n  z-index: 2;\n  display: flex;\n  align-items: center;\n  flex: 0 0 auto;\n  gap: var(--dimension-space-050);\n}\n\n.disclosure-trailing--empty {\n  display: none;\n}\n\n.disclosure-trailing slot {\n  display: contents;\n}\n\n/* Height animates through grid rows so content never needs measuring. */\n.disclosure-panel {\n  display: grid;\n  grid-template-rows: 0fr;\n  transition:\n    grid-template-rows var(--_disclosure-duration) var(--effect-animation-easing-ease-in-out),\n    visibility 0s linear var(--_disclosure-duration);\n  visibility: hidden;\n}\n\n.disclosure-panel--open {\n  grid-template-rows: 1fr;\n  transition:\n    grid-template-rows var(--_disclosure-duration) var(--effect-animation-easing-ease-in-out),\n    visibility 0s linear 0s;\n  visibility: visible;\n}\n\n.disclosure-panel__clip {\n  min-height: 0;\n  overflow: hidden;\n}\n\n/* Content shares the heading's inline inset on both edges. */\n.disclosure-content {\n  padding: 0 var(--_disclosure-inset-inline) var(--dimension-space-200);\n  opacity: 0;\n  transition: opacity var(--_disclosure-duration) var(--effect-animation-easing-ease-out);\n}\n\n.disclosure-panel--open .disclosure-content {\n  opacity: 1;\n}\n\n@media (prefers-reduced-motion: no-preference) {\n  .disclosure-chevron {\n    transition: transform var(--effect-motion-short-3);\n  }\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .disclosure-panel,\n  .disclosure-panel--open,\n  .disclosure-content {\n    transition: none;\n  }\n}\n\n@media (forced-colors: active) {\n  :host(.disclosure--contained) {\n    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);\n    outline-offset: calc(-1 * var(--dimension-stroke-width-012));\n  }\n\n  :host(.disclosure--contained)::after {\n    box-shadow: none;\n  }\n}\n",
+      "content": "/*\n * Disclosure owns the trigger and the reveal, not a container: no background,\n * border, divider, or content inset. The surrounding card or section supplies\n * those. The trigger is a borderless ButtonUnfilled, so hover, press, focus,\n * and padding follow the button recipe.\n */\n:host {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-start;\n  min-width: 0;\n}\n\n.disclosure-heading {\n  margin: 0;\n  font: inherit;\n}\n\n/* Height animates through grid rows so content never needs measuring. */\n.disclosure-panel {\n  display: grid;\n  grid-template-rows: 0fr;\n  align-self: stretch;\n  transition:\n    grid-template-rows var(--effect-animation-duration-short-3)\n      var(--effect-animation-easing-ease-in-out),\n    visibility 0s linear var(--effect-animation-duration-short-3);\n  visibility: hidden;\n}\n\n.disclosure-panel--open {\n  grid-template-rows: 1fr;\n  transition:\n    grid-template-rows var(--effect-animation-duration-short-3)\n      var(--effect-animation-easing-ease-in-out),\n    visibility 0s linear 0s;\n  /* inherit, not visible, so a hiding ancestor such as a skeleton still wins. */\n  visibility: inherit;\n}\n\n.disclosure-panel__clip {\n  min-height: 0;\n  overflow: hidden;\n}\n\n/* Content starts below the trigger; its own inset belongs to the owner. */\n.disclosure-content {\n  padding-block-start: var(--dimension-space-100);\n  opacity: 0;\n  transition: opacity var(--effect-animation-duration-short-3)\n    var(--effect-animation-easing-ease-out);\n}\n\n.disclosure-panel--open .disclosure-content {\n  opacity: 1;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .disclosure-panel,\n  .disclosure-panel--open,\n  .disclosure-content {\n    transition: none;\n  }\n}\n",
       "type": "registry:ui"
     },
     {
       "path": "src/wc/components/Disclosure/Disclosure.tsx",
-      "content": "import { Component, Prop, State, Event, EventEmitter, Element, h, Host } from '@stencil/core';\n\nexport type DisclosureVariant = 'flush' | 'contained';\nexport type DisclosureHeadingLevel = 2 | 3 | 4 | 5 | 6;\n\nlet disclosureIdCounter = 0;\n\n@Component({\n  tag: 'ds-disclosure',\n  styleUrl: 'Disclosure.css',\n  scoped: true,\n})\nexport class Disclosure {\n  @Element() el!: HTMLElement;\n\n  /** Whether the content is shown. The component mutates this when the trigger is activated. */\n  @Prop({ mutable: true, reflect: true }) open: boolean = false;\n  @Prop() heading!: string;\n  /** Optional supporting copy shown below the heading inside the trigger. */\n  @Prop() description: string = '';\n  /** Heading level that wraps the trigger, matching the surrounding document outline. */\n  @Prop() headingLevel: DisclosureHeadingLevel = 3;\n  /** `flush` separates stacked sections with a divider; `contained` sits on its own card surface. */\n  @Prop() variant: DisclosureVariant = 'flush';\n  @Prop() isInactive: boolean = false;\n  /** Count shown before the chevron, as in Table group rows. Part of the toggle hit area. */\n  @Prop() count: number | string | undefined;\n\n  @State() private hasTrailing: boolean = false;\n\n  /** Emitted after the user toggles the section; detail is the new open state. */\n  @Event() dsToggle!: EventEmitter<boolean>;\n\n  private readonly baseId = `ds-disclosure-${++disclosureIdCounter}`;\n  private readonly panelId = `${this.baseId}-panel`;\n  private readonly triggerId = `${this.baseId}-trigger`;\n  private readonly countId = `${this.baseId}-count`;\n\n  componentWillLoad() {\n    this.hasTrailing = this.el.querySelector('[slot=\"trailing\"]') !== null;\n  }\n\n  private toggle = () => {\n    if (this.isInactive) return;\n    this.open = !this.open;\n    this.dsToggle.emit(this.open);\n  };\n\n  private updateTrailing(slot: HTMLSlotElement) {\n    this.hasTrailing =\n      slot\n        .assignedNodes()\n        .some(node => node.nodeType !== Node.TEXT_NODE || !!node.textContent?.trim()) ||\n      this.el.querySelector('[slot=\"trailing\"]') !== null;\n  }\n\n  render() {\n    const HeadingTag = `h${this.headingLevel}` as 'h3';\n    const hasCount = this.count !== undefined && this.count !== null && `${this.count}` !== '';\n    return (\n      <Host\n        class={{\n          'disclosure--contained': this.variant === 'contained',\n          'disclosure--open': this.open,\n        }}\n      >\n        <div class=\"disclosure-header ds-interaction-fill\">\n          <HeadingTag class=\"disclosure-heading-level\">\n            <button\n              id={this.triggerId}\n              type=\"button\"\n              class={{\n                'disclosure-trigger': true,\n                'ds-control-inactive': this.isInactive,\n              }}\n              aria-expanded={this.open ? 'true' : 'false'}\n              aria-controls={this.panelId}\n              aria-disabled={this.isInactive ? 'true' : undefined}\n              aria-describedby={hasCount ? this.countId : undefined}\n              onClick={this.toggle}\n            >\n              <span class=\"disclosure-copy ds-interaction-fill__content\">\n                <ds-text\n                  class=\"disclosure-title\"\n                  as=\"span\"\n                  variant=\"text-body-medium\"\n                  emphasis\n                  color=\"primary\"\n                  wrap=\"wrap\"\n                >\n                  {this.heading}\n                </ds-text>\n                {this.description ? (\n                  <ds-text\n                    class=\"disclosure-description\"\n                    as=\"span\"\n                    variant=\"text-body-small\"\n                    color=\"secondary\"\n                    wrap=\"wrap\"\n                  >\n                    {this.description}\n                  </ds-text>\n                ) : null}\n              </span>\n            </button>\n          </HeadingTag>\n          <div\n            class={{ 'disclosure-trailing': true, 'disclosure-trailing--empty': !this.hasTrailing }}\n          >\n            <slot\n              name=\"trailing\"\n              onSlotchange={(event: Event) =>\n                this.updateTrailing(event.currentTarget as HTMLSlotElement)\n              }\n            />\n          </div>\n          {hasCount ? (\n            <ds-text\n              id={this.countId}\n              class=\"disclosure-count ds-interaction-fill__content\"\n              as=\"span\"\n              variant=\"text-body-medium\"\n              color=\"secondary\"\n              aria-hidden=\"true\"\n            >\n              {this.count}\n            </ds-text>\n          ) : null}\n          <ds-icon\n            class=\"disclosure-chevron ds-interaction-fill__content\"\n            name=\"ChevronDown\"\n            size=\"md\"\n            color=\"inherit\"\n            aria-hidden=\"true\"\n          />\n        </div>\n        <div\n          id={this.panelId}\n          class={{ 'disclosure-panel': true, 'disclosure-panel--open': this.open }}\n          role=\"region\"\n          aria-labelledby={this.triggerId}\n          inert={!this.open}\n        >\n          <div class=\"disclosure-panel__clip\">\n            <div class=\"disclosure-content\">\n              <slot />\n            </div>\n          </div>\n        </div>\n      </Host>\n    );\n  }\n}\n",
+      "content": "import { Component, Prop, Event, EventEmitter, Element, h, Host } from '@stencil/core';\nimport type { ButtonSize } from '../../utils/button-types';\n\nexport type DisclosureHeadingLevel = 2 | 3 | 4 | 5 | 6;\nexport type DisclosureSize = Extract<ButtonSize, 'sm' | 'md'>;\n\nlet disclosureIdCounter = 0;\n\n@Component({\n  tag: 'ds-disclosure',\n  styleUrl: 'Disclosure.css',\n  scoped: true,\n})\nexport class Disclosure {\n  @Element() el!: HTMLElement;\n\n  /** Whether the content is shown. The component mutates this when the trigger is activated. */\n  @Prop({ mutable: true, reflect: true }) open: boolean = false;\n  /** Visible trigger label. */\n  @Prop() label!: string;\n  /** Trigger density, matching ButtonUnfilled. */\n  @Prop() size: DisclosureSize = 'md';\n  /** Wraps the trigger in a heading when the label titles a document section. */\n  @Prop() headingLevel: DisclosureHeadingLevel | undefined;\n  @Prop() isInactive: boolean = false;\n\n  /** Emitted after the user toggles the content; detail is the new open state. */\n  @Event() dsToggle!: EventEmitter<boolean>;\n\n  private readonly panelId = `ds-disclosure-${++disclosureIdCounter}-panel`;\n\n  private handleTriggerClick = (event: CustomEvent<MouseEvent>) => {\n    // The trigger's own dsClick is an implementation detail; owners listen for dsToggle.\n    event.stopPropagation();\n    if (this.isInactive) return;\n    this.open = !this.open;\n    this.dsToggle.emit(this.open);\n  };\n\n  render() {\n    const trigger = (\n      <ds-button-unfilled\n        class=\"disclosure-trigger\"\n        variant=\"icon-label\"\n        size={this.size}\n        icon={this.open ? 'ChevronDown' : 'ChevronRight'}\n        label={this.label}\n        hasBorder={false}\n        pressScale={false}\n        expanded={this.open}\n        surfaceOpen={false}\n        controls={this.panelId}\n        isInactive={this.isInactive}\n        onDsClick={this.handleTriggerClick}\n      />\n    );\n    const HeadingTag = this.headingLevel ? (`h${this.headingLevel}` as 'h3') : null;\n\n    return (\n      <Host class={{ 'disclosure--open': this.open }}>\n        {HeadingTag ? <HeadingTag class=\"disclosure-heading\">{trigger}</HeadingTag> : trigger}\n        <div\n          id={this.panelId}\n          class={{ 'disclosure-panel': true, 'disclosure-panel--open': this.open }}\n          role=\"region\"\n          aria-label={this.label}\n          inert={!this.open}\n        >\n          <div class=\"disclosure-panel__clip\">\n            <div class=\"disclosure-content\">\n              <slot />\n            </div>\n          </div>\n        </div>\n      </Host>\n    );\n  }\n}\n",
       "type": "registry:ui"
     }
   ]

@@ -45,7 +45,7 @@ import { DataGroupOption as DataGroupOption1 } from "./components/DataGroup/Data
 import { PreferencesTab } from "./components/DataPreferences/DataPreferences";
 import { DataSavedView, DataSavedViewChangeDetail, DataSavedViewCreateDetail, DataSavedViewDiscardDetail, DataSavedViewRemoveDetail, DataSavedViewRenameDetail, DataSavedViewSaveDetail } from "./components/DataSavedViews/data-saved-views-types";
 import { DataSearchFieldsChangeDetail } from "./components/DataSearch/data-search-types";
-import { DisclosureHeadingLevel, DisclosureVariant } from "./components/Disclosure/Disclosure";
+import { DisclosureHeadingLevel, DisclosureSize } from "./components/Disclosure/Disclosure";
 import { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
 import { DrawerAfterCloseDetail, DrawerBodyInset, DrawerCloseDetail, DrawerSide, DrawerWidth } from "./components/Drawer/Drawer";
 import { FilterMenuChangeDetail as FilterMenuChangeDetail1, FilterMenuFilter as FilterMenuFilter1, FilterMenuFooterLayout, FilterMenuMatchModeChangeDetail as FilterMenuMatchModeChangeDetail1, FilterMenuMatchModes as FilterMenuMatchModes1, FilterMenuSize, FilterMenuValues as FilterMenuValues1, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
@@ -138,7 +138,7 @@ export { DataGroupOption as DataGroupOption1 } from "./components/DataGroup/Data
 export { PreferencesTab } from "./components/DataPreferences/DataPreferences";
 export { DataSavedView, DataSavedViewChangeDetail, DataSavedViewCreateDetail, DataSavedViewDiscardDetail, DataSavedViewRemoveDetail, DataSavedViewRenameDetail, DataSavedViewSaveDetail } from "./components/DataSavedViews/data-saved-views-types";
 export { DataSearchFieldsChangeDetail } from "./components/DataSearch/data-search-types";
-export { DisclosureHeadingLevel, DisclosureVariant } from "./components/Disclosure/Disclosure";
+export { DisclosureHeadingLevel, DisclosureSize } from "./components/Disclosure/Disclosure";
 export { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
 export { DrawerAfterCloseDetail, DrawerBodyInset, DrawerCloseDetail, DrawerSide, DrawerWidth } from "./components/Drawer/Drawer";
 export { FilterMenuChangeDetail as FilterMenuChangeDetail1, FilterMenuFilter as FilterMenuFilter1, FilterMenuFooterLayout, FilterMenuMatchModeChangeDetail as FilterMenuMatchModeChangeDetail1, FilterMenuMatchModes as FilterMenuMatchModes1, FilterMenuSize, FilterMenuValues as FilterMenuValues1, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
@@ -1957,34 +1957,27 @@ export namespace Components {
     }
     interface DsDisclosure {
         /**
-          * Count shown before the chevron, as in Table group rows. Part of the toggle hit area.
+          * Wraps the trigger in a heading when the label titles a document section.
          */
-        "count": number | string | undefined;
-        /**
-          * Optional supporting copy shown below the heading inside the trigger.
-          * @default ''
-         */
-        "description": string;
-        "heading": string;
-        /**
-          * Heading level that wraps the trigger, matching the surrounding document outline.
-          * @default 3
-         */
-        "headingLevel": DisclosureHeadingLevel;
+        "headingLevel": DisclosureHeadingLevel | undefined;
         /**
           * @default false
          */
         "isInactive": boolean;
+        /**
+          * Visible trigger label.
+         */
+        "label": string;
         /**
           * Whether the content is shown. The component mutates this when the trigger is activated.
           * @default false
          */
         "open": boolean;
         /**
-          * `flush` separates stacked sections with a divider; `contained` sits on its own card surface.
-          * @default 'flush'
+          * Trigger density, matching ButtonUnfilled.
+          * @default 'md'
          */
-        "variant": DisclosureVariant;
+        "size": DisclosureSize;
     }
     interface DsDivider {
         /**
@@ -9422,26 +9415,19 @@ declare namespace LocalJSX {
     }
     interface DsDisclosure {
         /**
-          * Count shown before the chevron, as in Table group rows. Part of the toggle hit area.
+          * Wraps the trigger in a heading when the label titles a document section.
          */
-        "count"?: number | string | undefined;
-        /**
-          * Optional supporting copy shown below the heading inside the trigger.
-          * @default ''
-         */
-        "description"?: string;
-        "heading": string;
-        /**
-          * Heading level that wraps the trigger, matching the surrounding document outline.
-          * @default 3
-         */
-        "headingLevel"?: DisclosureHeadingLevel;
+        "headingLevel"?: DisclosureHeadingLevel | undefined;
         /**
           * @default false
          */
         "isInactive"?: boolean;
         /**
-          * Emitted after the user toggles the section; detail is the new open state.
+          * Visible trigger label.
+         */
+        "label": string;
+        /**
+          * Emitted after the user toggles the content; detail is the new open state.
          */
         "onDsToggle"?: (event: DsDisclosureCustomEvent<boolean>) => void;
         /**
@@ -9450,10 +9436,10 @@ declare namespace LocalJSX {
          */
         "open"?: boolean;
         /**
-          * `flush` separates stacked sections with a divider; `contained` sits on its own card surface.
-          * @default 'flush'
+          * Trigger density, matching ButtonUnfilled.
+          * @default 'md'
          */
-        "variant"?: DisclosureVariant;
+        "size"?: DisclosureSize;
     }
     interface DsDivider {
         /**
@@ -13535,12 +13521,10 @@ declare namespace LocalJSX {
     }
     interface DsDisclosureAttributes {
         "open": boolean;
-        "heading": string;
-        "description": string;
-        "headingLevel": DisclosureHeadingLevel;
-        "variant": DisclosureVariant;
+        "label": string;
+        "size": DisclosureSize;
+        "headingLevel": DisclosureHeadingLevel | undefined;
         "isInactive": boolean;
-        "count": string;
     }
     interface DsDividerAttributes {
         "orientation": DividerOrientation;
@@ -14385,7 +14369,7 @@ declare namespace LocalJSX {
         "ds-data-search": Omit<DsDataSearch, keyof DsDataSearchAttributes> & { [K in keyof DsDataSearch & keyof DsDataSearchAttributes]?: DsDataSearch[K] } & { [K in keyof DsDataSearch & keyof DsDataSearchAttributes as `attr:${K}`]?: DsDataSearchAttributes[K] } & { [K in keyof DsDataSearch & keyof DsDataSearchAttributes as `prop:${K}`]?: DsDataSearch[K] };
         "ds-data-sort": Omit<DsDataSort, keyof DsDataSortAttributes> & { [K in keyof DsDataSort & keyof DsDataSortAttributes]?: DsDataSort[K] } & { [K in keyof DsDataSort & keyof DsDataSortAttributes as `attr:${K}`]?: DsDataSortAttributes[K] } & { [K in keyof DsDataSort & keyof DsDataSortAttributes as `prop:${K}`]?: DsDataSort[K] };
         "ds-data-toolbar": Omit<DsDataToolbar, keyof DsDataToolbarAttributes> & { [K in keyof DsDataToolbar & keyof DsDataToolbarAttributes]?: DsDataToolbar[K] } & { [K in keyof DsDataToolbar & keyof DsDataToolbarAttributes as `attr:${K}`]?: DsDataToolbarAttributes[K] } & { [K in keyof DsDataToolbar & keyof DsDataToolbarAttributes as `prop:${K}`]?: DsDataToolbar[K] };
-        "ds-disclosure": Omit<DsDisclosure, keyof DsDisclosureAttributes> & { [K in keyof DsDisclosure & keyof DsDisclosureAttributes]?: DsDisclosure[K] } & { [K in keyof DsDisclosure & keyof DsDisclosureAttributes as `attr:${K}`]?: DsDisclosureAttributes[K] } & { [K in keyof DsDisclosure & keyof DsDisclosureAttributes as `prop:${K}`]?: DsDisclosure[K] } & OneOf<"heading", DsDisclosure["heading"], DsDisclosureAttributes["heading"]>;
+        "ds-disclosure": Omit<DsDisclosure, keyof DsDisclosureAttributes> & { [K in keyof DsDisclosure & keyof DsDisclosureAttributes]?: DsDisclosure[K] } & { [K in keyof DsDisclosure & keyof DsDisclosureAttributes as `attr:${K}`]?: DsDisclosureAttributes[K] } & { [K in keyof DsDisclosure & keyof DsDisclosureAttributes as `prop:${K}`]?: DsDisclosure[K] } & OneOf<"label", DsDisclosure["label"], DsDisclosureAttributes["label"]>;
         "ds-divider": Omit<DsDivider, keyof DsDividerAttributes> & { [K in keyof DsDivider & keyof DsDividerAttributes]?: DsDivider[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `attr:${K}`]?: DsDividerAttributes[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `prop:${K}`]?: DsDivider[K] };
         "ds-drawer": Omit<DsDrawer, keyof DsDrawerAttributes> & { [K in keyof DsDrawer & keyof DsDrawerAttributes]?: DsDrawer[K] } & { [K in keyof DsDrawer & keyof DsDrawerAttributes as `attr:${K}`]?: DsDrawerAttributes[K] } & { [K in keyof DsDrawer & keyof DsDrawerAttributes as `prop:${K}`]?: DsDrawer[K] } & OneOf<"heading", DsDrawer["heading"], DsDrawerAttributes["heading"]>;
         "ds-empty-state": Omit<DsEmptyState, keyof DsEmptyStateAttributes> & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes]?: DsEmptyState[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `attr:${K}`]?: DsEmptyStateAttributes[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `prop:${K}`]?: DsEmptyState[K] };

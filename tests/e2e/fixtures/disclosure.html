@@ -6,11 +6,11 @@
     <link rel="stylesheet" href="/tokens/index.css">
   </head>
   <body>
-    <main style="width: 400px; padding: 24px">
-      <ds-disclosure id="alerts" heading="Alerts" count="3">
-        <button id="alerts-action" slot="trailing" type="button">Edit</button>
-        <button id="alerts-content" type="button">Harsh braking</button>
+    <main id="owner" style="width: 400px; padding: 24px">
+      <ds-disclosure id="snapshot" label="View JSON snapshot">
+        <button id="snapshot-content" type="button" style="display: block">Copy JSON</button>
       </ds-disclosure>
+      <button id="after" type="button">After</button>
     </main>
     <script type="module" src="/disclosure-setup.mjs"></script>
   </body>
