@@ -73,7 +73,7 @@ import { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 import { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 import { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderActionDetail, PanelToolsHeaders, PanelToolsItem, PanelToolsRailAccessory, PanelToolsRailAccessoryActionDetail, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
-import { PopoverAlign, PopoverCloseDetail, PopoverSide, PopoverWidth } from "./components/Popover/Popover";
+import { PopoverAlign, PopoverBodyInset, PopoverCloseDetail, PopoverSide, PopoverWidth } from "./components/Popover/Popover";
 import { RadioOption, RadioSize } from "./components/Radio/Radio";
 import { RadioTileOption } from "./components/RadioTile/RadioTile";
 import { SafetyScoreLevel, ScoreSize, ScoreVariant } from "./components/Score/score-types";
@@ -166,7 +166,7 @@ export { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 export { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 export { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderActionDetail, PanelToolsHeaders, PanelToolsItem, PanelToolsRailAccessory, PanelToolsRailAccessoryActionDetail, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
-export { PopoverAlign, PopoverCloseDetail, PopoverSide, PopoverWidth } from "./components/Popover/Popover";
+export { PopoverAlign, PopoverBodyInset, PopoverCloseDetail, PopoverSide, PopoverWidth } from "./components/Popover/Popover";
 export { RadioOption, RadioSize } from "./components/Radio/Radio";
 export { RadioTileOption } from "./components/RadioTile/RadioTile";
 export { SafetyScoreLevel, ScoreSize, ScoreVariant } from "./components/Score/score-types";
@@ -3640,32 +3640,27 @@ export namespace Components {
          */
         "anchorId": string | undefined;
         /**
+          * `default` insets content to the Menu label edge; `none` for lists that bring their own inset.
+          * @default 'default'
+         */
+        "bodyInset": PopoverBodyInset;
+        /**
           * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
          */
         "boundary": HTMLElement | undefined;
-        /**
-          * @default 'Close'
-         */
-        "closeAriaLabel": string;
-        /**
-          * Optional visible title. When present it names the dialog and adds a Close action.
-          * @default ''
-         */
-        "heading": string;
         /**
           * @default false
          */
         "open": boolean;
         /**
-          * Accessible name when no heading is shown.
+          * Accessible name for the dialog surface.
           * @default ''
          */
         "popoverLabel": string;
         /**
-          * Width token (`sm`, `md`, `lg`) or a CSS length.
-          * @default 'sm'
+          * Menu width token (`xs`, `sm`, `md`, `lg`) or a CSS length. Unset, the surface follows its content between the menu-width-xs and panel-width-lg bounds.
          */
-        "popoverWidth": PopoverWidth | string;
+        "popoverWidth": PopoverWidth | string | undefined;
         /**
           * Preferred side; placement flips to the opposite side when that offers a better fit.
           * @default 'bottom'
@@ -11264,18 +11259,14 @@ declare namespace LocalJSX {
          */
         "anchorId"?: string | undefined;
         /**
+          * `default` insets content to the Menu label edge; `none` for lists that bring their own inset.
+          * @default 'default'
+         */
+        "bodyInset"?: PopoverBodyInset;
+        /**
           * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
          */
         "boundary"?: HTMLElement | undefined;
-        /**
-          * @default 'Close'
-         */
-        "closeAriaLabel"?: string;
-        /**
-          * Optional visible title. When present it names the dialog and adds a Close action.
-          * @default ''
-         */
-        "heading"?: string;
         /**
           * Emitted after exit motion completes.
          */
@@ -11289,15 +11280,14 @@ declare namespace LocalJSX {
          */
         "open"?: boolean;
         /**
-          * Accessible name when no heading is shown.
+          * Accessible name for the dialog surface.
           * @default ''
          */
         "popoverLabel"?: string;
         /**
-          * Width token (`sm`, `md`, `lg`) or a CSS length.
-          * @default 'sm'
+          * Menu width token (`xs`, `sm`, `md`, `lg`) or a CSS length. Unset, the surface follows its content between the menu-width-xs and panel-width-lg bounds.
          */
-        "popoverWidth"?: PopoverWidth | string;
+        "popoverWidth"?: PopoverWidth | string | undefined;
         /**
           * Preferred side; placement flips to the opposite side when that offers a better fit.
           * @default 'bottom'
@@ -13965,10 +13955,9 @@ declare namespace LocalJSX {
         "side": PopoverSide;
         "align": PopoverAlign;
         "sideOffset": string;
-        "popoverWidth": PopoverWidth | string;
-        "heading": string;
+        "popoverWidth": PopoverWidth | string | undefined;
         "popoverLabel": string;
-        "closeAriaLabel": string;
+        "bodyInset": PopoverBodyInset;
     }
     interface DsRadioAttributes {
         "groupLabel": string;

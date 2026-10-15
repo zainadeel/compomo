@@ -23,8 +23,9 @@ import { ConnectionTasks } from '../../utils/connection-tasks';
 
 export type PopoverSide = AnchoredSide;
 export type PopoverAlign = AnchoredAlign;
-export type PopoverWidth = 'sm' | 'md' | 'lg';
-export type PopoverCloseReason = 'close-button' | 'escape' | 'outside' | 'tab';
+export type PopoverWidth = 'xs' | 'sm' | 'md' | 'lg';
+export type PopoverBodyInset = 'default' | 'none';
+export type PopoverCloseReason = 'escape' | 'outside' | 'tab';
 
 export interface PopoverCloseDetail {
   reason: PopoverCloseReason;
@@ -36,6 +37,7 @@ const TABBABLE_SELECTOR =
   'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 const WIDTH_MAP: Record<PopoverWidth, string> = {
+  xs: 'var(--dimension-menu-width-xs)',
   sm: 'var(--dimension-menu-width-sm)',
   md: 'var(--dimension-menu-width-md)',
   lg: 'var(--dimension-menu-width-lg)',
@@ -63,20 +65,21 @@ export class Popover {
   @Prop() sideOffset: number | string = TOKEN_CSS_LENGTHS.space050;
   /** Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used. */
   @Prop() boundary: HTMLElement | undefined;
-  /** Width token (`sm`, `md`, `lg`) or a CSS length. */
-  @Prop() popoverWidth: PopoverWidth | string = 'sm';
-  /** Optional visible title. When present it names the dialog and adds a Close action. */
-  @Prop() heading: string = '';
-  /** Accessible name when no heading is shown. */
+  /**
+   * Menu width token (`xs`, `sm`, `md`, `lg`) or a CSS length. Unset, the surface
+   * follows its content between the menu-width-xs and panel-width-lg bounds.
+   */
+  @Prop() popoverWidth: PopoverWidth | string | undefined;
+  /** Accessible name for the dialog surface. */
   @Prop() popoverLabel: string = '';
-  @Prop() closeAriaLabel: string = 'Close';
+  /** `default` insets content to the Menu label edge; `none` for lists that bring their own inset. */
+  @Prop() bodyInset: PopoverBodyInset = 'default';
 
   @State() private shouldRender: boolean = false;
   @State() private closing: boolean = false;
   @State() private positionReady: boolean = false;
   @State() private pos: { x: number; y: number } = { x: 0, y: 0 };
   @State() private availableHeight: number | null = null;
-  @State() private hasFooter: boolean = false;
 
   /** Emitted when the user dismisses the popover. The component sets open to false. */
   @Event() dsClose!: EventEmitter<PopoverCloseDetail>;
@@ -84,7 +87,6 @@ export class Popover {
   @Event() dsAfterClose!: EventEmitter<void>;
 
   private readonly popupId = `ds-popover-${++popoverIdCounter}`;
-  private readonly titleId = `${this.popupId}-title`;
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
   private loaded = false;
   private readonly tasks = new ConnectionTasks(() => this.el.isConnected);
@@ -156,7 +158,6 @@ export class Popover {
       this.closing = false;
       this.positionReady = false;
       this.availableHeight = null;
-      this.updateFooterPresence();
       this.interaction.connect();
       this.position.observe();
       this.position.schedule(() => this.focusInitial());
@@ -202,11 +203,10 @@ export class Popover {
     return resolveCssLengthPx(TOKEN_DEFAULTS.space050, TOKEN_DEFAULTS.space050);
   }
 
-  private get resolvedWidth(): string {
-    if (this.popoverWidth === 'sm' || this.popoverWidth === 'md' || this.popoverWidth === 'lg') {
-      return WIDTH_MAP[this.popoverWidth];
-    }
-    return this.popoverWidth as string;
+  private get resolvedWidth(): string | undefined {
+    const width = this.popoverWidth?.trim();
+    if (!width) return undefined;
+    return WIDTH_MAP[width as PopoverWidth] ?? width;
   }
 
   private teardown() {
@@ -252,13 +252,6 @@ export class Popover {
     this.dsAfterClose.emit();
   }
 
-  private updateFooterPresence(slot?: HTMLSlotElement) {
-    const assignedNodes = slot?.assignedNodes() ?? [];
-    this.hasFooter =
-      assignedNodes.some(node => node.nodeType !== Node.TEXT_NODE || !!node.textContent?.trim()) ||
-      this.el.querySelector('[slot="footer"]') !== null;
-  }
-
   private handleKeyDown = (event: KeyboardEvent) => {
     if (this.closing) return;
     if (event.key === 'Escape') {
@@ -267,9 +260,15 @@ export class Popover {
       this.close('escape', event, true);
       return;
     }
-    // From the focused surface itself, a forward Tab moves natively into the first control.
+    // From the focused surface itself, a forward Tab enters the first control. WebKit
+    // sends native Tab from a top-layer surface to the document body, so move it here.
     if (event.key === 'Tab' && !event.shiftKey && event.target === this.popupEl) {
-      if (this.popupEl?.querySelector(TABBABLE_SELECTOR)) return;
+      const first = this.popupEl?.querySelector<HTMLElement>(TABBABLE_SELECTOR);
+      if (first) {
+        event.preventDefault();
+        first.focus();
+        return;
+      }
     }
     if (event.key === 'Tab' && this.interaction.tabLeavesPopup(event)) {
       event.preventDefault();
@@ -287,12 +286,12 @@ export class Popover {
       top: '0',
       transform: `translate(${Math.round(this.pos.x)}px, ${Math.round(this.pos.y)}px)`,
       visibility: this.positionReady ? 'visible' : 'hidden',
-      '--_popover-width': this.resolvedWidth,
     };
+    const width = this.resolvedWidth;
+    if (width) popupStyle['--_popover-width'] = width;
     if (this.availableHeight !== null) {
       popupStyle['max-height'] = `${Math.floor(this.availableHeight)}px`;
     }
-    const hasHeading = !!this.heading.trim();
 
     return (
       <Host>
@@ -302,57 +301,23 @@ export class Popover {
           tabindex={-1}
           class={{
             'popover-surface': true,
+            'ds-choice-popup': true,
+            'ds-choice-popup--closing': this.closing,
             'popover-surface--hidden': !visible,
-            'popover-surface--closing': this.closing,
-            'popover-surface--headed': hasHeading,
           }}
           style={visible ? popupStyle : undefined}
           role="dialog"
-          aria-labelledby={hasHeading ? this.titleId : undefined}
-          aria-label={hasHeading ? undefined : this.popoverLabel || undefined}
+          aria-label={this.popoverLabel || undefined}
           inert={this.closing}
           onKeyDown={this.handleKeyDown}
         >
-          {hasHeading ? (
-            <div class="popover-header ds-chrome-header">
-              {/* eslint-disable-next-line compomo/prefer-direct-ds-text -- The copy lane owns the sm control box that centers the title against the close button. */}
-              <div class="popover-copy ds-chrome-header__copy ds-control--sm">
-                <ds-text
-                  class="popover-heading ds-chrome-header__heading"
-                  as="h2"
-                  variant="text-body-medium"
-                  emphasis
-                  color="primary"
-                  lineTruncation={1}
-                  textId={this.titleId}
-                >
-                  {this.heading}
-                </ds-text>
-              </div>
-              <ds-button-unfilled
-                class="popover-close ds-chrome-header__trailing"
-                variant="icon"
-                icon="Cross"
-                size="sm"
-                aria-label={this.closeAriaLabel}
-                activeFill={false}
-                hasBorder={false}
-                onDsClick={(event: CustomEvent<MouseEvent>) =>
-                  this.close('close-button', event.detail, true)
-                }
-              />
-            </div>
-          ) : null}
-          <div class="popover-content">
+          <div
+            class={{
+              'popover-content': true,
+              'popover-content--flush': this.bodyInset === 'none',
+            }}
+          >
             <slot />
-          </div>
-          <div class={{ 'popover-footer': true, 'popover-footer--empty': !this.hasFooter }}>
-            <slot
-              name="footer"
-              onSlotchange={(event: Event) =>
-                this.updateFooterPresence(event.currentTarget as HTMLSlotElement)
-              }
-            />
           </div>
         </div>
       </Host>

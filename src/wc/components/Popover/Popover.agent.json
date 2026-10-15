@@ -7,7 +7,7 @@
   "tag": "ds-popover",
   "audience": "general",
   "status": "experimental",
-  "summary": "Anchored non-modal dialog for short interactive content tied to a trigger, sharing the anchored choice-popup surface with Menu and Select, with an optional title-and-close header and footer actions.",
+  "summary": "Anchored non-modal dialog for short interactive content tied to a trigger. It uses the same choice-popup surface and placement as Menu, Select, and the date picker, with fully composable content and no built-in header or footer.",
   "useWhen": [
     "A trigger reveals a few related controls, such as share options or display settings, that apply without leaving the page.",
     "Supplementary explanation is too long or needs a link, so a Tooltip is not enough.",
@@ -49,11 +49,11 @@
     "component:ds-text"
   ],
   "accessibility": [
-    "The surface is a non-modal dialog. Give it a visible heading or, when untitled, a popoverLabel so it has an accessible name.",
+    "The surface is a non-modal dialog named by popoverLabel. Always set it.",
     "The owner marks the trigger with haspopup=\"dialog\" and mirrors open into expanded and surfaceOpen on ButtonUnfilled.",
     "Opening moves focus to an element marked autofocus in the content, otherwise to the surface itself.",
-    "Escape and the Close action return focus to the anchor. Outside activation closes without moving focus. Tab past the last control closes the popover and continues to the control after the trigger.",
-    "dsClose reports close-button, escape, outside, or tab so the owner can sync trigger state."
+    "Escape returns focus to the anchor. Outside activation closes without moving focus. Tab past the last control closes the popover and continues to the control after the trigger.",
+    "dsClose reports escape, outside, or tab so the owner can sync trigger state. Actions inside the content close the popover by setting open to false."
   ],
   "states": [
     "The owner sets open and an anchor or anchorId; the component mutates open to false for user dismissal and emits dsAfterClose after exit motion.",
@@ -61,7 +61,7 @@
     "Placement flips to the opposite side when the preferred side does not fit, and clamps within the viewport or the nearest overlay boundary."
   ],
   "responsiveBehavior": [
-    "Width comes from menu-width tokens and is clamped to the viewport.",
+    "Unset, width follows content between menu-width-xs and panel-width-lg, clamped to the viewport. popoverWidth fixes it to a menu-width token or a CSS length.",
     "Height is limited to the space available on the resolved side; content scrolls when it exceeds it.",
     "The surface lives in the native top layer, escaping clipping containers and transformed ancestors."
   ],
@@ -79,12 +79,12 @@
   },
   "references": [
     {
-      "label": "Storybook share, help, trigger, and placement examples",
+      "label": "Storybook share, help, trigger, flush content, and placement examples",
       "path": "src/wc/components/Popover/Popover.stories.ts"
     }
   ],
   "styling": {
-    "rationale": "The component owns the anchored surface shared with Menu, Select, and the date and time pickers so every anchored overlay reads as the same material.",
+    "rationale": "The component owns the anchored choice-popup surface shared with Menu, Select, and the date and time pickers so every anchored overlay reads as the same material. Content insets to the Menu label edge by default.",
     "protected": [
       {
         "properties": ["background", "border", "border-radius", "box-shadow"],
@@ -93,8 +93,13 @@
       },
       {
         "properties": ["width"],
-        "reason": "Width comes from menu-width tokens through popoverWidth and is clamped to the viewport.",
+        "reason": "Width follows content within the choice-popup bounds, or a menu-width token or length through popoverWidth.",
         "props": ["popoverWidth"]
+      },
+      {
+        "properties": ["padding"],
+        "reason": "The 4px frame and the content inset align content with Menu labels; bodyInset none removes the content inset for lists and calendars.",
+        "props": ["bodyInset"]
       }
     ],
     "customProperties": []

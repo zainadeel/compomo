@@ -3,6 +3,7 @@ import { html } from 'lit';
 import '../../../../dist/components/ds-popover.js';
 import '../../../../dist/components/ds-button-filled.js';
 import '../../../../dist/components/ds-button-unfilled.js';
+import '../../../../dist/components/ds-calendar.js';
 import '../../../../dist/components/ds-field.js';
 import '../../../../dist/components/ds-input.js';
 import '../../../../dist/components/ds-switch.js';
@@ -11,13 +12,11 @@ import '../../../../dist/components/ds-text.js';
 const meta: Meta = {
   title: 'Overlay/Popover',
   argTypes: {
-    heading: { control: 'text' },
     side: { control: 'select', options: ['top', 'right', 'bottom', 'left'] },
     align: { control: 'inline-radio', options: ['start', 'center', 'end'] },
-    popoverWidth: { control: 'select', options: ['sm', 'md', 'lg'] },
+    popoverWidth: { control: 'select', options: ['xs', 'sm', 'md', 'lg'] },
   },
   args: {
-    heading: 'Share view',
     side: 'bottom',
     align: 'start',
     popoverWidth: 'sm',
@@ -71,6 +70,13 @@ const shareContent = html`
       <ds-switch checked aria-label="Include current filters"></ds-switch>
       <ds-text as="span" variant="text-body-medium">Include current filters</ds-text>
     </div>
+    <ds-button-filled
+      variant="label"
+      label="Copy link"
+      intent="brand"
+      contrast="bold"
+      @dsClick=${closeOwningPopover}
+    ></ds-button-filled>
   </div>
 `;
 
@@ -90,7 +96,6 @@ export const Playground: Story = {
         <ds-popover
           ?open=${true}
           anchor-id="popover-playground-trigger"
-          heading=${args['heading'] ?? ''}
           popover-label="Share view"
           side=${args['side'] ?? 'bottom'}
           align=${args['align'] ?? 'start'}
@@ -98,14 +103,6 @@ export const Playground: Story = {
           @dsClose=${syncTrigger}
         >
           ${shareContent}
-          <ds-button-filled
-            slot="footer"
-            variant="label"
-            label="Copy link"
-            intent="brand"
-            contrast="bold"
-            @dsClick=${closeOwningPopover}
-          ></ds-button-filled>
         </ds-popover>
       </span>
     `),
@@ -133,6 +130,7 @@ export const ContextualHelp: Story = {
           ?open=${true}
           anchor-id="popover-help-trigger"
           popover-label="About idle time"
+          popover-width="sm"
           @dsClose=${syncTrigger}
         >
           <ds-text as="p" variant="text-body-small" color="secondary" wrap="wrap">
@@ -155,7 +153,7 @@ export const TriggerBehavior: Story = {
           haspopup="dialog"
           @dsClick=${toggle}
         ></ds-button-unfilled>
-        <ds-popover heading="Display options" popover-width="sm" @dsClose=${syncTrigger}>
+        <ds-popover popover-label="Display options" @dsClose=${syncTrigger}>
           <div style="display:grid;gap:var(--dimension-space-100);">
             <div style="display:flex;align-items:center;gap:var(--dimension-space-100);">
               <ds-switch checked aria-label="Show vehicle labels"></ds-switch>
@@ -172,12 +170,42 @@ export const TriggerBehavior: Story = {
     `),
 };
 
+/**
+ * Lists and calendars bring their own inset, so bodyInset="none" sets them on the
+ * 4px frame, matching the InputDate picker popup.
+ */
+export const FlushContent: Story = {
+  render: () =>
+    stage(html`
+      <span style="display:contents;">
+        <ds-button-unfilled
+          id="popover-flush-trigger"
+          label="Pick a date"
+          has-border
+          haspopup="dialog"
+          expanded
+          surface-open
+          @dsClick=${toggle}
+        ></ds-button-unfilled>
+        <ds-popover
+          ?open=${true}
+          anchor-id="popover-flush-trigger"
+          popover-label="Choose date"
+          body-inset="none"
+          @dsClose=${syncTrigger}
+        >
+          <ds-calendar selection-mode="single" style="--ds-calendar-padding: 0;"></ds-calendar>
+        </ds-popover>
+      </span>
+    `),
+};
+
 /** Placement flips when the preferred side does not fit. */
 export const Placement: Story = {
   render: () =>
     stage(html`
       <div
-        style="display:grid;grid-template-columns:repeat(2,max-content);gap:var(--dimension-space-800) calc(var(--dimension-space-800) * 3);padding:calc(var(--dimension-space-800) * 1.5) var(--dimension-space-800);"
+        style="display:grid;grid-template-columns:repeat(2,max-content);gap:var(--dimension-space-800) calc(var(--dimension-space-800) * 4);padding:calc(var(--dimension-space-800) * 1.5) var(--dimension-space-800);"
       >
         ${(['top', 'right', 'bottom', 'left'] as const).map(
           side => html`
@@ -192,7 +220,7 @@ export const Placement: Story = {
                 anchor-id=${`popover-side-${side}`}
                 side=${side}
                 align="center"
-                popover-width="var(--dimension-menu-width-xs)"
+                popover-width="xs"
                 popover-label=${`${side} placement`}
               >
                 <ds-text as="p" variant="text-body-small" color="secondary">
