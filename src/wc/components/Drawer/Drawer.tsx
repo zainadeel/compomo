@@ -125,6 +125,8 @@ export class Drawer {
   @State() private shown: boolean = false;
   @State() private hasFooterActions: boolean = false;
   @State() private hasHeaderActions: boolean = false;
+  /** Bumped when framework-inserted slotted content needs relocating into its slot. */
+  @State() private slotRevision: number = 0;
 
   /** Emitted when the drawer requests to close; open is already false. */
   @Event() dsClose!: EventEmitter<DrawerCloseDetail>;
@@ -146,16 +148,19 @@ export class Drawer {
   private replaced = false;
   private documentListening: Document | null = null;
   private readonly tasks = new ConnectionTasks(() => this.el.isConnected);
+  private slotObserver?: MutationObserver;
 
   connectedCallback() {
     if (!this.loaded) return;
     this.updateSlotPresence();
+    this.observeSlottedContent();
     this.onOpenChange(this.open);
   }
 
   componentDidLoad() {
     this.loaded = true;
     this.updateSlotPresence();
+    this.observeSlottedContent();
     if (this.open) this.onOpenChange(true);
   }
 
@@ -174,6 +179,8 @@ export class Drawer {
   }
 
   disconnectedCallback() {
+    this.slotObserver?.disconnect();
+    this.slotObserver = undefined;
     this.tasks.cancel();
     this.clearCloseTimer();
     this.releaseActive();
@@ -359,6 +366,31 @@ export class Drawer {
   private updateSlotPresence() {
     this.hasFooterActions = this.hasAssignedContent('footer');
     this.hasHeaderActions = this.hasAssignedContent('header-actions');
+  }
+
+  /**
+   * Frameworks insert conditional content after first render, for example an
+   * Angular @if around footer actions. Scoped slots only place host children
+   * during render, so re-render when named-slot content arrives or leaves.
+   */
+  private observeSlottedContent() {
+    if (this.slotObserver || typeof MutationObserver === 'undefined') return;
+    this.slotObserver = new MutationObserver(records => {
+      let slottedChange = false;
+      let needsRelocation = false;
+      for (const record of records) {
+        for (const node of [...record.addedNodes, ...record.removedNodes]) {
+          if (node.nodeType !== Node.ELEMENT_NODE) continue;
+          if (!(node as HTMLElement).hasAttribute('slot')) continue;
+          slottedChange = true;
+          if (node.parentNode === this.el) needsRelocation = true;
+        }
+      }
+      if (!slottedChange) return;
+      this.updateSlotPresence();
+      if (needsRelocation) this.slotRevision++;
+    });
+    this.slotObserver.observe(this.el, { childList: true, subtree: true });
   }
 
   private handleCancel(event: globalThis.Event) {
