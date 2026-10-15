@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.1.3](https://github.com/zainadeel/compomo/compare/v16.1.2...v16.1.3) (2026-10-13)
+
+
+### Fixed
+
+* update icomo and speed up browser checks ([#695](https://github.com/zainadeel/compomo/issues/695)) ([333c1ed](https://github.com/zainadeel/compomo/commit/333c1ede3725b6992898c135af8cdcdc9f9f24c7))
+
 ## [16.1.2](https://github.com/zainadeel/compomo/compare/v16.1.1...v16.1.2) (2026-10-04)
 
 

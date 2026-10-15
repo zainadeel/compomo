@@ -27,7 +27,9 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: 0,
   workers: process.env.CI ? 2 : undefined,
-  reporter: process.env.CI ? 'github' : 'list',
+  reporter: process.env.CI
+    ? [['github'], ['list'], ['json', { outputFile: 'playwright-report/results.json' }]]
+    : 'list',
   use: {
     baseURL,
     screenshot: 'only-on-failure',
