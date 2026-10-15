@@ -24,7 +24,6 @@ import { ConnectionTasks } from '../../utils/connection-tasks';
 export type PopoverSide = AnchoredSide;
 export type PopoverAlign = AnchoredAlign;
 export type PopoverWidth = 'xs' | 'sm' | 'md' | 'lg';
-export type PopoverBodyInset = 'default' | 'none';
 export type PopoverCloseReason = 'escape' | 'outside' | 'tab';
 
 export interface PopoverCloseDetail {
@@ -72,8 +71,6 @@ export class Popover {
   @Prop() popoverWidth: PopoverWidth | string | undefined;
   /** Accessible name for the dialog surface. */
   @Prop() popoverLabel: string = '';
-  /** `default` insets content to the Menu label edge; `none` for lists that bring their own inset. */
-  @Prop() bodyInset: PopoverBodyInset = 'default';
 
   @State() private shouldRender: boolean = false;
   @State() private closing: boolean = false;
@@ -311,12 +308,7 @@ export class Popover {
           inert={this.closing}
           onKeyDown={this.handleKeyDown}
         >
-          <div
-            class={{
-              'popover-content': true,
-              'popover-content--flush': this.bodyInset === 'none',
-            }}
-          >
+          <div class="popover-content">
             <slot />
           </div>
         </div>

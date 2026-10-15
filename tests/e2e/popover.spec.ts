@@ -35,17 +35,12 @@ test('shares the choice-popup surface and insets content to the Menu label edge 
   expect(Math.round(copyBox!.x - surfaceBox!.x)).toBe(12);
 });
 
-test('flush content sits on the frame and follows its content width', async ({ page }) => {
+test('unsized content follows the choice-popup minimum width', async ({ page }) => {
   await openWithKeyboard(page, 'list-trigger');
   const surface = page.getByRole('dialog', { name: 'Columns' });
   await expect(surface).toBeVisible();
-  const [surfaceBox, contentBox] = await Promise.all([
-    surface.boundingBox(),
-    page.locator('#list-content').boundingBox(),
-  ]);
-  expect(Math.round(contentBox!.x - surfaceBox!.x)).toBe(4);
   // A short label keeps the choice-popup minimum, menu-width-xs.
-  expect(Math.round(surfaceBox!.width)).toBe(200);
+  expect(Math.round((await surface.boundingBox())!.width)).toBe(200);
 });
 
 test('Escape returns focus to the trigger', async ({ page }) => {

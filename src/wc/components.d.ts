@@ -73,7 +73,7 @@ import { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 import { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 import { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderActionDetail, PanelToolsHeaders, PanelToolsItem, PanelToolsRailAccessory, PanelToolsRailAccessoryActionDetail, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
-import { PopoverAlign, PopoverBodyInset, PopoverCloseDetail, PopoverSide, PopoverWidth } from "./components/Popover/Popover";
+import { PopoverAlign, PopoverCloseDetail, PopoverSide, PopoverWidth } from "./components/Popover/Popover";
 import { RadioOption, RadioSize } from "./components/Radio/Radio";
 import { RadioTileOption } from "./components/RadioTile/RadioTile";
 import { SafetyScoreLevel, ScoreSize, ScoreVariant } from "./components/Score/score-types";
@@ -166,7 +166,7 @@ export { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 export { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 export { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderActionDetail, PanelToolsHeaders, PanelToolsItem, PanelToolsRailAccessory, PanelToolsRailAccessoryActionDetail, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
-export { PopoverAlign, PopoverBodyInset, PopoverCloseDetail, PopoverSide, PopoverWidth } from "./components/Popover/Popover";
+export { PopoverAlign, PopoverCloseDetail, PopoverSide, PopoverWidth } from "./components/Popover/Popover";
 export { RadioOption, RadioSize } from "./components/Radio/Radio";
 export { RadioTileOption } from "./components/RadioTile/RadioTile";
 export { SafetyScoreLevel, ScoreSize, ScoreVariant } from "./components/Score/score-types";
@@ -3639,11 +3639,6 @@ export namespace Components {
           * ID of the external trigger element for positioning.
          */
         "anchorId": string | undefined;
-        /**
-          * `default` insets content to the Menu label edge; `none` for lists that bring their own inset.
-          * @default 'default'
-         */
-        "bodyInset": PopoverBodyInset;
         /**
           * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
          */
@@ -11259,11 +11254,6 @@ declare namespace LocalJSX {
          */
         "anchorId"?: string | undefined;
         /**
-          * `default` insets content to the Menu label edge; `none` for lists that bring their own inset.
-          * @default 'default'
-         */
-        "bodyInset"?: PopoverBodyInset;
-        /**
           * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
          */
         "boundary"?: HTMLElement | undefined;
@@ -13957,7 +13947,6 @@ declare namespace LocalJSX {
         "sideOffset": string;
         "popoverWidth": PopoverWidth | string | undefined;
         "popoverLabel": string;
-        "bodyInset": PopoverBodyInset;
     }
     interface DsRadioAttributes {
         "groupLabel": string;

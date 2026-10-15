@@ -3,7 +3,6 @@ import { html } from 'lit';
 import '../../../../dist/components/ds-popover.js';
 import '../../../../dist/components/ds-button-filled.js';
 import '../../../../dist/components/ds-button-unfilled.js';
-import '../../../../dist/components/ds-calendar.js';
 import '../../../../dist/components/ds-field.js';
 import '../../../../dist/components/ds-input.js';
 import '../../../../dist/components/ds-switch.js';
@@ -167,36 +166,6 @@ export const TriggerBehavior: Story = {
         </ds-popover>
       </span>
       <ds-button-unfilled label="Next control" has-border></ds-button-unfilled>
-    `),
-};
-
-/**
- * Lists and calendars bring their own inset, so bodyInset="none" sets them on the
- * 4px frame, matching the InputDate picker popup.
- */
-export const FlushContent: Story = {
-  render: () =>
-    stage(html`
-      <span style="display:contents;">
-        <ds-button-unfilled
-          id="popover-flush-trigger"
-          label="Pick a date"
-          has-border
-          haspopup="dialog"
-          expanded
-          surface-open
-          @dsClick=${toggle}
-        ></ds-button-unfilled>
-        <ds-popover
-          ?open=${true}
-          anchor-id="popover-flush-trigger"
-          popover-label="Choose date"
-          body-inset="none"
-          @dsClose=${syncTrigger}
-        >
-          <ds-calendar selection-mode="single" style="--ds-calendar-padding: 0;"></ds-calendar>
-        </ds-popover>
-      </span>
     `),
 };
 

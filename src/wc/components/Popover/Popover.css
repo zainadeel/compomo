@@ -30,8 +30,3 @@
   padding: var(--dimension-space-100);
   overflow-y: auto;
 }
-
-/* Composed lists and calendars bring their own row inset and sit on the frame. */
-.popover-content--flush {
-  padding: 0;
-}

@@ -15,6 +15,7 @@
   ],
   "avoidWhen": [
     "The content is a list of commands or one-of-many choices.",
+    "The content picks a date.",
     "The content is a short non-interactive label for an icon control.",
     "The user must complete or confirm a blocking task.",
     "The content needs more than a few controls or scrolling sections."
@@ -24,6 +25,11 @@
       "when": "A trigger reveals commands or a choice list.",
       "component": "component:ds-menu",
       "reason": "Menu provides menu semantics, roving focus, and selection."
+    },
+    {
+      "when": "The user picks a calendar date.",
+      "component": "component:ds-input-date",
+      "reason": "InputDate owns its calendar popup, anchored to the whole field and aligned to its end edge, with calendar keyboard behavior."
     },
     {
       "when": "An icon control needs a short non-interactive name.",
@@ -79,7 +85,7 @@
   },
   "references": [
     {
-      "label": "Storybook share, help, trigger, flush content, and placement examples",
+      "label": "Storybook share, help, trigger, and placement examples",
       "path": "src/wc/components/Popover/Popover.stories.ts"
     }
   ],
@@ -98,8 +104,8 @@
       },
       {
         "properties": ["padding"],
-        "reason": "The 4px frame and the content inset align content with Menu labels; bodyInset none removes the content inset for lists and calendars.",
-        "props": ["bodyInset"]
+        "reason": "The 4px frame and the content inset align content with Menu labels; compose lists and pickers with Menu, Select, or InputDate instead.",
+        "props": []
       }
     ],
     "customProperties": []
