@@ -1,0 +1,135 @@
+@import '../../utils/radius.css';
+@import '../../utils/chrome-header.css';
+@import '../../utils/forced-colors.css';
+
+:host {
+  display: contents;
+}
+
+/*
+ * Shares the anchored choice-popup surface (Menu, Select, InputDate) so every
+ * anchored overlay reads as the same material: menu radius, floating shadow on
+ * the surface, and the floating highlight painted above content on ::after.
+ */
+.popover-surface {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: min(var(--_popover-width), calc(100vw - var(--dimension-space-100)));
+  max-height: calc(100vh - var(--dimension-space-100));
+  inset: auto;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background-color: var(--color-background-primary);
+  border-radius: var(--ds-radius-menu);
+  box-shadow: var(--effect-shadow-elevated-floating);
+  color: var(--color-foreground-primary);
+  outline: none;
+  text-align: start;
+  animation: popoverIn var(--effect-motion-short-2) forwards;
+}
+
+.popover-surface::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: var(--effect-highlight-elevated-floating);
+}
+
+.popover-surface--hidden {
+  display: none;
+}
+
+.popover-surface--closing {
+  animation: popoverOut var(--effect-motion-short-2) forwards;
+}
+
+@keyframes popoverIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes popoverOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .popover-surface {
+    animation: none;
+    opacity: 1;
+  }
+
+  .popover-surface--closing {
+    opacity: 0;
+  }
+}
+
+/*
+ * Compact header: the sm copy box plus a 12px start inset puts the title glyphs
+ * on the same 16px edge as content and footer; the matching 12px top puts the
+ * title 16px below the surface edge.
+ */
+.popover-header {
+  flex: 0 0 auto;
+  min-block-size: 0;
+  padding: var(--dimension-space-150) var(--dimension-space-100) 0 var(--dimension-space-150);
+}
+
+ds-text.popover-heading {
+  width: auto;
+  text-align: left;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.popover-content {
+  min-height: 0;
+  padding: var(--dimension-space-200);
+  overflow-y: auto;
+  flex: 1 1 auto;
+  box-sizing: border-box;
+}
+
+.popover-surface--headed .popover-content {
+  padding-block-start: var(--dimension-space-050);
+}
+
+.popover-footer {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: var(--dimension-space-100);
+  padding: 0 var(--dimension-space-200) var(--dimension-space-200);
+}
+
+.popover-footer--empty {
+  display: none;
+}
+
+.popover-footer slot {
+  display: contents;
+}
+
+@media (forced-colors: active) {
+  .popover-surface {
+    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-012));
+  }
+
+  .popover-surface::after {
+    box-shadow: none;
+  }
+}

@@ -1473,6 +1473,14 @@ export class ShellApp {
               <slot />
             </div>
             <div
+              class="shell-app__page-overlay"
+              data-ds-overlay-boundary
+              aria-hidden={fullscreen || mobileStageBlocked ? 'true' : undefined}
+              inert={fullscreen || mobileStageBlocked ? true : undefined}
+            >
+              <slot name="page-overlay" />
+            </div>
+            <div
               class="shell-app__mobile-sheet-nav"
               hidden={!mobile || !this.mobileSheetNavOpen}
               aria-hidden={mobile && this.mobileSheetNavOpen ? undefined : 'true'}
@@ -1572,6 +1580,14 @@ export class ShellApp {
               tabIndex={0}
             >
               {this.renderManagedPage()}
+            </div>
+            <div
+              class="shell-app__page-overlay"
+              data-ds-overlay-boundary
+              aria-hidden={fullscreen || mobileStageBlocked ? 'true' : undefined}
+              inert={fullscreen || mobileStageBlocked ? true : undefined}
+            >
+              <slot name="page-overlay" />
             </div>
             <div
               class="shell-app__mobile-sheet-nav"

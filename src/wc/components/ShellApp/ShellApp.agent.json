@@ -31,7 +31,8 @@
     "component:ds-shell-page",
     "component:ds-banner",
     "component:ds-swatch-picker",
-    "component:ds-paper-texture"
+    "component:ds-paper-texture",
+    "component:ds-drawer"
   ],
   "patterns": ["pattern:application-shell", "pattern:shell-page"],
   "accessibility": [
@@ -72,7 +73,8 @@
     "Route-owned pageChrome independently selects ShellPage contentInset, page-header seams, scroll compaction, expanded and compact header-divider visibility, and contentSurface. ShellApp forwards them while resolving whether desktop title geometry is page-local or shell-bar-owned.",
     "The application filters unauthorized destinations, sections, and tools before passing them into shell components.",
     "Application-owned header actions and the account trigger retain surface ownership across shell presentations. Supply surfaceOpen on header actions and accountMenuSurfaceOpen on navigation for rendered surface lifetimes; keep disclosure and selected-route state separate.",
-    "Managed page chrome can explicitly choose page-local title presentation for pages that must remain compact rather than following capacity and scrolling."
+    "Managed page chrome can explicitly choose page-local title presentation for pages that must remain compact rather than following capacity and scrolling.",
+    "The page-overlay slot holds one non-modal page panel, such as a details ds-drawer, that covers the page content lane below the shell bar without covering navigation or tools; it is hidden with the content lane in fullscreen tools and mobile stages that hide content."
   ],
   "responsiveBehavior": [
     "ShellApp owns the fixed system breakpoints and resolves desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",

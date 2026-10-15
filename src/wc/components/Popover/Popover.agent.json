@@ -1,0 +1,102 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-popover",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-popover",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "Anchored non-modal dialog for short interactive content tied to a trigger, sharing the anchored choice-popup surface with Menu and Select, with an optional title-and-close header and footer actions.",
+  "useWhen": [
+    "A trigger reveals a few related controls, such as share options or display settings, that apply without leaving the page.",
+    "Supplementary explanation is too long or needs a link, so a Tooltip is not enough.",
+    "The content should dismiss on outside activation or Escape and return focus to its trigger."
+  ],
+  "avoidWhen": [
+    "The content is a list of commands or one-of-many choices.",
+    "The content is a short non-interactive label for an icon control.",
+    "The user must complete or confirm a blocking task.",
+    "The content needs more than a few controls or scrolling sections."
+  ],
+  "alternatives": [
+    {
+      "when": "A trigger reveals commands or a choice list.",
+      "component": "component:ds-menu",
+      "reason": "Menu provides menu semantics, roving focus, and selection."
+    },
+    {
+      "when": "An icon control needs a short non-interactive name.",
+      "component": "component:ds-tooltip",
+      "reason": "Tooltip shows supplementary labels on hover and keyboard focus without taking focus."
+    },
+    {
+      "when": "The task is blocking or needs explicit completion.",
+      "component": "component:ds-modal",
+      "reason": "Modal contains focus and makes the page inert until the user decides."
+    },
+    {
+      "when": "The content is a larger panel of detail or a multi-field task.",
+      "component": "component:ds-drawer",
+      "reason": "Drawer provides room for longer content beside the page."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-button-unfilled",
+    "component:ds-button-filled",
+    "component:ds-field",
+    "component:ds-switch",
+    "component:ds-text"
+  ],
+  "accessibility": [
+    "The surface is a non-modal dialog. Give it a visible heading or, when untitled, a popoverLabel so it has an accessible name.",
+    "The owner marks the trigger with haspopup=\"dialog\" and mirrors open into expanded and surfaceOpen on ButtonUnfilled.",
+    "Opening moves focus to an element marked autofocus in the content, otherwise to the surface itself.",
+    "Escape and the Close action return focus to the anchor. Outside activation closes without moving focus. Tab past the last control closes the popover and continues to the control after the trigger.",
+    "dsClose reports close-button, escape, outside, or tab so the owner can sync trigger state."
+  ],
+  "states": [
+    "The owner sets open and an anchor or anchorId; the component mutates open to false for user dismissal and emits dsAfterClose after exit motion.",
+    "Slotted content stays in the host while closed so authored nodes and their state persist between openings.",
+    "Placement flips to the opposite side when the preferred side does not fit, and clamps within the viewport or the nearest overlay boundary."
+  ],
+  "responsiveBehavior": [
+    "Width comes from menu-width tokens and is clamped to the viewport.",
+    "Height is limited to the space available on the resolved side; content scrolls when it exceeds it.",
+    "The surface lives in the native top layer, escaping clipping containers and transformed ancestors."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Set anchor as a JavaScript property or anchorId as an attribute, then set open.",
+      "Listen for dsClose to update the trigger's expanded and surfaceOpen state."
+    ],
+    "react": [
+      "Pass a trigger ref's element as anchor, or anchorId, and control open; update trigger state in onDsClose."
+    ],
+    "angular": [
+      "Bind [anchor] to the trigger element or set anchorId, bind [open], and update trigger state in (dsClose)."
+    ]
+  },
+  "references": [
+    {
+      "label": "Storybook share, help, trigger, and placement examples",
+      "path": "src/wc/components/Popover/Popover.stories.ts"
+    }
+  ],
+  "styling": {
+    "rationale": "The component owns the anchored surface shared with Menu, Select, and the date and time pickers so every anchored overlay reads as the same material.",
+    "protected": [
+      {
+        "properties": ["background", "border", "border-radius", "box-shadow"],
+        "reason": "The anchored surface recipe is shared across overlay families; compose application surfaces inside the content slot.",
+        "props": []
+      },
+      {
+        "properties": ["width"],
+        "reason": "Width comes from menu-width tokens through popoverWidth and is clamped to the viewport.",
+        "props": ["popoverWidth"]
+      }
+    ],
+    "customProperties": []
+  }
+}

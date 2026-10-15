@@ -45,7 +45,9 @@ import { DataGroupOption as DataGroupOption1 } from "./components/DataGroup/Data
 import { PreferencesTab } from "./components/DataPreferences/DataPreferences";
 import { DataSavedView, DataSavedViewChangeDetail, DataSavedViewCreateDetail, DataSavedViewDiscardDetail, DataSavedViewRemoveDetail, DataSavedViewRenameDetail, DataSavedViewSaveDetail } from "./components/DataSavedViews/data-saved-views-types";
 import { DataSearchFieldsChangeDetail } from "./components/DataSearch/data-search-types";
+import { DisclosureHeadingLevel, DisclosureVariant } from "./components/Disclosure/Disclosure";
 import { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
+import { DrawerAfterCloseDetail, DrawerBodyInset, DrawerCloseDetail, DrawerSide, DrawerWidth } from "./components/Drawer/Drawer";
 import { FilterMenuChangeDetail as FilterMenuChangeDetail1, FilterMenuFilter as FilterMenuFilter1, FilterMenuFooterLayout, FilterMenuMatchModeChangeDetail as FilterMenuMatchModeChangeDetail1, FilterMenuMatchModes as FilterMenuMatchModes1, FilterMenuSize, FilterMenuValues as FilterMenuValues1, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
 import { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
 import { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
@@ -71,6 +73,7 @@ import { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 import { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 import { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderActionDetail, PanelToolsHeaders, PanelToolsItem, PanelToolsRailAccessory, PanelToolsRailAccessoryActionDetail, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 import { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
+import { PopoverAlign, PopoverCloseDetail, PopoverSide, PopoverWidth } from "./components/Popover/Popover";
 import { RadioOption, RadioSize } from "./components/Radio/Radio";
 import { RadioTileOption } from "./components/RadioTile/RadioTile";
 import { SafetyScoreLevel, ScoreSize, ScoreVariant } from "./components/Score/score-types";
@@ -135,7 +138,9 @@ export { DataGroupOption as DataGroupOption1 } from "./components/DataGroup/Data
 export { PreferencesTab } from "./components/DataPreferences/DataPreferences";
 export { DataSavedView, DataSavedViewChangeDetail, DataSavedViewCreateDetail, DataSavedViewDiscardDetail, DataSavedViewRemoveDetail, DataSavedViewRenameDetail, DataSavedViewSaveDetail } from "./components/DataSavedViews/data-saved-views-types";
 export { DataSearchFieldsChangeDetail } from "./components/DataSearch/data-search-types";
+export { DisclosureHeadingLevel, DisclosureVariant } from "./components/Disclosure/Disclosure";
 export { DividerBackground, DividerInset, DividerLength, DividerOrientation } from "./components/Divider/Divider";
+export { DrawerAfterCloseDetail, DrawerBodyInset, DrawerCloseDetail, DrawerSide, DrawerWidth } from "./components/Drawer/Drawer";
 export { FilterMenuChangeDetail as FilterMenuChangeDetail1, FilterMenuFilter as FilterMenuFilter1, FilterMenuFooterLayout, FilterMenuMatchModeChangeDetail as FilterMenuMatchModeChangeDetail1, FilterMenuMatchModes as FilterMenuMatchModes1, FilterMenuSize, FilterMenuValues as FilterMenuValues1, FilterMenuWidth } from "./components/FilterMenu/FilterMenu";
 export { AnchoredAlign, AnchoredSide } from "./utils/anchored-position";
 export { IconColor as IconColor1, IconSize } from "./components/Icon/Icon";
@@ -161,6 +166,7 @@ export { PanelSubNavItem } from "./components/PanelSubNav/panel-sub-nav-types";
 export { PanelSubNavBackground } from "./components/PanelSubNav/PanelSubNav";
 export { PanelToolHeaderActionDetail, PanelToolsHeaderAction, PanelToolsHeaderActionDetail, PanelToolsHeaders, PanelToolsItem, PanelToolsRailAccessory, PanelToolsRailAccessoryActionDetail, PanelToolsToolId } from "./components/PanelTools/panel-tools-types";
 export { PaperTextureConfig } from "./components/PaperTexture/paper-texture-types";
+export { PopoverAlign, PopoverCloseDetail, PopoverSide, PopoverWidth } from "./components/Popover/Popover";
 export { RadioOption, RadioSize } from "./components/Radio/Radio";
 export { RadioTileOption } from "./components/RadioTile/RadioTile";
 export { SafetyScoreLevel, ScoreSize, ScoreVariant } from "./components/Score/score-types";
@@ -1949,6 +1955,33 @@ export namespace Components {
          */
         "label": string;
     }
+    interface DsDisclosure {
+        /**
+          * Optional supporting copy shown below the heading inside the trigger.
+          * @default ''
+         */
+        "description": string;
+        "heading": string;
+        /**
+          * Heading level that wraps the trigger, matching the surrounding document outline.
+          * @default 3
+         */
+        "headingLevel": DisclosureHeadingLevel;
+        /**
+          * @default false
+         */
+        "isInactive": boolean;
+        /**
+          * Whether the content is shown. The component mutates this when the trigger is activated.
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * `flush` separates stacked sections with a divider; `contained` sits on its own card surface.
+          * @default 'flush'
+         */
+        "variant": DisclosureVariant;
+    }
     interface DsDivider {
         /**
           * Actual parent surface context. Omit on primary and secondary surfaces.
@@ -1974,6 +2007,78 @@ export namespace Components {
           * @default false
          */
         "semantic": boolean;
+    }
+    interface DsDrawer {
+        /**
+          * Optional id reference for explanatory content in the body.
+         */
+        "ariaDescribedby": string | undefined;
+        /**
+          * When set, shows a leading Back action for multi-depth content and emits dsBack.
+         */
+        "backLabel": string | undefined;
+        /**
+          * `none` removes the body inset for content that owns its own edges.
+          * @default 'default'
+         */
+        "bodyInset": DrawerBodyInset;
+        /**
+          * @default 'Close'
+         */
+        "closeAriaLabel": string;
+        /**
+          * Panel width token (`sm`, `md`, `lg`) or a CSS length. Narrow viewports use the full width.
+          * @default 'sm'
+         */
+        "drawerWidth": DrawerWidth | string;
+        /**
+          * Generic label for what the drawer shows, such as "Event details". Record identity belongs in the body.
+         */
+        "heading": string;
+        /**
+          * Block the page behind a shade and contain focus. The default non-modal drawer leaves the page interactive beside it.
+          * @default false
+         */
+        "modal": boolean;
+        /**
+          * Shows Previous and Next record actions at the end of the footer.
+          * @default false
+         */
+        "navigation": boolean;
+        /**
+          * @default 'Record navigation'
+         */
+        "navigationAriaLabel": string;
+        /**
+          * Suspends Left/Right record paging, for example while a menu in the drawer is open.
+          * @default false
+         */
+        "navigationShortcutsBlocked": boolean;
+        /**
+          * @default 'Next item'
+         */
+        "nextAriaLabel": string;
+        /**
+          * @default false
+         */
+        "nextAvailable": boolean;
+        /**
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * @default 'Previous item'
+         */
+        "previousAriaLabel": string;
+        /**
+          * @default false
+         */
+        "previousAvailable": boolean;
+        /**
+          * Edge the panel attaches to.
+          * @default 'end'
+         */
+        "side": DrawerSide;
     }
     interface DsEmptyState {
         /**
@@ -3520,6 +3625,57 @@ export namespace Components {
           * @default {}
          */
         "config": PaperTextureConfig;
+    }
+    interface DsPopover {
+        /**
+          * @default 'start'
+         */
+        "align": PopoverAlign;
+        /**
+          * External trigger element to position against. Set via JS: popoverEl.anchor = buttonEl
+         */
+        "anchor": HTMLElement | undefined;
+        /**
+          * ID of the external trigger element for positioning.
+         */
+        "anchorId": string | undefined;
+        /**
+          * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
+         */
+        "boundary": HTMLElement | undefined;
+        /**
+          * @default 'Close'
+         */
+        "closeAriaLabel": string;
+        /**
+          * Optional visible title. When present it names the dialog and adds a Close action.
+          * @default ''
+         */
+        "heading": string;
+        /**
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * Accessible name when no heading is shown.
+          * @default ''
+         */
+        "popoverLabel": string;
+        /**
+          * Width token (`sm`, `md`, `lg`) or a CSS length.
+          * @default 'sm'
+         */
+        "popoverWidth": PopoverWidth | string;
+        /**
+          * Preferred side; placement flips to the opposite side when that offers a better fit.
+          * @default 'bottom'
+         */
+        "side": PopoverSide;
+        /**
+          * Gap between anchor and popover — number (px) or TokoMo length.
+          * @default TOKEN_CSS_LENGTHS.space050
+         */
+        "sideOffset": number | string;
     }
     interface DsRadio {
         /**
@@ -5397,6 +5553,14 @@ export interface DsDataSortCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsDataSortElement;
 }
+export interface DsDisclosureCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsDisclosureElement;
+}
+export interface DsDrawerCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsDrawerElement;
+}
 export interface DsFilterMenuCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsFilterMenuElement;
@@ -5488,6 +5652,10 @@ export interface DsPanelToolSearchCustomEvent<T> extends CustomEvent<T> {
 export interface DsPanelToolsCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsPanelToolsElement;
+}
+export interface DsPopoverCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsPopoverElement;
 }
 export interface DsRadioCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -6224,11 +6392,49 @@ declare global {
         prototype: HTMLDsDataToolbarElement;
         new (): HTMLDsDataToolbarElement;
     };
+    interface HTMLDsDisclosureElementEventMap {
+        "dsToggle": boolean;
+    }
+    interface HTMLDsDisclosureElement extends Components.DsDisclosure, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsDisclosureElementEventMap>(type: K, listener: (this: HTMLDsDisclosureElement, ev: DsDisclosureCustomEvent<HTMLDsDisclosureElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsDisclosureElementEventMap>(type: K, listener: (this: HTMLDsDisclosureElement, ev: DsDisclosureCustomEvent<HTMLDsDisclosureElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsDisclosureElement: {
+        prototype: HTMLDsDisclosureElement;
+        new (): HTMLDsDisclosureElement;
+    };
     interface HTMLDsDividerElement extends Components.DsDivider, HTMLStencilElement {
     }
     var HTMLDsDividerElement: {
         prototype: HTMLDsDividerElement;
         new (): HTMLDsDividerElement;
+    };
+    interface HTMLDsDrawerElementEventMap {
+        "dsClose": DrawerCloseDetail;
+        "dsAfterClose": DrawerAfterCloseDetail;
+        "dsBack": MouseEvent;
+        "dsPrevious": void;
+        "dsNext": void;
+    }
+    interface HTMLDsDrawerElement extends Components.DsDrawer, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsDrawerElementEventMap>(type: K, listener: (this: HTMLDsDrawerElement, ev: DsDrawerCustomEvent<HTMLDsDrawerElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsDrawerElementEventMap>(type: K, listener: (this: HTMLDsDrawerElement, ev: DsDrawerCustomEvent<HTMLDsDrawerElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsDrawerElement: {
+        prototype: HTMLDsDrawerElement;
+        new (): HTMLDsDrawerElement;
     };
     interface HTMLDsEmptyStateElement extends Components.DsEmptyState, HTMLStencilElement {
     }
@@ -6721,6 +6927,24 @@ declare global {
         prototype: HTMLDsPaperTextureElement;
         new (): HTMLDsPaperTextureElement;
     };
+    interface HTMLDsPopoverElementEventMap {
+        "dsClose": PopoverCloseDetail;
+        "dsAfterClose": void;
+    }
+    interface HTMLDsPopoverElement extends Components.DsPopover, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsPopoverElementEventMap>(type: K, listener: (this: HTMLDsPopoverElement, ev: DsPopoverCustomEvent<HTMLDsPopoverElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsPopoverElementEventMap>(type: K, listener: (this: HTMLDsPopoverElement, ev: DsPopoverCustomEvent<HTMLDsPopoverElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsPopoverElement: {
+        prototype: HTMLDsPopoverElement;
+        new (): HTMLDsPopoverElement;
+    };
     interface HTMLDsRadioElementEventMap {
         "dsChange": string;
     }
@@ -7183,7 +7407,9 @@ declare global {
         "ds-data-search": HTMLDsDataSearchElement;
         "ds-data-sort": HTMLDsDataSortElement;
         "ds-data-toolbar": HTMLDsDataToolbarElement;
+        "ds-disclosure": HTMLDsDisclosureElement;
         "ds-divider": HTMLDsDividerElement;
+        "ds-drawer": HTMLDsDrawerElement;
         "ds-empty-state": HTMLDsEmptyStateElement;
         "ds-field": HTMLDsFieldElement;
         "ds-filter-menu": HTMLDsFilterMenuElement;
@@ -7216,6 +7442,7 @@ declare global {
         "ds-panel-tool-search": HTMLDsPanelToolSearchElement;
         "ds-panel-tools": HTMLDsPanelToolsElement;
         "ds-paper-texture": HTMLDsPaperTextureElement;
+        "ds-popover": HTMLDsPopoverElement;
         "ds-radio": HTMLDsRadioElement;
         "ds-radio-tile": HTMLDsRadioTileElement;
         "ds-score": HTMLDsScoreElement;
@@ -9199,6 +9426,37 @@ declare namespace LocalJSX {
          */
         "label"?: string;
     }
+    interface DsDisclosure {
+        /**
+          * Optional supporting copy shown below the heading inside the trigger.
+          * @default ''
+         */
+        "description"?: string;
+        "heading": string;
+        /**
+          * Heading level that wraps the trigger, matching the surrounding document outline.
+          * @default 3
+         */
+        "headingLevel"?: DisclosureHeadingLevel;
+        /**
+          * @default false
+         */
+        "isInactive"?: boolean;
+        /**
+          * Emitted after the user toggles the section; detail is the new open state.
+         */
+        "onDsToggle"?: (event: DsDisclosureCustomEvent<boolean>) => void;
+        /**
+          * Whether the content is shown. The component mutates this when the trigger is activated.
+          * @default false
+         */
+        "open"?: boolean;
+        /**
+          * `flush` separates stacked sections with a divider; `contained` sits on its own card surface.
+          * @default 'flush'
+         */
+        "variant"?: DisclosureVariant;
+    }
     interface DsDivider {
         /**
           * Actual parent surface context. Omit on primary and secondary surfaces.
@@ -9224,6 +9482,98 @@ declare namespace LocalJSX {
           * @default false
          */
         "semantic"?: boolean;
+    }
+    interface DsDrawer {
+        /**
+          * Optional id reference for explanatory content in the body.
+         */
+        "ariaDescribedby"?: string | undefined;
+        /**
+          * When set, shows a leading Back action for multi-depth content and emits dsBack.
+         */
+        "backLabel"?: string | undefined;
+        /**
+          * `none` removes the body inset for content that owns its own edges.
+          * @default 'default'
+         */
+        "bodyInset"?: DrawerBodyInset;
+        /**
+          * @default 'Close'
+         */
+        "closeAriaLabel"?: string;
+        /**
+          * Panel width token (`sm`, `md`, `lg`) or a CSS length. Narrow viewports use the full width.
+          * @default 'sm'
+         */
+        "drawerWidth"?: DrawerWidth | string;
+        /**
+          * Generic label for what the drawer shows, such as "Event details". Record identity belongs in the body.
+         */
+        "heading": string;
+        /**
+          * Block the page behind a shade and contain focus. The default non-modal drawer leaves the page interactive beside it.
+          * @default false
+         */
+        "modal"?: boolean;
+        /**
+          * Shows Previous and Next record actions at the end of the footer.
+          * @default false
+         */
+        "navigation"?: boolean;
+        /**
+          * @default 'Record navigation'
+         */
+        "navigationAriaLabel"?: string;
+        /**
+          * Suspends Left/Right record paging, for example while a menu in the drawer is open.
+          * @default false
+         */
+        "navigationShortcutsBlocked"?: boolean;
+        /**
+          * @default 'Next item'
+         */
+        "nextAriaLabel"?: string;
+        /**
+          * @default false
+         */
+        "nextAvailable"?: boolean;
+        /**
+          * Emitted after exit motion completes.
+         */
+        "onDsAfterClose"?: (event: DsDrawerCustomEvent<DrawerAfterCloseDetail>) => void;
+        /**
+          * Emitted when the leading Back action is activated. The owner swaps heading and body.
+         */
+        "onDsBack"?: (event: DsDrawerCustomEvent<MouseEvent>) => void;
+        /**
+          * Emitted when the drawer requests to close; open is already false.
+         */
+        "onDsClose"?: (event: DsDrawerCustomEvent<DrawerCloseDetail>) => void;
+        /**
+          * Emitted by the Next action or ArrowRight while navigation is shown and available.
+         */
+        "onDsNext"?: (event: DsDrawerCustomEvent<void>) => void;
+        /**
+          * Emitted by the Previous action or ArrowLeft while navigation is shown and available.
+         */
+        "onDsPrevious"?: (event: DsDrawerCustomEvent<void>) => void;
+        /**
+          * @default false
+         */
+        "open"?: boolean;
+        /**
+          * @default 'Previous item'
+         */
+        "previousAriaLabel"?: string;
+        /**
+          * @default false
+         */
+        "previousAvailable"?: boolean;
+        /**
+          * Edge the panel attaches to.
+          * @default 'end'
+         */
+        "side"?: DrawerSide;
     }
     interface DsEmptyState {
         /**
@@ -10899,6 +11249,65 @@ declare namespace LocalJSX {
           * @default {}
          */
         "config"?: PaperTextureConfig;
+    }
+    interface DsPopover {
+        /**
+          * @default 'start'
+         */
+        "align"?: PopoverAlign;
+        /**
+          * External trigger element to position against. Set via JS: popoverEl.anchor = buttonEl
+         */
+        "anchor"?: HTMLElement | undefined;
+        /**
+          * ID of the external trigger element for positioning.
+         */
+        "anchorId"?: string | undefined;
+        /**
+          * Explicit collision owner; otherwise the nearest data-ds-overlay-boundary ancestor is used.
+         */
+        "boundary"?: HTMLElement | undefined;
+        /**
+          * @default 'Close'
+         */
+        "closeAriaLabel"?: string;
+        /**
+          * Optional visible title. When present it names the dialog and adds a Close action.
+          * @default ''
+         */
+        "heading"?: string;
+        /**
+          * Emitted after exit motion completes.
+         */
+        "onDsAfterClose"?: (event: DsPopoverCustomEvent<void>) => void;
+        /**
+          * Emitted when the user dismisses the popover. The component sets open to false.
+         */
+        "onDsClose"?: (event: DsPopoverCustomEvent<PopoverCloseDetail>) => void;
+        /**
+          * @default false
+         */
+        "open"?: boolean;
+        /**
+          * Accessible name when no heading is shown.
+          * @default ''
+         */
+        "popoverLabel"?: string;
+        /**
+          * Width token (`sm`, `md`, `lg`) or a CSS length.
+          * @default 'sm'
+         */
+        "popoverWidth"?: PopoverWidth | string;
+        /**
+          * Preferred side; placement flips to the opposite side when that offers a better fit.
+          * @default 'bottom'
+         */
+        "side"?: PopoverSide;
+        /**
+          * Gap between anchor and popover — number (px) or TokoMo length.
+          * @default TOKEN_CSS_LENGTHS.space050
+         */
+        "sideOffset"?: number | string;
     }
     interface DsRadio {
         /**
@@ -13136,12 +13545,38 @@ declare namespace LocalJSX {
         "label": string;
         "borderless": boolean;
     }
+    interface DsDisclosureAttributes {
+        "open": boolean;
+        "heading": string;
+        "description": string;
+        "headingLevel": DisclosureHeadingLevel;
+        "variant": DisclosureVariant;
+        "isInactive": boolean;
+    }
     interface DsDividerAttributes {
         "orientation": DividerOrientation;
         "background": DividerBackground | undefined;
         "inset": DividerInset;
         "length": DividerLength;
         "semantic": boolean;
+    }
+    interface DsDrawerAttributes {
+        "open": boolean;
+        "heading": string;
+        "modal": boolean;
+        "side": DrawerSide;
+        "drawerWidth": DrawerWidth | string;
+        "bodyInset": DrawerBodyInset;
+        "backLabel": string | undefined;
+        "closeAriaLabel": string;
+        "navigation": boolean;
+        "previousAvailable": boolean;
+        "nextAvailable": boolean;
+        "previousAriaLabel": string;
+        "nextAriaLabel": string;
+        "navigationAriaLabel": string;
+        "navigationShortcutsBlocked": boolean;
+        "ariaDescribedby": string | undefined;
     }
     interface DsEmptyStateAttributes {
         "icon": string | undefined;
@@ -13523,6 +13958,17 @@ declare namespace LocalJSX {
         "toolsLabel": string;
         "toolShortcutsLabel": string;
         "storageKey": string;
+    }
+    interface DsPopoverAttributes {
+        "open": boolean;
+        "anchorId": string | undefined;
+        "side": PopoverSide;
+        "align": PopoverAlign;
+        "sideOffset": string;
+        "popoverWidth": PopoverWidth | string;
+        "heading": string;
+        "popoverLabel": string;
+        "closeAriaLabel": string;
     }
     interface DsRadioAttributes {
         "groupLabel": string;
@@ -13952,7 +14398,9 @@ declare namespace LocalJSX {
         "ds-data-search": Omit<DsDataSearch, keyof DsDataSearchAttributes> & { [K in keyof DsDataSearch & keyof DsDataSearchAttributes]?: DsDataSearch[K] } & { [K in keyof DsDataSearch & keyof DsDataSearchAttributes as `attr:${K}`]?: DsDataSearchAttributes[K] } & { [K in keyof DsDataSearch & keyof DsDataSearchAttributes as `prop:${K}`]?: DsDataSearch[K] };
         "ds-data-sort": Omit<DsDataSort, keyof DsDataSortAttributes> & { [K in keyof DsDataSort & keyof DsDataSortAttributes]?: DsDataSort[K] } & { [K in keyof DsDataSort & keyof DsDataSortAttributes as `attr:${K}`]?: DsDataSortAttributes[K] } & { [K in keyof DsDataSort & keyof DsDataSortAttributes as `prop:${K}`]?: DsDataSort[K] };
         "ds-data-toolbar": Omit<DsDataToolbar, keyof DsDataToolbarAttributes> & { [K in keyof DsDataToolbar & keyof DsDataToolbarAttributes]?: DsDataToolbar[K] } & { [K in keyof DsDataToolbar & keyof DsDataToolbarAttributes as `attr:${K}`]?: DsDataToolbarAttributes[K] } & { [K in keyof DsDataToolbar & keyof DsDataToolbarAttributes as `prop:${K}`]?: DsDataToolbar[K] };
+        "ds-disclosure": Omit<DsDisclosure, keyof DsDisclosureAttributes> & { [K in keyof DsDisclosure & keyof DsDisclosureAttributes]?: DsDisclosure[K] } & { [K in keyof DsDisclosure & keyof DsDisclosureAttributes as `attr:${K}`]?: DsDisclosureAttributes[K] } & { [K in keyof DsDisclosure & keyof DsDisclosureAttributes as `prop:${K}`]?: DsDisclosure[K] } & OneOf<"heading", DsDisclosure["heading"], DsDisclosureAttributes["heading"]>;
         "ds-divider": Omit<DsDivider, keyof DsDividerAttributes> & { [K in keyof DsDivider & keyof DsDividerAttributes]?: DsDivider[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `attr:${K}`]?: DsDividerAttributes[K] } & { [K in keyof DsDivider & keyof DsDividerAttributes as `prop:${K}`]?: DsDivider[K] };
+        "ds-drawer": Omit<DsDrawer, keyof DsDrawerAttributes> & { [K in keyof DsDrawer & keyof DsDrawerAttributes]?: DsDrawer[K] } & { [K in keyof DsDrawer & keyof DsDrawerAttributes as `attr:${K}`]?: DsDrawerAttributes[K] } & { [K in keyof DsDrawer & keyof DsDrawerAttributes as `prop:${K}`]?: DsDrawer[K] } & OneOf<"heading", DsDrawer["heading"], DsDrawerAttributes["heading"]>;
         "ds-empty-state": Omit<DsEmptyState, keyof DsEmptyStateAttributes> & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes]?: DsEmptyState[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `attr:${K}`]?: DsEmptyStateAttributes[K] } & { [K in keyof DsEmptyState & keyof DsEmptyStateAttributes as `prop:${K}`]?: DsEmptyState[K] };
         "ds-field": Omit<DsField, keyof DsFieldAttributes> & { [K in keyof DsField & keyof DsFieldAttributes]?: DsField[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `attr:${K}`]?: DsFieldAttributes[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `prop:${K}`]?: DsField[K] };
         "ds-filter-menu": Omit<DsFilterMenu, keyof DsFilterMenuAttributes> & { [K in keyof DsFilterMenu & keyof DsFilterMenuAttributes]?: DsFilterMenu[K] } & { [K in keyof DsFilterMenu & keyof DsFilterMenuAttributes as `attr:${K}`]?: DsFilterMenuAttributes[K] } & { [K in keyof DsFilterMenu & keyof DsFilterMenuAttributes as `prop:${K}`]?: DsFilterMenu[K] };
@@ -13985,6 +14433,7 @@ declare namespace LocalJSX {
         "ds-panel-tool-search": Omit<DsPanelToolSearch, keyof DsPanelToolSearchAttributes> & { [K in keyof DsPanelToolSearch & keyof DsPanelToolSearchAttributes]?: DsPanelToolSearch[K] } & { [K in keyof DsPanelToolSearch & keyof DsPanelToolSearchAttributes as `attr:${K}`]?: DsPanelToolSearchAttributes[K] } & { [K in keyof DsPanelToolSearch & keyof DsPanelToolSearchAttributes as `prop:${K}`]?: DsPanelToolSearch[K] };
         "ds-panel-tools": Omit<DsPanelTools, keyof DsPanelToolsAttributes> & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes]?: DsPanelTools[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `attr:${K}`]?: DsPanelToolsAttributes[K] } & { [K in keyof DsPanelTools & keyof DsPanelToolsAttributes as `prop:${K}`]?: DsPanelTools[K] };
         "ds-paper-texture": DsPaperTexture;
+        "ds-popover": Omit<DsPopover, keyof DsPopoverAttributes> & { [K in keyof DsPopover & keyof DsPopoverAttributes]?: DsPopover[K] } & { [K in keyof DsPopover & keyof DsPopoverAttributes as `attr:${K}`]?: DsPopoverAttributes[K] } & { [K in keyof DsPopover & keyof DsPopoverAttributes as `prop:${K}`]?: DsPopover[K] };
         "ds-radio": Omit<DsRadio, keyof DsRadioAttributes> & { [K in keyof DsRadio & keyof DsRadioAttributes]?: DsRadio[K] } & { [K in keyof DsRadio & keyof DsRadioAttributes as `attr:${K}`]?: DsRadioAttributes[K] } & { [K in keyof DsRadio & keyof DsRadioAttributes as `prop:${K}`]?: DsRadio[K] };
         "ds-radio-tile": Omit<DsRadioTile, keyof DsRadioTileAttributes> & { [K in keyof DsRadioTile & keyof DsRadioTileAttributes]?: DsRadioTile[K] } & { [K in keyof DsRadioTile & keyof DsRadioTileAttributes as `attr:${K}`]?: DsRadioTileAttributes[K] } & { [K in keyof DsRadioTile & keyof DsRadioTileAttributes as `prop:${K}`]?: DsRadioTile[K] };
         "ds-score": Omit<DsScore, keyof DsScoreAttributes> & { [K in keyof DsScore & keyof DsScoreAttributes]?: DsScore[K] } & { [K in keyof DsScore & keyof DsScoreAttributes as `attr:${K}`]?: DsScoreAttributes[K] } & { [K in keyof DsScore & keyof DsScoreAttributes as `prop:${K}`]?: DsScore[K] };
@@ -14082,7 +14531,9 @@ declare module "@stencil/core" {
             "ds-data-search": LocalJSX.IntrinsicElements["ds-data-search"] & JSXBase.HTMLAttributes<HTMLDsDataSearchElement>;
             "ds-data-sort": LocalJSX.IntrinsicElements["ds-data-sort"] & JSXBase.HTMLAttributes<HTMLDsDataSortElement>;
             "ds-data-toolbar": LocalJSX.IntrinsicElements["ds-data-toolbar"] & JSXBase.HTMLAttributes<HTMLDsDataToolbarElement>;
+            "ds-disclosure": LocalJSX.IntrinsicElements["ds-disclosure"] & JSXBase.HTMLAttributes<HTMLDsDisclosureElement>;
             "ds-divider": LocalJSX.IntrinsicElements["ds-divider"] & JSXBase.HTMLAttributes<HTMLDsDividerElement>;
+            "ds-drawer": LocalJSX.IntrinsicElements["ds-drawer"] & JSXBase.HTMLAttributes<HTMLDsDrawerElement>;
             "ds-empty-state": LocalJSX.IntrinsicElements["ds-empty-state"] & JSXBase.HTMLAttributes<HTMLDsEmptyStateElement>;
             "ds-field": LocalJSX.IntrinsicElements["ds-field"] & JSXBase.HTMLAttributes<HTMLDsFieldElement>;
             "ds-filter-menu": LocalJSX.IntrinsicElements["ds-filter-menu"] & JSXBase.HTMLAttributes<HTMLDsFilterMenuElement>;
@@ -14115,6 +14566,7 @@ declare module "@stencil/core" {
             "ds-panel-tool-search": LocalJSX.IntrinsicElements["ds-panel-tool-search"] & JSXBase.HTMLAttributes<HTMLDsPanelToolSearchElement>;
             "ds-panel-tools": LocalJSX.IntrinsicElements["ds-panel-tools"] & JSXBase.HTMLAttributes<HTMLDsPanelToolsElement>;
             "ds-paper-texture": LocalJSX.IntrinsicElements["ds-paper-texture"] & JSXBase.HTMLAttributes<HTMLDsPaperTextureElement>;
+            "ds-popover": LocalJSX.IntrinsicElements["ds-popover"] & JSXBase.HTMLAttributes<HTMLDsPopoverElement>;
             "ds-radio": LocalJSX.IntrinsicElements["ds-radio"] & JSXBase.HTMLAttributes<HTMLDsRadioElement>;
             "ds-radio-tile": LocalJSX.IntrinsicElements["ds-radio-tile"] & JSXBase.HTMLAttributes<HTMLDsRadioTileElement>;
             "ds-score": LocalJSX.IntrinsicElements["ds-score"] & JSXBase.HTMLAttributes<HTMLDsScoreElement>;

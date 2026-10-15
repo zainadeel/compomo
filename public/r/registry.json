@@ -6979,6 +6979,161 @@
       ]
     },
     {
+      "name": "disclosure",
+      "title": "Disclosure",
+      "description": "In-flow section whose heading-level trigger shows or hides its content, in a flush divided style for stacked sections or a contained card style.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/disclosure",
+        "source": "src/wc/components/Disclosure/Disclosure.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "In-flow section whose heading-level trigger shows or hides its content, in a flush divided style for stacked sections or a contained card style.",
+          "useWhen": [
+            "A page, drawer, or settings column has secondary sections that users scan by heading and open on demand.",
+            "Several related sections stack vertically and some can start collapsed to reduce length.",
+            "A single section of optional detail, such as diagnostics or advanced options, should stay out of the way until requested."
+          ],
+          "avoidWhen": [
+            "Sections are peers the user switches between, with one visible at a time; use TabGroup.",
+            "The hidden content is critical to completing the task.",
+            "The content is a navigation tree or a filter list with its own selection semantics.",
+            "The trigger needs to open a floating surface rather than expand in place."
+          ],
+          "alternatives": [
+            {
+              "when": "The user switches between peer views of the same area.",
+              "component": "component:ds-tab-group",
+              "reason": "TabGroup shows one panel at a time with tab semantics."
+            },
+            {
+              "when": "A trigger reveals content that should float over the page.",
+              "component": "component:ds-popover",
+              "reason": "Popover anchors content to its trigger without reflowing the page."
+            },
+            {
+              "when": "The section is an editable settings group with view and edit modes.",
+              "component": "component:ds-card-setting",
+              "reason": "CardSetting owns the view, edit, save, and cancel workflow."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-drawer",
+            "component:ds-switch",
+            "component:ds-checkbox",
+            "component:ds-tag",
+            "component:ds-text"
+          ],
+          "accessibility": [
+            "The trigger is a native button inside a heading element; choose headingLevel to fit the surrounding outline.",
+            "The trigger exposes aria-expanded and controls a labelled region containing the content.",
+            "Collapsed content is inert and hidden so it is never focusable or announced.",
+            "Interactive trailing content sits outside the trigger button so it keeps its own semantics.",
+            "Inactive sections expose aria-disabled and cannot be toggled."
+          ],
+          "states": [
+            "open is reflected and mutable: the component toggles it on activation and emits dsToggle with the new state. Owners may also set it directly, for example to make sections mutually exclusive.",
+            "flush sections show a bottom divider so stacked sections read as one list; contained sections sit on their own card surface.",
+            "Height and content opacity animate on toggle and are removed under reduced motion."
+          ],
+          "responsiveBehavior": [
+            "The section fills its container width; heading and description wrap rather than truncate.",
+            "Content aligns with the heading text, not the chevron, at every width."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Set open as a property or attribute; listen for dsToggle for user changes."
+            ],
+            "react": [
+              "Pass open to DsDisclosure and update it in onDsToggle when controlling it."
+            ],
+            "angular": [
+              "Bind [open] and update it from (dsToggle) when controlling it."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook flush, contained, trailing, and inactive examples",
+              "path": "src/wc/components/Disclosure/Disclosure.stories.ts"
+            }
+          ],
+          "styling": {
+            "rationale": "The component owns the trigger row, divider, card surface, and expand motion; applications own the content and the space between contained sections.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "border-radius",
+                  "box-shadow"
+                ],
+                "reason": "Divider and card surfaces follow the shared border and elevation recipes; choose a variant instead.",
+                "props": [
+                  "variant"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
+        },
+        "props": {
+          "description": {
+            "type": "string",
+            "required": false
+          },
+          "heading": {
+            "type": "string",
+            "required": true
+          },
+          "headingLevel": {
+            "type": "DisclosureHeadingLevel",
+            "required": false
+          },
+          "isInactive": {
+            "type": "boolean",
+            "required": false
+          },
+          "open": {
+            "type": "boolean",
+            "required": false
+          },
+          "variant": {
+            "type": "DisclosureVariant",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsToggle",
+            "detail": "boolean"
+          }
+        ],
+        "slots": [
+          "",
+          "trailing"
+        ],
+        "exports": {
+          "customElement": "ds-disclosure",
+          "react": "DsDisclosure",
+          "vue": "DsDisclosure",
+          "angular": "DsDisclosure"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens",
+        "@ds-mo/icons"
+      ],
+      "registryDependencies": [
+        "icon",
+        "text"
+      ]
+    },
+    {
       "name": "divider",
       "title": "Divider",
       "description": "Horizontal or vertical separator between sibling content groups, decorative by default with optional structural semantics.",
@@ -7096,6 +7251,241 @@
         "@ds-mo/tokens"
       ],
       "registryDependencies": []
+    },
+    {
+      "name": "drawer",
+      "title": "Drawer",
+      "description": "Edge-attached details panel beside the current page with a generic header, a composable content slot, and a footer for record actions and previous/next paging; non-modal by default with an optional modal presentation and a Back action for multi-depth content.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/drawer",
+        "source": "src/wc/components/Drawer/Drawer.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Edge-attached details panel beside the current page with a generic header, a composable content slot, and a footer for record actions and previous/next paging; non-modal by default with an optional modal presentation and a Back action for multi-depth content.",
+          "useWhen": [
+            "The user inspects the details of an item selected from a list, table, or map while the page stays visible and interactive.",
+            "The user steps through records in order from the details view; enable navigation for previous and next paging.",
+            "Details drill into a related record, such as vehicle to driver; set backLabel and swap content in place.",
+            "A contained task such as a multi-field edit needs more room than a Modal but not a new page; set modal."
+          ],
+          "avoidWhen": [
+            "The user must confirm a single focused decision; Modal is more direct.",
+            "The content is a short contextual control anchored to a trigger.",
+            "The panel is persistent application navigation or a shell tool panel.",
+            "The workflow is long enough to need its own URL, history, or deep links; offer an open-full-page header action instead.",
+            "A second drawer would be stacked over an existing one; only one non-modal drawer is open per document, so swap content in place and use backLabel."
+          ],
+          "alternatives": [
+            {
+              "when": "The user confirms or cancels one focused decision.",
+              "component": "component:ds-modal",
+              "reason": "Modal centers a short blocking decision without moving the user's attention to a page edge."
+            },
+            {
+              "when": "A trigger reveals short interactive content anchored to it.",
+              "component": "component:ds-popover",
+              "reason": "Popover keeps the content beside its trigger and dismisses on outside activation."
+            },
+            {
+              "when": "Supplementary tools such as search, inbox, or agents live beside every page.",
+              "component": "component:ds-shell-tools",
+              "reason": "ShellTools owns the persistent application tool panel and its responsive layout."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-shell-app",
+            "component:ds-button-filled",
+            "component:ds-button-unfilled",
+            "component:ds-tooltip",
+            "component:ds-text",
+            "component:ds-divider"
+          ],
+          "accessibility": [
+            "The heading is the dialog's accessible name. Keep it a generic label for what the panel shows, such as Event details or Vehicle details; record identity belongs in the content.",
+            "Connect explanatory content through aria-describedby when the task needs context beyond the heading.",
+            "Opening moves focus to the leading header action: Back when backLabel is set, otherwise Close. Changing backLabel while focus is in the drawer moves focus to the new leading action.",
+            "A modal drawer makes the page inert, traps Tab, and shows a shade. A non-modal drawer leaves the page interactive, lets Tab leave the panel, and ignores outside clicks.",
+            "Close, Escape, and shade activation emit dsClose with close-button, escape, or backdrop before dismissal. A non-modal drawer handles Escape at the document unless another handler prevented it or a modal dialog is open.",
+            "With navigation enabled, ArrowLeft and ArrowRight page records from anywhere in the document, respecting writing direction, except inside text fields, selects, sliders, menus, listboxes, tablists, comboboxes, and editable content. Set navigationShortcutsBlocked while the page needs those keys.",
+            "Focus return after close follows the presentation. A modal drawer returns focus to its trigger and reports restoreFocus false. A non-modal drawer moves no focus itself; dsAfterClose reports restoreFocus true unless another drawer replaced it, and the owner then focuses the record now shown, such as the current row or map marker, since paging may have moved past the original trigger.",
+            "Header actions and footer navigation are icon buttons with tooltips; give header-actions their own accessible names and keep them to one or two."
+          ],
+          "states": [
+            "The owner controls open, heading, content, and paging availability; the component mutates open to false on dismissal and emits dsAfterClose after exit motion.",
+            "Only one non-modal drawer is open per document. Opening another closes the previous one with reason replaced and restoreFocus false.",
+            "The header holds optional Back, the heading, optional header-actions such as open full page, a divider when actions exist, and Close. Back and Close appear together at depth.",
+            "The default slot is composable content with a 16px inset; bodyInset none removes it for content that owns its edges.",
+            "The footer holds slot footer actions at the start and, with navigation, previous and next at the end. It is hidden when both are empty.",
+            "previousAvailable and nextAvailable make the paging actions inactive at list edges; the owner advances the selection on dsPrevious and dsNext.",
+            "modal is read on open; changing it while open re-presents the same surface in the new mode."
+          ],
+          "responsiveBehavior": [
+            "Inside ShellApp's page-overlay slot the drawer covers the page content lane only, below the shell bar and beside the navigation and tool panels; elsewhere it attaches to the viewport edge.",
+            "Modal drawers always present in the top layer against the viewport edge.",
+            "Width comes from drawerWidth, defaulting to the small panel width, and is clamped to the available lane.",
+            "Below 768px the panel spans the full width of its lane; header and footer stay fixed while content scrolls."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Set open, modal, previousAvailable, and nextAvailable as JavaScript properties when controlling the drawer.",
+              "Place a page details drawer in ds-shell-app with slot=\"page-overlay\"; assign footer actions with slot=\"footer\" and icon actions with slot=\"header-actions\"."
+            ],
+            "react": [
+              "Pass open, modal, previousAvailable, and nextAvailable to DsDrawer; handle onDsClose, onDsPrevious, onDsNext, onDsBack, and onDsAfterClose.",
+              "Render the drawer as a ShellApp child with slot=\"page-overlay\"; assign footer and header-actions slots on its children."
+            ],
+            "angular": [
+              "Bind [open], [modal], [previousAvailable], and [nextAvailable]; handle (dsClose), (dsPrevious), (dsNext), (dsBack), and (dsAfterClose) with $event.detail.",
+              "Project the drawer into ShellApp with slot=\"page-overlay\"; assign footer and header-actions slots on its children."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook event details, standalone, multi-depth, modal, and flush examples",
+              "path": "src/wc/components/Drawer/Drawer.stories.ts"
+            }
+          ],
+          "styling": {
+            "rationale": "The component owns its panel surface, edge elevation, motion, and fixed header and footer chrome so every details drawer shares one rhythm; the content slot is application-owned.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "box-shadow",
+                  "color"
+                ],
+                "reason": "The component owns its surface and edge elevation; compose an application-owned surface inside the content slot when needed.",
+                "props": []
+              },
+              {
+                "properties": [
+                  "width"
+                ],
+                "reason": "Width comes from panel-width tokens through drawerWidth and is clamped to the lane.",
+                "props": [
+                  "drawerWidth"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
+        },
+        "props": {
+          "ariaDescribedby": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "backLabel": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "bodyInset": {
+            "type": "DrawerBodyInset",
+            "required": false
+          },
+          "closeAriaLabel": {
+            "type": "string",
+            "required": false
+          },
+          "drawerWidth": {
+            "type": "DrawerWidth | string",
+            "required": false
+          },
+          "heading": {
+            "type": "string",
+            "required": true
+          },
+          "modal": {
+            "type": "boolean",
+            "required": false
+          },
+          "navigation": {
+            "type": "boolean",
+            "required": false
+          },
+          "navigationAriaLabel": {
+            "type": "string",
+            "required": false
+          },
+          "navigationShortcutsBlocked": {
+            "type": "boolean",
+            "required": false
+          },
+          "nextAriaLabel": {
+            "type": "string",
+            "required": false
+          },
+          "nextAvailable": {
+            "type": "boolean",
+            "required": false
+          },
+          "open": {
+            "type": "boolean",
+            "required": false
+          },
+          "previousAriaLabel": {
+            "type": "string",
+            "required": false
+          },
+          "previousAvailable": {
+            "type": "boolean",
+            "required": false
+          },
+          "side": {
+            "type": "DrawerSide",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsAfterClose",
+            "detail": "DrawerAfterCloseDetail"
+          },
+          {
+            "name": "dsBack",
+            "detail": "MouseEvent"
+          },
+          {
+            "name": "dsClose",
+            "detail": "DrawerCloseDetail"
+          },
+          {
+            "name": "dsNext",
+            "detail": "void"
+          },
+          {
+            "name": "dsPrevious",
+            "detail": "void"
+          }
+        ],
+        "slots": [
+          "",
+          "footer",
+          "header-actions"
+        ],
+        "exports": {
+          "customElement": "ds-drawer",
+          "react": "DsDrawer",
+          "vue": "DsDrawer",
+          "angular": "DsDrawer"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "button-unfilled",
+        "divider",
+        "text",
+        "tooltip"
+      ]
     },
     {
       "name": "empty-state",
@@ -12699,6 +13089,198 @@
       "registryDependencies": []
     },
     {
+      "name": "popover",
+      "title": "Popover",
+      "description": "Anchored non-modal dialog for short interactive content tied to a trigger, sharing the anchored choice-popup surface with Menu and Select, with an optional title-and-close header and footer actions.",
+      "type": "registry:ui",
+      "meta": {
+        "library": "@ds-mo/ui",
+        "distribution": "npm",
+        "storybook": "https://zainadeel.github.io/compomo/?path=/story/popover",
+        "source": "src/wc/components/Popover/Popover.tsx",
+        "intentStatus": "complete",
+        "intent": {
+          "audience": "general",
+          "status": "experimental",
+          "summary": "Anchored non-modal dialog for short interactive content tied to a trigger, sharing the anchored choice-popup surface with Menu and Select, with an optional title-and-close header and footer actions.",
+          "useWhen": [
+            "A trigger reveals a few related controls, such as share options or display settings, that apply without leaving the page.",
+            "Supplementary explanation is too long or needs a link, so a Tooltip is not enough.",
+            "The content should dismiss on outside activation or Escape and return focus to its trigger."
+          ],
+          "avoidWhen": [
+            "The content is a list of commands or one-of-many choices.",
+            "The content is a short non-interactive label for an icon control.",
+            "The user must complete or confirm a blocking task.",
+            "The content needs more than a few controls or scrolling sections."
+          ],
+          "alternatives": [
+            {
+              "when": "A trigger reveals commands or a choice list.",
+              "component": "component:ds-menu",
+              "reason": "Menu provides menu semantics, roving focus, and selection."
+            },
+            {
+              "when": "An icon control needs a short non-interactive name.",
+              "component": "component:ds-tooltip",
+              "reason": "Tooltip shows supplementary labels on hover and keyboard focus without taking focus."
+            },
+            {
+              "when": "The task is blocking or needs explicit completion.",
+              "component": "component:ds-modal",
+              "reason": "Modal contains focus and makes the page inert until the user decides."
+            },
+            {
+              "when": "The content is a larger panel of detail or a multi-field task.",
+              "component": "component:ds-drawer",
+              "reason": "Drawer provides room for longer content beside the page."
+            }
+          ],
+          "commonlyComposedWith": [
+            "component:ds-button-unfilled",
+            "component:ds-button-filled",
+            "component:ds-field",
+            "component:ds-switch",
+            "component:ds-text"
+          ],
+          "accessibility": [
+            "The surface is a non-modal dialog. Give it a visible heading or, when untitled, a popoverLabel so it has an accessible name.",
+            "The owner marks the trigger with haspopup=\"dialog\" and mirrors open into expanded and surfaceOpen on ButtonUnfilled.",
+            "Opening moves focus to an element marked autofocus in the content, otherwise to the surface itself.",
+            "Escape and the Close action return focus to the anchor. Outside activation closes without moving focus. Tab past the last control closes the popover and continues to the control after the trigger.",
+            "dsClose reports close-button, escape, outside, or tab so the owner can sync trigger state."
+          ],
+          "states": [
+            "The owner sets open and an anchor or anchorId; the component mutates open to false for user dismissal and emits dsAfterClose after exit motion.",
+            "Slotted content stays in the host while closed so authored nodes and their state persist between openings.",
+            "Placement flips to the opposite side when the preferred side does not fit, and clamps within the viewport or the nearest overlay boundary."
+          ],
+          "responsiveBehavior": [
+            "Width comes from menu-width tokens and is clamped to the viewport.",
+            "Height is limited to the space available on the resolved side; content scrolls when it exceeds it.",
+            "The surface lives in the native top layer, escaping clipping containers and transformed ancestors."
+          ],
+          "frameworkCaveats": {
+            "customElements": [
+              "Set anchor as a JavaScript property or anchorId as an attribute, then set open.",
+              "Listen for dsClose to update the trigger's expanded and surfaceOpen state."
+            ],
+            "react": [
+              "Pass a trigger ref's element as anchor, or anchorId, and control open; update trigger state in onDsClose."
+            ],
+            "angular": [
+              "Bind [anchor] to the trigger element or set anchorId, bind [open], and update trigger state in (dsClose)."
+            ]
+          },
+          "references": [
+            {
+              "label": "Storybook share, help, trigger, and placement examples",
+              "path": "src/wc/components/Popover/Popover.stories.ts"
+            }
+          ],
+          "styling": {
+            "rationale": "The component owns the anchored surface shared with Menu, Select, and the date and time pickers so every anchored overlay reads as the same material.",
+            "protected": [
+              {
+                "properties": [
+                  "background",
+                  "border",
+                  "border-radius",
+                  "box-shadow"
+                ],
+                "reason": "The anchored surface recipe is shared across overlay families; compose application surfaces inside the content slot.",
+                "props": []
+              },
+              {
+                "properties": [
+                  "width"
+                ],
+                "reason": "Width comes from menu-width tokens through popoverWidth and is clamped to the viewport.",
+                "props": [
+                  "popoverWidth"
+                ]
+              }
+            ],
+            "customProperties": []
+          }
+        },
+        "props": {
+          "align": {
+            "type": "PopoverAlign",
+            "required": false
+          },
+          "anchor": {
+            "type": "HTMLElement | undefined",
+            "required": false
+          },
+          "anchorId": {
+            "type": "string | undefined",
+            "required": false
+          },
+          "boundary": {
+            "type": "HTMLElement | undefined",
+            "required": false
+          },
+          "closeAriaLabel": {
+            "type": "string",
+            "required": false
+          },
+          "heading": {
+            "type": "string",
+            "required": false
+          },
+          "open": {
+            "type": "boolean",
+            "required": false
+          },
+          "popoverLabel": {
+            "type": "string",
+            "required": false
+          },
+          "popoverWidth": {
+            "type": "PopoverWidth | string",
+            "required": false
+          },
+          "side": {
+            "type": "PopoverSide",
+            "required": false
+          },
+          "sideOffset": {
+            "type": "number | string",
+            "required": false
+          }
+        },
+        "events": [
+          {
+            "name": "dsAfterClose",
+            "detail": "void"
+          },
+          {
+            "name": "dsClose",
+            "detail": "PopoverCloseDetail"
+          }
+        ],
+        "slots": [
+          "",
+          "footer"
+        ],
+        "exports": {
+          "customElement": "ds-popover",
+          "react": "DsPopover",
+          "vue": "DsPopover",
+          "angular": "DsPopover"
+        }
+      },
+      "dependencies": [
+        "@ds-mo/ui",
+        "@ds-mo/tokens"
+      ],
+      "registryDependencies": [
+        "button-unfilled",
+        "text"
+      ]
+    },
+    {
       "name": "radio",
       "title": "Radio",
       "description": "Form-associated one-of-many radio selection set with an optional visible group label, vertical or horizontal layout, per-option descriptions, four densities, per-option inactive state, and roving keyboard focus.",
@@ -14281,7 +14863,8 @@
             "component:ds-shell-page",
             "component:ds-banner",
             "component:ds-swatch-picker",
-            "component:ds-paper-texture"
+            "component:ds-paper-texture",
+            "component:ds-drawer"
           ],
           "patterns": [
             "pattern:application-shell",
@@ -14325,7 +14908,8 @@
             "Route-owned pageChrome independently selects ShellPage contentInset, page-header seams, scroll compaction, expanded and compact header-divider visibility, and contentSurface. ShellApp forwards them while resolving whether desktop title geometry is page-local or shell-bar-owned.",
             "The application filters unauthorized destinations, sections, and tools before passing them into shell components.",
             "Application-owned header actions and the account trigger retain surface ownership across shell presentations. Supply surfaceOpen on header actions and accountMenuSurfaceOpen on navigation for rendered surface lifetimes; keep disclosure and selected-route state separate.",
-            "Managed page chrome can explicitly choose page-local title presentation for pages that must remain compact rather than following capacity and scrolling."
+            "Managed page chrome can explicitly choose page-local title presentation for pages that must remain compact rather than following capacity and scrolling.",
+            "The page-overlay slot holds one non-modal page panel, such as a details ds-drawer, that covers the page content lane below the shell bar without covering navigation or tools; it is hidden with the content lane in fullscreen tools and mobile stages that hide content."
           ],
           "responsiveBehavior": [
             "ShellApp owns the fixed system breakpoints and resolves desktop at 1200px and wider, tablet from 768px through 1199px, and mobile below 768px.",
@@ -14538,6 +15122,7 @@
           "mobile-sheet-nav",
           "page-header-leading",
           "page-header-trailing",
+          "page-overlay",
           "panel",
           "tools"
         ],

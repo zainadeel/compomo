@@ -1,0 +1,206 @@
+@import '../../utils/radius.css';
+@import '../../utils/interaction-fill.css';
+@import '../../utils/focus-ring.css';
+@import '../../utils/control-inactive.css';
+@import '../../utils/forced-colors.css';
+
+:host {
+  --_disclosure-inset-inline: var(--dimension-space-200);
+  --_disclosure-chevron-gap: var(--dimension-space-100);
+  --_disclosure-duration: var(--effect-animation-duration-short-3);
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  min-width: 0;
+  color: var(--color-foreground-primary);
+  border-bottom: var(--dimension-stroke-width-012) solid var(--color-border-tertiary);
+}
+
+/* Card surface, matching CardSetting's split shadow + highlight recipe. */
+:host(.disclosure--contained) {
+  overflow: hidden;
+  border-bottom: 0;
+  border-radius: var(--ds-radius-card);
+  background-color: var(--color-background-primary);
+  box-shadow: var(--effect-shadow-elevated-sm);
+}
+
+:host(.disclosure--contained)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border-radius: inherit;
+  box-shadow: var(--effect-highlight-elevated-sm);
+  pointer-events: none;
+}
+
+.disclosure-header {
+  display: flex;
+  cursor: default;
+  align-items: center;
+  min-width: 0;
+}
+
+.disclosure-heading-level {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font: inherit;
+}
+
+.disclosure-trigger {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--_disclosure-chevron-gap);
+  box-sizing: border-box;
+  width: 100%;
+  min-block-size: var(--dimension-size-600);
+  margin: 0;
+  padding: var(--dimension-space-150) var(--_disclosure-inset-inline);
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/*
+ * The wash and focus ring paint on the whole header row so a trailing slot is
+ * covered too; only the trigger button drives them. Instant on enter, eased
+ * fade on leave (shared nav/tab timing).
+ */
+.disclosure-header::after {
+  transition: background var(--effect-motion-short-3);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .disclosure-header:has(.disclosure-trigger:hover)::after {
+    background: var(--ds-interaction-hover);
+    transition: none;
+  }
+}
+
+.disclosure-header:has(.disclosure-trigger:active)::after {
+  background: var(--ds-interaction-pressed);
+  transition: none;
+}
+
+.disclosure-trigger:focus-visible {
+  outline: none;
+}
+
+.disclosure-header:has(.disclosure-trigger:focus-visible)::after {
+  outline: var(--ds-focus-ring-width) solid var(--ds-focus-ring-color);
+  outline-offset: calc(-1 * var(--ds-focus-ring-width));
+}
+
+:host(.disclosure--contained) .disclosure-header::after {
+  border-radius: var(--ds-radius-card) var(--ds-radius-card) 0 0;
+}
+
+:host(.disclosure--contained:not(.disclosure--open)) .disclosure-header::after {
+  border-radius: var(--ds-radius-card);
+}
+
+.disclosure-chevron {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+  color: var(--color-foreground-secondary);
+  transform: rotate(-90deg);
+}
+
+:host(.disclosure--open) .disclosure-chevron {
+  transform: none;
+}
+
+.disclosure-copy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--dimension-space-025);
+  min-width: 0;
+}
+
+.disclosure-trailing {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: var(--dimension-space-050);
+  padding-inline-end: var(--_disclosure-inset-inline);
+}
+
+.disclosure-trailing--empty {
+  display: none;
+}
+
+.disclosure-trailing slot {
+  display: contents;
+}
+
+/* Height animates through grid rows so content never needs measuring. */
+.disclosure-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition:
+    grid-template-rows var(--_disclosure-duration) var(--effect-animation-easing-ease-in-out),
+    visibility 0s linear var(--_disclosure-duration);
+  visibility: hidden;
+}
+
+.disclosure-panel--open {
+  grid-template-rows: 1fr;
+  transition:
+    grid-template-rows var(--_disclosure-duration) var(--effect-animation-easing-ease-in-out),
+    visibility 0s linear 0s;
+  visibility: visible;
+}
+
+.disclosure-panel__clip {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Content aligns with the heading text, not the chevron. */
+.disclosure-content {
+  padding: 0 var(--_disclosure-inset-inline) var(--dimension-space-200)
+    calc(
+      var(--_disclosure-inset-inline) + var(--dimension-iconography-md) +
+        var(--_disclosure-chevron-gap)
+    );
+  opacity: 0;
+  transition: opacity var(--_disclosure-duration) var(--effect-animation-easing-ease-out);
+}
+
+.disclosure-panel--open .disclosure-content {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .disclosure-chevron {
+    transition: transform var(--effect-motion-short-3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .disclosure-panel,
+  .disclosure-panel--open,
+  .disclosure-content {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  :host(.disclosure--contained) {
+    outline: var(--dimension-stroke-width-012) solid var(--ds-forced-color-content);
+    outline-offset: calc(-1 * var(--dimension-stroke-width-012));
+  }
+
+  :host(.disclosure--contained)::after {
+    box-shadow: none;
+  }
+}

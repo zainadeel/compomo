@@ -162,6 +162,21 @@
   background-color: var(--color-background-primary);
 }
 
+/*
+ * Page-scoped panels such as ds-drawer. Shares the content cell without
+ * scrolling with it, so panels cover exactly the content lane.
+ */
+.shell-app__page-overlay {
+  --ds-shell-page-overlay-position: absolute;
+  grid-area: content;
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: clip;
+  pointer-events: none;
+}
+
 .shell-app__tools {
   grid-area: tools;
   flex: 0 0 auto;
@@ -230,7 +245,8 @@
 
 :host(.shell-app--tools-fullscreen) .shell-app__panel,
 :host(.shell-app--tools-fullscreen) .shell-app__bar,
-:host(.shell-app--tools-fullscreen) .shell-app__content {
+:host(.shell-app--tools-fullscreen) .shell-app__content,
+:host(.shell-app--tools-fullscreen) .shell-app__page-overlay {
   visibility: hidden;
   /* Descendants can override visibility, but must not paint through tools. */
   content-visibility: hidden;
@@ -269,6 +285,7 @@
 }
 
 :host(.shell-app--mobile) .shell-app__content,
+:host(.shell-app--mobile) .shell-app__page-overlay,
 :host(.shell-app--mobile) .shell-app__tools,
 :host(.shell-app--mobile) .shell-app__mobile-sheet-nav {
   grid-area: stage;

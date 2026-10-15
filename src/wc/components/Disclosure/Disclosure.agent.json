@@ -1,0 +1,86 @@
+{
+  "$schema": "../../../../agent/schemas/component-agent.schema.json",
+  "schemaVersion": "1.0.0",
+  "id": "component:ds-disclosure",
+  "kind": "component",
+  "package": "@ds-mo/ui",
+  "tag": "ds-disclosure",
+  "audience": "general",
+  "status": "experimental",
+  "summary": "In-flow section whose heading-level trigger shows or hides its content, in a flush divided style for stacked sections or a contained card style.",
+  "useWhen": [
+    "A page, drawer, or settings column has secondary sections that users scan by heading and open on demand.",
+    "Several related sections stack vertically and some can start collapsed to reduce length.",
+    "A single section of optional detail, such as diagnostics or advanced options, should stay out of the way until requested."
+  ],
+  "avoidWhen": [
+    "Sections are peers the user switches between, with one visible at a time; use TabGroup.",
+    "The hidden content is critical to completing the task.",
+    "The content is a navigation tree or a filter list with its own selection semantics.",
+    "The trigger needs to open a floating surface rather than expand in place."
+  ],
+  "alternatives": [
+    {
+      "when": "The user switches between peer views of the same area.",
+      "component": "component:ds-tab-group",
+      "reason": "TabGroup shows one panel at a time with tab semantics."
+    },
+    {
+      "when": "A trigger reveals content that should float over the page.",
+      "component": "component:ds-popover",
+      "reason": "Popover anchors content to its trigger without reflowing the page."
+    },
+    {
+      "when": "The section is an editable settings group with view and edit modes.",
+      "component": "component:ds-card-setting",
+      "reason": "CardSetting owns the view, edit, save, and cancel workflow."
+    }
+  ],
+  "commonlyComposedWith": [
+    "component:ds-drawer",
+    "component:ds-switch",
+    "component:ds-checkbox",
+    "component:ds-tag",
+    "component:ds-text"
+  ],
+  "accessibility": [
+    "The trigger is a native button inside a heading element; choose headingLevel to fit the surrounding outline.",
+    "The trigger exposes aria-expanded and controls a labelled region containing the content.",
+    "Collapsed content is inert and hidden so it is never focusable or announced.",
+    "Interactive trailing content sits outside the trigger button so it keeps its own semantics.",
+    "Inactive sections expose aria-disabled and cannot be toggled."
+  ],
+  "states": [
+    "open is reflected and mutable: the component toggles it on activation and emits dsToggle with the new state. Owners may also set it directly, for example to make sections mutually exclusive.",
+    "flush sections show a bottom divider so stacked sections read as one list; contained sections sit on their own card surface.",
+    "Height and content opacity animate on toggle and are removed under reduced motion."
+  ],
+  "responsiveBehavior": [
+    "The section fills its container width; heading and description wrap rather than truncate.",
+    "Content aligns with the heading text, not the chevron, at every width."
+  ],
+  "frameworkCaveats": {
+    "customElements": [
+      "Set open as a property or attribute; listen for dsToggle for user changes."
+    ],
+    "react": ["Pass open to DsDisclosure and update it in onDsToggle when controlling it."],
+    "angular": ["Bind [open] and update it from (dsToggle) when controlling it."]
+  },
+  "references": [
+    {
+      "label": "Storybook flush, contained, trailing, and inactive examples",
+      "path": "src/wc/components/Disclosure/Disclosure.stories.ts"
+    }
+  ],
+  "styling": {
+    "rationale": "The component owns the trigger row, divider, card surface, and expand motion; applications own the content and the space between contained sections.",
+    "protected": [
+      {
+        "properties": ["background", "border", "border-radius", "box-shadow"],
+        "reason": "Divider and card surfaces follow the shared border and elevation recipes; choose a variant instead.",
+        "props": ["variant"]
+      }
+    ],
+    "customProperties": []
+  }
+}
