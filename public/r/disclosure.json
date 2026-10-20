@@ -12,7 +12,7 @@
     "intentStatus": "complete",
     "intent": {
       "audience": "general",
-      "status": "experimental",
+      "status": "stable",
       "summary": "Show-and-hide control for optional in-flow detail: a borderless ButtonUnfilled trigger with a leading chevron that reveals content below it. It owns the trigger and the reveal, not a container; the surrounding card or section supplies surface, dividers, and inset.",
       "useWhen": [
         "A card, page section, or tool panel has optional detail, such as a raw snapshot or advanced options, that should stay out of the way until requested.",
