@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.3.0](https://github.com/zainadeel/compomo/compare/v16.2.0...v16.3.0) (2026-10-20)
+
+
+### Added
+
+* graduate drawer and disclosure to stable ([#699](https://github.com/zainadeel/compomo/issues/699)) ([d224a70](https://github.com/zainadeel/compomo/commit/d224a705c02054fd90c46cb6df064b28247b9f66))
+
 ## [16.2.0](https://github.com/zainadeel/compomo/compare/v16.1.3...v16.2.0) (2026-10-15)
 
 
