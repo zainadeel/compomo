@@ -1,4 +1,5 @@
 import { Component, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';
+import { labelWithVisibleText } from '../../utils/label-in-name';
 
 const formatCount = (count: number): string => {
   const normalizedCount = Math.max(0, Math.round(Number.isFinite(count) ? count : 0));
@@ -13,7 +14,10 @@ const formatCount = (count: number): string => {
   scoped: true,
 })
 export class MapClusterMarker {
-  /** Accessible action label. Describe the cluster and what activation does. */
+  /**
+   * Accessible action label. Describe the cluster and what activation does. The visible count is
+   * prefixed when the label does not already contain it.
+   */
   @Prop() label!: string;
 
   /** Short visible cluster identifier revealed on hover or keyboard focus. */
@@ -54,7 +58,7 @@ export class MapClusterMarker {
             'map-cluster-marker__button--padded': countLabel.length > 1,
             'ds-focus-ring': true,
           }}
-          aria-label={this.label}
+          aria-label={labelWithVisibleText(countLabel, this.label ?? '')}
           onClick={this.handleClick}
         >
           <ds-text
