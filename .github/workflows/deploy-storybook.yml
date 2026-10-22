@@ -16,8 +16,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 # Only one deployment at a time; don't cancel in-progress runs.
 concurrency:
@@ -26,42 +24,27 @@ concurrency:
 
 jobs:
   deploy:
+    # Only this job deploys, so only it gets Pages and OIDC write access.
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deploy1.outputs.page_url || steps.deploy2.outputs.page_url || steps.deploy3.outputs.page_url }}
     runs-on: ubuntu-latest
+    # ~2 min build plus up to three 5-minute deploy attempts and two retry waits.
+    timeout-minutes: 25
 
     steps:
       - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           ref: ${{ inputs.ref || github.sha }}
 
-      # Keep setup inline so recovery works for tags predating the local setup action.
-      - name: Setup Node
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-
-      - name: Select pinned npm
-        shell: bash
-        run: |
-          npm_version="$(node --input-type=module <<'NODE'
-          import fs from 'node:fs';
-          const { packageManager } = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-          const match = /^npm@(\d+\.\d+\.\d+)$/.exec(packageManager ?? '');
-          if (!match) throw new Error('packageManager must pin an exact npm version');
-          process.stdout.write(match[1]);
-          NODE
-          )"
-          if [ "$(npm --version)" != "$npm_version" ]; then
-            npm install --global "npm@$npm_version" --ignore-scripts --no-audit --no-fund
-          fi
-          test "$(npm --version)" = "$npm_version"
-          node --version
-          npm --version
+      - name: Setup toolchain
+        uses: ./.github/actions/setup-toolchain
 
       - name: Install dependencies
         run: npm ci
@@ -83,13 +66,42 @@ jobs:
         run: cp -r public/r storybook-static/r
 
       - name: Setup Pages
-        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: storybook-static
 
+      # Retry only the promote step on transient Pages API failures (e.g.
+      # "Deployment failed, try again later."). Native steps keep every
+      # executed action pinned to a commit SHA.
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: ./.github/actions/retry-deploy-pages
+        id: deploy1
+        continue-on-error: true
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+        with:
+          timeout: 300000
+
+      - name: Wait before retry
+        if: steps.deploy1.outcome == 'failure'
+        run: sleep 45
+
+      - name: Deploy to GitHub Pages (retry 1)
+        id: deploy2
+        if: steps.deploy1.outcome == 'failure'
+        continue-on-error: true
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+        with:
+          timeout: 300000
+
+      - name: Wait before final retry
+        if: steps.deploy2.outcome == 'failure'
+        run: sleep 45
+
+      - name: Deploy to GitHub Pages (retry 2)
+        id: deploy3
+        if: steps.deploy2.outcome == 'failure'
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+        with:
+          timeout: 300000

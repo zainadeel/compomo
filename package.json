@@ -258,5 +258,5 @@
     "micromark-extension-gfm": "^3.0.0",
     "sax": "^1.6.1"
   },
-  "packageManager": "npm@11.12.1"
+  "packageManager": "npm@11.19.1"
 }

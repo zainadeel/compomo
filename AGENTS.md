@@ -37,6 +37,8 @@ React, and Vue adapters:
 - Storybook usage documentation: `src/docs/`
 - Agent intent and compositions: co-located `*.agent.json` and `agent/patterns/`
 - Generated registry: `public/r/`
+- CI workflows: `.github/workflows/`; shared Node/npm setup:
+  `.github/actions/setup-toolchain/`
 
 ## Commands
 
@@ -63,8 +65,13 @@ Node and npm are both pinned, and CI uses exactly these:
 
 |      | Version   | Pinned by                   |
 | ---- | --------- | --------------------------- |
-| Node | `24.15.0` | `.nvmrc`                    |
-| npm  | `11.12.1` | `packageManager` (Corepack) |
+| Node | `24.22.1` | `.nvmrc`                    |
+| npm  | `11.19.1` | `packageManager` (Corepack) |
+
+`.nvmrc` is the only Node pin. Every workflow that runs npm uses the local
+`.github/actions/setup-toolchain` action, which reads `.nvmrc` and fails unless
+the bundled npm equals `packageManager`. To upgrade, choose a Node release
+whose bundled npm you want, then update both pins together.
 
 Interactive shells with an `.nvmrc` hook pick Node up on `cd`. **Agent and CI
 shells usually do not** — they inherit whatever Node started the session. Select
