@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.3.2](https://github.com/zainadeel/compomo/compare/v16.3.1...v16.3.2) (2026-10-22)
+
+
+### Fixed
+
+* include visible text in panel nav account and cluster marker names ([#710](https://github.com/zainadeel/compomo/issues/710)) ([2f8713d](https://github.com/zainadeel/compomo/commit/2f8713ddc5bfa2347d584435c173e1dd49aa9aa9))
+
 ## [16.3.1](https://github.com/zainadeel/compomo/compare/v16.3.0...v16.3.1) (2026-10-22)
 
 
