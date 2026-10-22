@@ -38,6 +38,7 @@ import {
 import { PANEL_NAV_CHILD_MENU_PLACEMENT } from '../Menu/menu-placement';
 import type { MenuItemData } from '../Menu/menu-types';
 import { scrollEdgeFadeClassMap } from '../../utils/scroll-edge-fade';
+import { labelWithVisibleText } from '../../utils/label-in-name';
 import { prefersReducedMotion } from '../../utils/resolve-css-time-ms';
 import { resolveSafeUrl } from '../../utils/safe-url';
 
@@ -884,7 +885,7 @@ export class PanelNav {
           'ds-interaction-fill--on-chrome': true,
         }}
         tabIndex={this.rovingIndex === this.getUserRovingIndex() ? 0 : -1}
-        aria-label={this.accountLabel}
+        aria-label={labelWithVisibleText(userName, this.accountLabel)}
         aria-haspopup="menu"
         aria-expanded={String(this.accountMenuExpanded)}
         onClick={e => this.handleUserAction(e)}

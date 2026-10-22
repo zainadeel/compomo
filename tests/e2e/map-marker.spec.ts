@@ -1,3 +1,4 @@
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 const INTENTS = ['brand', 'neutral', 'positive', 'warning', 'caution', 'negative'] as const;
@@ -40,4 +41,22 @@ test('exposes native button activation and programmatic focus @cross-browser', a
 
   await marker.evaluate(element => (element as HTMLDsMapMarkerElement).setFocus());
   await expect(marker.getByRole('button')).toBeFocused();
+});
+
+test('cluster marker accessible name includes its visible count @cross-browser', async ({
+  page,
+}) => {
+  await page.goto('/map-marker.html');
+  const cluster = page.locator('#cluster');
+
+  await expect(cluster.getByRole('button')).toHaveAccessibleName(
+    '5, California cluster, 2 drivers, 2 vehicles, 1 asset'
+  );
+
+  const results = await new AxeBuilder({ page })
+    .include('#cluster')
+    .withRules(['label-content-name-mismatch'])
+    .analyze();
+  expect(results.passes.map(rule => rule.id)).toContain('label-content-name-mismatch');
+  expect(results.violations).toEqual([]);
 });

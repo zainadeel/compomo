@@ -1,3 +1,4 @@
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { chromiumOnly } from './browser-tier';
 import { expectGeometryClose } from './rendered-geometry';
@@ -594,6 +595,21 @@ test.describe('App shell chrome', () => {
 
     await trigger.click();
     await expect(menu).toBeHidden();
+  });
+
+  test('account button accessible name includes the visible user name @cross-browser', async ({
+    page,
+  }) => {
+    await expect(page.locator('#ds-panel-nav-user-menu-anchor')).toHaveAccessibleName(
+      'Zain Adeel, Account'
+    );
+
+    const results = await new AxeBuilder({ page })
+      .include('#ds-panel-nav-user-menu-anchor')
+      .withRules(['label-content-name-mismatch'])
+      .analyze();
+    expect(results.passes.map(rule => rule.id)).toContain('label-content-name-mismatch');
+    expect(results.violations).toEqual([]);
   });
 
   test('completes controlled account-menu dismissal after outside activation @cross-browser', async ({

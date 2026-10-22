@@ -2673,7 +2673,7 @@ export namespace Components {
          */
         "dimmed": boolean;
         /**
-          * Accessible action label. Describe the cluster and what activation does.
+          * Accessible action label. Describe the cluster and what activation does. The visible count is prefixed when the label does not already contain it.
          */
         "label": string;
         /**
@@ -10186,7 +10186,7 @@ declare namespace LocalJSX {
          */
         "dimmed"?: boolean;
         /**
-          * Accessible action label. Describe the cluster and what activation does.
+          * Accessible action label. Describe the cluster and what activation does. The visible count is prefixed when the label does not already contain it.
          */
         "label": string;
         /**
