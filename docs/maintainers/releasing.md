@@ -28,7 +28,9 @@ checks regardless of the branch name.
 
 If a tag/release exists but a later workflow step prevented npm publishing,
 rerun the Release Please workflow for the existing tag. Do not replace the
-configured publishing identity with a local token.
+configured publishing identity with a local token. Recovery checks out the tag
+and uses that tag's own `.github/actions/setup-toolchain`, so it publishes with
+the Node and npm pinned at that release.
 
 Use a `Release-As: X.Y.Z` commit trailer only when a deliberate exact version is
 required. Preserve the trailer in the merge commit.
