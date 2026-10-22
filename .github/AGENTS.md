@@ -27,6 +27,12 @@ Applies to `.github/`, release configuration, and publishing automation.
 - Checkouts set `persist-credentials: false`; no job pushes with Git.
 - Every job sets `timeout-minutes`. PR workflows cancel superseded runs; never
   add `cancel-in-progress` to release, publish, or Pages runs.
+- Playwright jobs run in the official `mcr.microsoft.com/playwright` image,
+  pinned by tag and digest, and install browsers without `--with-deps`. Do not
+  reintroduce `--with-deps`: it downloads ~115 MB of system packages from the
+  Ubuntu mirror and has pushed jobs past their timeouts. When `@playwright/test`
+  changes, update the image tag and digest to the same version in the same PR
+  (do not rely on Dependabot to bump the image).
 - `Build library` and `Validate PR title` are required status checks. Do not
   rename those jobs without updating branch protection.
 
