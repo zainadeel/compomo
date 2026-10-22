@@ -101,7 +101,10 @@ jobs:
   e2e-contract-shards:
     name: Browser contracts (${{ matrix.browser }}, shard ${{ matrix.shard }}/2)
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Tests take ~2-4 minutes per shard, but `playwright install --with-deps`
+    # downloads ~115 MB of WebKit system packages from the Ubuntu mirror, which
+    # has taken 6.5+ minutes on slow days and pushed shards past a 10-minute cap.
+    timeout-minutes: 20
     needs: build
     if: ${{ needs.build.outputs.browser == 'true' }}
     strategy:
