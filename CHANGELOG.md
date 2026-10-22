@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.3.1](https://github.com/zainadeel/compomo/compare/v16.3.0...v16.3.1) (2026-10-22)
+
+
+### Fixed
+
+* **deps:** update vulnerable dependencies to patched releases ([#703](https://github.com/zainadeel/compomo/issues/703)) ([26965d6](https://github.com/zainadeel/compomo/commit/26965d61fb0b7e96f3db4dead088e7b15374267b))
+
 ## [16.3.0](https://github.com/zainadeel/compomo/compare/v16.2.0...v16.3.0) (2026-10-20)
 
 
