@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.4.0](https://github.com/zainadeel/compomo/compare/v16.3.2...v16.4.0) (2026-11-04)
+
+
+### Added
+
+* **deps:** support @ds-mo/icons 8.5 and @ds-mo/tokens 9.1 ([#720](https://github.com/zainadeel/compomo/issues/720)) ([01a9ff9](https://github.com/zainadeel/compomo/commit/01a9ff9408e9be27bc2b58ebaa525b9ece355e9c))
+
 ## [16.3.2](https://github.com/zainadeel/compomo/compare/v16.3.1...v16.3.2) (2026-10-22)
 
 
