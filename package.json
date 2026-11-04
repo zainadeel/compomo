@@ -137,7 +137,7 @@
     "@angular/core": ">=19 <23",
     "@angular/forms": ">=19 <23",
     "@ds-mo/icons": "^8.5.0",
-    "@ds-mo/tokens": "^9.0.0",
+    "@ds-mo/tokens": "^9.1.0",
     "@eslint/css": "^2.0.0",
     "eslint": "^10.7.0",
     "react": "^18 || ^19",
