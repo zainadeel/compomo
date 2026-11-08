@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.4.1](https://github.com/zainadeel/compomo/compare/v16.4.0...v16.4.1) (2026-11-08)
+
+
+### Fixed
+
+* **deps:** update zod and minimatch for security advisories ([#722](https://github.com/zainadeel/compomo/issues/722)) ([0a2b90d](https://github.com/zainadeel/compomo/commit/0a2b90da217d2d0dec7d715b55b8ac4a27fe112b))
+
 ## [16.4.0](https://github.com/zainadeel/compomo/compare/v16.3.2...v16.4.0) (2026-11-04)
 
 
