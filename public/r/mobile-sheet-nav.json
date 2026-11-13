@@ -390,7 +390,7 @@
       "complexPropertyNote": "Assign these non-primitive values as JavaScript properties: dashboardGroups, settingsGroups.",
       "peerDependencies": {
         "required": [
-          "@ds-mo/tokens ^9.1.0",
+          "@ds-mo/tokens ^10.0.0",
           "@ds-mo/icons ^8.5.0"
         ],
         "frameworks": "Custom Elements; React 18/19 wrappers; Vue 3 wrappers; Angular 19-22 standalone adapters."
