@@ -1,5 +1,16 @@
 # Changelog
 
+## [17.0.0](https://github.com/zainadeel/compomo/compare/v16.4.1...v17.0.0) (2026-11-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* consumers must upgrade @ds-mo/tokens from 9.x to ^10.0.0.
+
+### Fixed
+
+* require tokomo 10 for component consumers ([#724](https://github.com/zainadeel/compomo/issues/724)) ([a3fe010](https://github.com/zainadeel/compomo/commit/a3fe010bcf27364314f112c4cc078ed079171008))
+
 ## [16.4.1](https://github.com/zainadeel/compomo/compare/v16.4.0...v16.4.1) (2026-11-08)
 
 
